@@ -3,6 +3,7 @@ package docker
 import (
 	"testing"
 
+	"github.com/ahacop/pgbox/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,18 +12,21 @@ func TestBuildPostgresArgs(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		config   PostgresConfig
+		pgConfig *config.PostgresConfig
+		opts     ContainerOptions
 		expected []string
 	}{
 		{
 			name: "basic config with password",
-			config: PostgresConfig{
-				Name:     "test-pg",
-				Image:    "postgres:17",
+			pgConfig: &config.PostgresConfig{
+				Version:  "17",
 				Port:     "5432",
 				Database: "testdb",
 				User:     "testuser",
 				Password: "secret",
+			},
+			opts: ContainerOptions{
+				Name: "test-pg",
 			},
 			expected: []string{
 				"run", "-d",
@@ -36,13 +40,15 @@ func TestBuildPostgresArgs(t *testing.T) {
 		},
 		{
 			name: "config without password uses trust auth",
-			config: PostgresConfig{
-				Name:     "test-pg",
-				Image:    "postgres:16",
+			pgConfig: &config.PostgresConfig{
+				Version:  "16",
 				Port:     "5433",
 				Database: "mydb",
 				User:     "myuser",
 				Password: "",
+			},
+			opts: ContainerOptions{
+				Name: "test-pg",
 			},
 			expected: []string{
 				"run", "-d",
@@ -56,13 +62,15 @@ func TestBuildPostgresArgs(t *testing.T) {
 		},
 		{
 			name: "config with extra args and env",
-			config: PostgresConfig{
+			pgConfig: &config.PostgresConfig{
+				Version:  "17",
+				Port:     "5432",
+				Database: "testdb",
+				User:     "testuser",
+				Password: "secret",
+			},
+			opts: ContainerOptions{
 				Name:      "test-pg",
-				Image:     "postgres:17",
-				Port:      "5432",
-				Database:  "testdb",
-				User:      "testuser",
-				Password:  "secret",
 				ExtraEnv:  []string{"PGDATA=/var/lib/postgresql/data/pgdata"},
 				ExtraArgs: []string{"--rm", "-v", "pgdata:/var/lib/postgresql/data"},
 			},
@@ -80,14 +88,16 @@ func TestBuildPostgresArgs(t *testing.T) {
 		},
 		{
 			name: "config with custom command",
-			config: PostgresConfig{
-				Name:     "test-pg",
-				Image:    "postgres:17",
+			pgConfig: &config.PostgresConfig{
+				Version:  "17",
 				Port:     "5432",
 				Database: "testdb",
 				User:     "testuser",
 				Password: "secret",
-				Command:  []string{"-c", "shared_buffers=256MB"},
+			},
+			opts: ContainerOptions{
+				Name:    "test-pg",
+				Command: []string{"-c", "shared_buffers=256MB"},
 			},
 			expected: []string{
 				"run", "-d",
@@ -104,7 +114,7 @@ func TestBuildPostgresArgs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := client.buildPostgresArgs(tt.config)
+			result := client.buildPostgresArgs(tt.pgConfig, tt.opts)
 			assert.Equal(t, tt.expected, result)
 		})
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ahacop/pgbox/internal/container"
 	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/spf13/cobra"
 )
@@ -48,7 +49,8 @@ func runPsql(cmd *cobra.Command, args []string) error {
 	if psqlName == "" {
 		psqlName = findRunningPgboxContainer(client)
 		if psqlName == "" {
-			psqlName = "pgbox-pg17"
+			containerMgr := container.NewManager()
+			psqlName = containerMgr.DefaultName()
 		}
 	}
 

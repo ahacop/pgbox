@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/ahacop/pgbox/internal/config"
 )
 
 // Client provides an interface to Docker operations
@@ -100,47 +102,42 @@ func (c *Client) ExecCommand(containerName string, command ...string) (string, e
 	return out.String(), err
 }
 
+// ContainerOptions holds Docker-specific options for running a container
+type ContainerOptions struct {
+	Name      string
+	ExtraEnv  []string
+	ExtraArgs []string
+	Command   []string
+}
+
 // RunPostgres runs a PostgreSQL container with the specified configuration
-func (c *Client) RunPostgres(config PostgresConfig) error {
-	args := c.buildPostgresArgs(config)
+func (c *Client) RunPostgres(pgConfig *config.PostgresConfig, opts ContainerOptions) error {
+	args := c.buildPostgresArgs(pgConfig, opts)
 	return c.RunCommand(args...)
 }
 
 // buildPostgresArgs builds the docker run arguments for PostgreSQL
-func (c *Client) buildPostgresArgs(config PostgresConfig) []string {
+func (c *Client) buildPostgresArgs(pgConfig *config.PostgresConfig, opts ContainerOptions) []string {
 	args := []string{"run", "-d"}
-	args = append(args, "--name", config.Name)
-	args = append(args, "-p", fmt.Sprintf("%s:5432", config.Port))
+	args = append(args, "--name", opts.Name)
+	args = append(args, "-p", fmt.Sprintf("%s:5432", pgConfig.Port))
 
-	args = append(args, "-e", fmt.Sprintf("POSTGRES_DB=%s", config.Database))
-	args = append(args, "-e", fmt.Sprintf("POSTGRES_USER=%s", config.User))
+	args = append(args, "-e", fmt.Sprintf("POSTGRES_DB=%s", pgConfig.Database))
+	args = append(args, "-e", fmt.Sprintf("POSTGRES_USER=%s", pgConfig.User))
 
-	if config.Password != "" {
-		args = append(args, "-e", fmt.Sprintf("POSTGRES_PASSWORD=%s", config.Password))
+	if pgConfig.Password != "" {
+		args = append(args, "-e", fmt.Sprintf("POSTGRES_PASSWORD=%s", pgConfig.Password))
 	} else {
 		args = append(args, "-e", "POSTGRES_HOST_AUTH_METHOD=trust")
 	}
 
-	for _, env := range config.ExtraEnv {
+	for _, env := range opts.ExtraEnv {
 		args = append(args, "-e", env)
 	}
 
-	args = append(args, config.ExtraArgs...)
-	args = append(args, config.Image)
-	args = append(args, config.Command...)
+	args = append(args, opts.ExtraArgs...)
+	args = append(args, pgConfig.Image())
+	args = append(args, opts.Command...)
 
 	return args
-}
-
-// PostgresConfig holds configuration for running a PostgreSQL container
-type PostgresConfig struct {
-	Name      string
-	Image     string
-	Port      string
-	Database  string
-	User      string
-	Password  string
-	ExtraEnv  []string
-	ExtraArgs []string
-	Command   []string
 }

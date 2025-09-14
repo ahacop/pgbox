@@ -26,12 +26,17 @@ This command stops and removes the container but preserves any volumes.`,
 		},
 	}
 
-	stopCmd.Flags().StringVarP(&containerName, "name", "n", "pgbox-postgres", "Container name to stop")
+	stopCmd.Flags().StringVarP(&containerName, "name", "n", "", "Container name to stop (default: pgbox-pg17)")
 
 	return stopCmd
 }
 
 func stopContainer(name string) error {
+	// Use default name if not provided (default to pg17)
+	if name == "" {
+		name = "pgbox-pg17"
+	}
+
 	fmt.Printf("Stopping container %s...\n", name)
 
 	// Execute docker stop command

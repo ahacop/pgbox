@@ -7,31 +7,31 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func StopCmd() *cobra.Command {
+func DownCmd() *cobra.Command {
 	var containerName string
 
-	stopCmd := &cobra.Command{
-		Use:   "stop",
+	downCmd := &cobra.Command{
+		Use:   "down",
 		Short: "Stop a running PostgreSQL container",
-		Long: `Stop a running PostgreSQL container started with pgbox run.
+		Long: `Stop a running PostgreSQL container started with pgbox up.
 
 This command stops and removes the container but preserves any volumes.`,
 		Example: `  # Stop the default pgbox container
-  pgbox stop
+  pgbox down
 
   # Stop a container with a custom name
-  pgbox stop -n my-postgres`,
+  pgbox down -n my-postgres`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return stopContainer(containerName)
+			return downContainer(containerName)
 		},
 	}
 
-	stopCmd.Flags().StringVarP(&containerName, "name", "n", "", "Container name to stop (default: pgbox-pg17)")
+	downCmd.Flags().StringVarP(&containerName, "name", "n", "", "Container name to stop (default: pgbox-pg17)")
 
-	return stopCmd
+	return downCmd
 }
 
-func stopContainer(name string) error {
+func downContainer(name string) error {
 	// Use default name if not provided (default to pg17)
 	if name == "" {
 		name = "pgbox-pg17"

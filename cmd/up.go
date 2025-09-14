@@ -19,43 +19,43 @@ var (
 	detach    bool
 )
 
-func RunCmd() *cobra.Command {
-	runCmd := &cobra.Command{
-		Use:   "run",
-		Short: "Run PostgreSQL in Docker",
-		Long: `Run a PostgreSQL instance in Docker with the specified version.
+func UpCmd() *cobra.Command {
+	upCmd := &cobra.Command{
+		Use:   "up",
+		Short: "Start PostgreSQL in Docker",
+		Long: `Start a PostgreSQL instance in Docker with the specified version.
 
 This command starts a PostgreSQL container with sensible defaults for development.
 The container runs in the background by default (detached mode).`,
-		Example: `  # Run PostgreSQL 17 (creates container named pgbox-pg17)
-  pgbox run
+		Example: `  # Start PostgreSQL 17 (creates container named pgbox-pg17)
+  pgbox up
 
-  # Run PostgreSQL 16 (creates container named pgbox-pg16)
-  pgbox run -v 16
+  # Start PostgreSQL 16 (creates container named pgbox-pg16)
+  pgbox up -v 16
 
-  # Run PostgreSQL with custom name
-  pgbox run -n my-postgres
+  # Start PostgreSQL with custom name
+  pgbox up -n my-postgres
 
-  # Run in foreground (attached mode)
-  pgbox run --detach=false
+  # Start in foreground (attached mode)
+  pgbox up --detach=false
 
-  # Run with custom database and user
-  pgbox run --database=mydb --user=myuser --password=secret`,
-		RunE: runPostgres,
+  # Start with custom database and user
+  pgbox up --database=mydb --user=myuser --password=secret`,
+		RunE: upPostgres,
 	}
 
-	runCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
-	runCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
-	runCmd.Flags().StringVarP(&name, "name", "n", "", "Container name (default: pgbox-pg<version>)")
-	runCmd.Flags().StringVar(&password, "password", "postgres", "PostgreSQL password")
-	runCmd.Flags().StringVar(&database, "database", "postgres", "Default database name")
-	runCmd.Flags().StringVar(&user, "user", "postgres", "PostgreSQL user")
-	runCmd.Flags().BoolVarP(&detach, "detach", "d", true, "Run container in background")
+	upCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
+	upCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
+	upCmd.Flags().StringVarP(&name, "name", "n", "", "Container name (default: pgbox-pg<version>)")
+	upCmd.Flags().StringVar(&password, "password", "postgres", "PostgreSQL password")
+	upCmd.Flags().StringVar(&database, "database", "postgres", "Default database name")
+	upCmd.Flags().StringVar(&user, "user", "postgres", "PostgreSQL user")
+	upCmd.Flags().BoolVarP(&detach, "detach", "d", true, "Run container in background")
 
-	return runCmd
+	return upCmd
 }
 
-func runPostgres(cmd *cobra.Command, args []string) error {
+func upPostgres(cmd *cobra.Command, args []string) error {
 	// Validate version
 	if pgVersion != "16" && pgVersion != "17" {
 		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
@@ -95,7 +95,7 @@ func runPostgres(cmd *cobra.Command, args []string) error {
 	if !detach {
 		fmt.Println("\nPress Ctrl+C to stop the container")
 	} else {
-		fmt.Printf("\nRunning in background. Use 'pgbox stop -n %s' to stop.\n", name)
+		fmt.Printf("\nRunning in background. Use 'pgbox down -n %s' to stop.\n", name)
 	}
 	fmt.Println(strings.Repeat("-", 40))
 

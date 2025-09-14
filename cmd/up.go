@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ahacop/pgbox/internal/config"
+	"github.com/ahacop/pgbox/internal/container"
 	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/spf13/cobra"
 )
@@ -60,42 +62,52 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
 	}
 
-	// Use default name if not provided
-	if name == "" {
-		name = fmt.Sprintf("pgbox-pg%s", pgVersion)
+	// Create config with defaults, then override with user values
+	pgConfig := config.NewPostgresConfig()
+	pgConfig.Version = pgVersion
+	if port != "" {
+		pgConfig.Port = port
+	}
+	if database != "" {
+		pgConfig.Database = database
+	}
+	if user != "" {
+		pgConfig.User = user
+	}
+	if password != "" {
+		pgConfig.Password = password
+	}
+
+	// Determine container name
+	containerMgr := container.NewManager()
+	containerName := name
+	if containerName == "" {
+		containerName = containerMgr.Name(pgConfig)
 	}
 
 	// Show the command being run
-	fmt.Printf("Starting PostgreSQL %s...\n", pgVersion)
-	fmt.Printf("Container: %s\n", name)
-	fmt.Printf("Port: %s\n", port)
-	fmt.Printf("User: %s\n", user)
-	fmt.Printf("Database: %s\n", database)
+	fmt.Printf("Starting PostgreSQL %s...\n", pgConfig.Version)
+	fmt.Printf("Container: %s\n", containerName)
+	fmt.Printf("Port: %s\n", pgConfig.Port)
+	fmt.Printf("User: %s\n", pgConfig.User)
+	fmt.Printf("Database: %s\n", pgConfig.Database)
 
 	if !detach {
 		fmt.Println("\nPress Ctrl+C to stop the container")
 	} else {
-		fmt.Printf("\nRunning in background. Use 'pgbox down -n %s' to stop.\n", name)
+		fmt.Printf("\nRunning in background. Use 'pgbox down -n %s' to stop.\n", containerName)
 	}
 	fmt.Println(strings.Repeat("-", 40))
 
 	// Create Docker client and run PostgreSQL
 	client := docker.NewClient()
-	config := docker.PostgresConfig{
-		Name:     name,
-		Image:    fmt.Sprintf("postgres:%s", pgVersion),
-		Port:     port,
-		Database: database,
-		User:     user,
-		Password: password,
+	opts := docker.ContainerOptions{
+		Name:      containerName,
+		ExtraArgs: []string{"--rm"},
 	}
-
-	// Add --rm flag and -d if detaching
-	extraArgs := []string{"--rm"}
 	if detach {
-		extraArgs = append(extraArgs, "-d")
+		opts.ExtraArgs = append(opts.ExtraArgs, "-d")
 	}
-	config.ExtraArgs = extraArgs
 
-	return client.RunPostgres(config)
+	return client.RunPostgres(pgConfig, opts)
 }

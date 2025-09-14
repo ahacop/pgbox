@@ -17,7 +17,7 @@ func TestRootCommand(t *testing.T) {
 
 	t.Run("Shows help by default", func(t *testing.T) {
 		// TODO: Capture output and verify help is shown
-		rootCmd := NewRootCmd()
+		rootCmd := RootCmd()
 		buf := new(bytes.Buffer)
 		rootCmd.SetOut(buf)
 		rootCmd.SetErr(buf)

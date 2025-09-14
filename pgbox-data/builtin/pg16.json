@@ -1,6 +1,6 @@
 {
-  "generated_at": "2025-09-06T16:01:38Z",
-  "source": "postgres:16-bookworm pg_available_extensions",
+  "generated_at": "2025-09-14T21:44:39Z",
+  "source": "postgres:16 pg_available_extensions",
   "pg_major": 16,
   "entries": [
     {"name":"adminpack","kind":"builtin","description":"administrative functions for PostgreSQL"},

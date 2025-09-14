@@ -7,7 +7,7 @@ mkdir -p "$OUT_DIR"
 
 gen_for_major() {
   local major="$1"
-  local img="postgres:${major}-bookworm"
+  local img="postgres:${major}"
 
   # run a temporary server, query pg_available_extensions
   local cid

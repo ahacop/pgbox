@@ -27,11 +27,11 @@ func RunCmd() *cobra.Command {
 
 This command starts a PostgreSQL container with sensible defaults for development.
 The container runs in the background by default (detached mode).`,
-		Example: `  # Run PostgreSQL 17 (default) on default port 5432
+		Example: `  # Run PostgreSQL 17 (creates container named pgbox-pg17)
   pgbox run
 
-  # Run PostgreSQL 16 on port 5433
-  pgbox run -v 16 -p 5433
+  # Run PostgreSQL 16 (creates container named pgbox-pg16)
+  pgbox run -v 16
 
   # Run PostgreSQL with custom name
   pgbox run -n my-postgres
@@ -46,7 +46,7 @@ The container runs in the background by default (detached mode).`,
 
 	runCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
 	runCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
-	runCmd.Flags().StringVarP(&name, "name", "n", "pgbox-postgres", "Container name")
+	runCmd.Flags().StringVarP(&name, "name", "n", "", "Container name (default: pgbox-pg<version>)")
 	runCmd.Flags().StringVar(&password, "password", "postgres", "PostgreSQL password")
 	runCmd.Flags().StringVar(&database, "database", "postgres", "Default database name")
 	runCmd.Flags().StringVar(&user, "user", "postgres", "PostgreSQL user")
@@ -59,6 +59,11 @@ func runPostgres(cmd *cobra.Command, args []string) error {
 	// Validate version
 	if pgVersion != "16" && pgVersion != "17" {
 		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
+	}
+
+	// Use default name if not provided
+	if name == "" {
+		name = fmt.Sprintf("pgbox-pg%s", pgVersion)
 	}
 
 	// Build docker run command

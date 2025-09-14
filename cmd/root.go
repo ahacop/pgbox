@@ -17,7 +17,7 @@ specific extensions for development and testing purposes.`,
 		// TODO: Add actual functionality here
 		Run: func(cmd *cobra.Command, args []string) {
 			// For now, just show help
-			cmd.Help()
+			_ = cmd.Help()
 		},
 	}
 

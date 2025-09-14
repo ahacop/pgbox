@@ -2,9 +2,14 @@
 
 # Variables
 BINARY_NAME := pgbox
-VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
-LDFLAGS := -ldflags "-X github.com/ahacop/pgbox/cmd.Version=$(VERSION)"
 GO := go
+
+# Version information
+VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo v0.0.0-dev)
+COMMIT  := $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
+DATE    := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+LDFLAGS := -X 'main.version=$(VERSION)' -X 'main.commit=$(COMMIT)' -X 'main.date=$(DATE)'
 
 # Default target
 .PHONY: all
@@ -13,7 +18,7 @@ all: build
 # Build the binary
 .PHONY: build
 build:
-	$(GO) build $(LDFLAGS) -o $(BINARY_NAME) .
+	$(GO) build -ldflags "$(LDFLAGS)" -o $(BINARY_NAME) .
 
 # Run tests
 .PHONY: test
@@ -56,12 +61,17 @@ clean:
 # Install to GOPATH/bin
 .PHONY: install
 install:
-	$(GO) install $(LDFLAGS) .
+	$(GO) install -ldflags "$(LDFLAGS)" .
 
 # Development build and run
 .PHONY: dev
 dev: build
 	./$(BINARY_NAME)
+
+# Show version
+.PHONY: version
+version: build
+	./$(BINARY_NAME) --version
 
 # Show help
 .PHONY: help
@@ -77,6 +87,7 @@ help:
 	@echo "  clean         - Remove build artifacts"
 	@echo "  install       - Install to GOPATH/bin"
 	@echo "  dev           - Build and run for development"
+	@echo "  version       - Show version information"
 	@echo "  update-extensions - Update extension catalogs"
 	@echo "  help          - Show this help message"
 

@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"os/exec"
 
+	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/spf13/cobra"
 )
 
@@ -39,12 +39,12 @@ func downContainer(name string) error {
 
 	fmt.Printf("Stopping container %s...\n", name)
 
-	// Execute docker stop command
-	dockerCmd := exec.Command("docker", "stop", name)
-	output, err := dockerCmd.CombinedOutput()
+	// Create Docker client and stop container
+	client := docker.NewClient()
+	err := client.StopContainer(name)
 
 	if err != nil {
-		return fmt.Errorf("failed to stop container: %w\nOutput: %s", err, output)
+		return fmt.Errorf("failed to stop container: %w", err)
 	}
 
 	fmt.Printf("Container %s stopped successfully\n", name)

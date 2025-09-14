@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"strings"
 
+	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/spf13/cobra"
 )
 
@@ -66,25 +65,6 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		name = fmt.Sprintf("pgbox-pg%s", pgVersion)
 	}
 
-	// Build docker run command
-	dockerArgs := []string{
-		"run",
-		"--rm", // Remove container when it stops
-		"--name", name,
-		"-e", fmt.Sprintf("POSTGRES_PASSWORD=%s", password),
-		"-e", fmt.Sprintf("POSTGRES_USER=%s", user),
-		"-e", fmt.Sprintf("POSTGRES_DB=%s", database),
-		"-p", fmt.Sprintf("%s:5432", port),
-	}
-
-	if detach {
-		dockerArgs = append(dockerArgs, "-d")
-	}
-
-	// Add the PostgreSQL image
-	image := fmt.Sprintf("postgres:%s", pgVersion)
-	dockerArgs = append(dockerArgs, image)
-
 	// Show the command being run
 	fmt.Printf("Starting PostgreSQL %s...\n", pgVersion)
 	fmt.Printf("Container: %s\n", name)
@@ -99,11 +79,23 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	}
 	fmt.Println(strings.Repeat("-", 40))
 
-	// Execute docker command
-	dockerCmd := exec.Command("docker", dockerArgs...)
-	dockerCmd.Stdout = os.Stdout
-	dockerCmd.Stderr = os.Stderr
-	dockerCmd.Stdin = os.Stdin
+	// Create Docker client and run PostgreSQL
+	client := docker.NewClient()
+	config := docker.PostgresConfig{
+		Name:     name,
+		Image:    fmt.Sprintf("postgres:%s", pgVersion),
+		Port:     port,
+		Database: database,
+		User:     user,
+		Password: password,
+	}
 
-	return dockerCmd.Run()
+	// Add --rm flag and -d if detaching
+	extraArgs := []string{"--rm"}
+	if detach {
+		extraArgs = append(extraArgs, "-d")
+	}
+	config.ExtraArgs = extraArgs
+
+	return client.RunPostgres(config)
 }

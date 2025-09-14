@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 	"strings"
 
+	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/spf13/cobra"
 )
 
@@ -44,28 +43,29 @@ This command executes psql inside the container, so no local PostgreSQL client i
 }
 
 func runPsql(cmd *cobra.Command, args []string) error {
+	client := docker.NewClient()
+
 	if psqlName == "" {
-		psqlName = findRunningPgboxContainer()
+		psqlName = findRunningPgboxContainer(client)
 		if psqlName == "" {
 			psqlName = "pgbox-pg17"
 		}
 	}
 
 	// Check if container is running
-	checkCmd := exec.Command("docker", "ps", "-q", "-f", fmt.Sprintf("name=^%s$", psqlName))
-	output, err := checkCmd.Output()
-	if err != nil || len(output) == 0 {
+	running, err := client.IsContainerRunning(psqlName)
+	if err != nil || !running {
 		return fmt.Errorf("no pgbox container is running. Start one with: pgbox up")
 	}
 
 	// If user and database weren't specified, try to get them from container env vars
 	if !cmd.Flags().Changed("user") {
-		if envUser := getContainerEnv(psqlName, "POSTGRES_USER"); envUser != "" {
+		if envUser, err := client.GetContainerEnv(psqlName, "POSTGRES_USER"); err == nil && envUser != "" {
 			psqlUser = envUser
 		}
 	}
 	if !cmd.Flags().Changed("database") {
-		if envDB := getContainerEnv(psqlName, "POSTGRES_DB"); envDB != "" {
+		if envDB, err := client.GetContainerEnv(psqlName, "POSTGRES_DB"); err == nil && envDB != "" {
 			psqlDatabase = envDB
 		}
 	}
@@ -75,33 +75,21 @@ func runPsql(cmd *cobra.Command, args []string) error {
 	fmt.Println(strings.Repeat("-", 40))
 
 	// Execute psql inside the container
-	dockerArgs := []string{
-		"exec",
-		"-it",
-		psqlName,
-		"psql",
-		"-U", psqlUser,
-		"-d", psqlDatabase,
-	}
-
-	dockerCmd := exec.Command("docker", dockerArgs...)
-	dockerCmd.Stdout = os.Stdout
-	dockerCmd.Stderr = os.Stderr
-	dockerCmd.Stdin = os.Stdin
-
-	return dockerCmd.Run()
+	return client.RunInteractive(
+		"exec", "-it", psqlName,
+		"psql", "-U", psqlUser, "-d", psqlDatabase,
+	)
 }
 
 // findRunningPgboxContainer searches for running containers that look like pgbox containers
-func findRunningPgboxContainer() string {
+func findRunningPgboxContainer(client *docker.Client) string {
 	// Get list of running containers
-	listCmd := exec.Command("docker", "ps", "--format", "{{.Names}}\t{{.Image}}")
-	output, err := listCmd.Output()
+	output, err := client.RunCommandWithOutput("ps", "--format", "{{.Names}}\t{{.Image}}")
 	if err != nil {
 		return ""
 	}
 
-	containerName := selectPgboxContainer(string(output))
+	containerName := selectPgboxContainer(output)
 	if containerName != "" {
 		return containerName
 	}
@@ -109,9 +97,7 @@ func findRunningPgboxContainer() string {
 	// Try common pgbox container names as fallback
 	possibleNames := []string{"pgbox-pg17", "pgbox-pg16"}
 	for _, name := range possibleNames {
-		checkCmd := exec.Command("docker", "ps", "-q", "-f", fmt.Sprintf("name=^%s$", name))
-		output, err := checkCmd.Output()
-		if err == nil && len(output) > 0 {
+		if running, err := client.IsContainerRunning(name); err == nil && running {
 			return name
 		}
 	}
@@ -152,21 +138,4 @@ func selectPgboxContainer(dockerPsOutput string) string {
 	}
 
 	return ""
-}
-
-// getContainerEnv retrieves an environment variable from a running container
-func getContainerEnv(containerName, envVar string) string {
-	cmd := exec.Command("docker", "inspect", "-f", fmt.Sprintf("{{range .Config.Env}}{{if eq (index (split . \"=\") 0) \"%s\"}}{{index (split . \"=\") 1}}{{end}}{{end}}", envVar), containerName)
-	output, err := cmd.Output()
-	if err != nil {
-		return ""
-	}
-	return strings.TrimSpace(string(output))
-}
-
-// parseContainerEnv extracts an environment variable value from docker inspect output
-// This is pure business logic with no side effects
-func parseContainerEnv(dockerInspectOutput string, envVar string) string {
-	// Docker inspect with our template returns just the value or empty
-	return strings.TrimSpace(dockerInspectOutput)
 }

@@ -13,7 +13,7 @@ gen_for_major() {
   mapfile -t pkg_data < <(
     docker run --rm "$img" bash -c "
 apt-get update -qq 2>/dev/null
-apt-cache search postgresql 2>/dev/null | grep -E '^postgresql-$major-' | awk '{pkg=\$1; \$1=\"\"; desc=\$0; gsub(/^ /, \"\", desc); print pkg \"|\" desc}' | sort
+apt-cache search postgresql 2>/dev/null | grep -E '^postgresql-$major-' | grep -v dbgsym | awk '{pkg=\$1; \$1=\"\"; desc=\$0; gsub(/^ /, \"\", desc); print pkg \"|\" desc}' | sort
 "
   )
 

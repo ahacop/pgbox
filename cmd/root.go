@@ -4,11 +4,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	// Version will be set at build time
-	Version = "dev"
-)
-
 // NewRootCmd creates and returns the root command
 func NewRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
@@ -19,7 +14,6 @@ with your choice of extensions.
 
 It provides an easy way to spin up PostgreSQL instances with
 specific extensions for development and testing purposes.`,
-		Version: Version,
 		// TODO: Add actual functionality here
 		Run: func(cmd *cobra.Command, args []string) {
 			// For now, just show help

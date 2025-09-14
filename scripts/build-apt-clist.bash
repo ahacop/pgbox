@@ -2,12 +2,12 @@
 set -euo pipefail
 
 # gen-apt-bookworm-pgdg.sh
-OUT_DIR="${1:-pgbox-data/apt-bookworm-pgdg}"
+OUT_DIR="${1:-pgbox-data/apt-pgdg}"
 mkdir -p "$OUT_DIR"
 
 gen_for_major() {
   local major="$1"
-  local img="postgres:${major}-bookworm"
+  local img="postgres:${major}"
 
   # Do the work using the official postgres image which already has apt repos configured
   mapfile -t pkg_data < <(

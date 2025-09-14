@@ -1,6 +1,6 @@
 {
-  "generated_at": "2025-09-06T16:01:40Z",
-  "source": "postgres:17-bookworm pg_available_extensions",
+  "generated_at": "2025-09-14T21:44:40Z",
+  "source": "postgres:17 pg_available_extensions",
   "pg_major": 17,
   "entries": [
     {"name":"amcheck","kind":"builtin","description":"functions for verifying relation integrity"},

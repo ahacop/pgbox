@@ -18,8 +18,8 @@ specific extensions for development and testing purposes.`,
 		},
 	}
 
-	rootCmd.AddCommand(RunCmd())
-	rootCmd.AddCommand(StopCmd())
+	rootCmd.AddCommand(UpCmd())
+	rootCmd.AddCommand(DownCmd())
 
 	return rootCmd
 }

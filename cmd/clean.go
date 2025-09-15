@@ -60,6 +60,22 @@ func cleanPgbox(force bool, all bool) error {
 		}
 	}
 
+	// Find all pgbox volumes
+	fmt.Println("Searching for pgbox volumes...")
+	volumesOutput, err := client.RunCommandWithOutput("volume", "ls", "--format", "{{.Name}}")
+	if err != nil {
+		return fmt.Errorf("failed to list volumes: %w", err)
+	}
+
+	volumes := []string{}
+	if volumesOutput != "" {
+		for _, line := range strings.Split(strings.TrimSpace(volumesOutput), "\n") {
+			if line != "" && strings.HasPrefix(line, "pgbox-") && strings.HasSuffix(line, "-data") {
+				volumes = append(volumes, line)
+			}
+		}
+	}
+
 	// Find all pgbox images
 	fmt.Println("Searching for pgbox images...")
 	imagesOutput, err := client.RunCommandWithOutput("images", "--format", "{{.Repository}}:{{.Tag}}")
@@ -80,7 +96,7 @@ func cleanPgbox(force bool, all bool) error {
 	}
 
 	// Show what will be removed
-	if len(containers) == 0 && len(images) == 0 && len(baseImages) == 0 {
+	if len(containers) == 0 && len(volumes) == 0 && len(images) == 0 && len(baseImages) == 0 {
 		fmt.Println("No pgbox resources found to clean.")
 		return nil
 	}
@@ -90,6 +106,12 @@ func cleanPgbox(force bool, all bool) error {
 		fmt.Printf("\nContainers (%d):\n", len(containers))
 		for _, c := range containers {
 			fmt.Printf("  - %s\n", c)
+		}
+	}
+	if len(volumes) > 0 {
+		fmt.Printf("\nVolumes (%d):\n", len(volumes))
+		for _, v := range volumes {
+			fmt.Printf("  - %s\n", v)
 		}
 	}
 	if len(images) > 0 {
@@ -122,6 +144,19 @@ func cleanPgbox(force bool, all bool) error {
 		for _, container := range containers {
 			fmt.Printf("  Removing %s...", container)
 			if err := client.RemoveContainer(container); err != nil {
+				fmt.Printf(" failed: %v\n", err)
+			} else {
+				fmt.Println(" done")
+			}
+		}
+	}
+
+	// Remove volumes
+	if len(volumes) > 0 {
+		fmt.Println("\nRemoving volumes...")
+		for _, volume := range volumes {
+			fmt.Printf("  Removing %s...", volume)
+			if _, err := client.RunCommandWithOutput("volume", "rm", volume); err != nil {
 				fmt.Printf(" failed: %v\n", err)
 			} else {
 				fmt.Println(" done")

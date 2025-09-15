@@ -26,3 +26,8 @@ vendor/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Generated extension data
+pgbox-data/extension-mappings-*.json
+pgbox-data/extensions.jsonl
+internal/extensions/extensions.jsonl

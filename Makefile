@@ -98,3 +98,7 @@ update-extensions:
 	./scripts/build-official-extensions-list.bash
 	@echo "Updating apt package extensions catalog..."
 	./scripts/build-apt-clist.bash
+	@echo "Generating extension name mappings..."
+	./scripts/build-extension-mappings.bash
+	@echo "Merging extension data into single file..."
+	./scripts/build-merged-extensions.bash

@@ -99,7 +99,7 @@ func exportScaffold(targetDir, pgVersion, port, extList string) error {
 	}
 
 	// Generate init.sql
-	if err := generateInitSQL(targetDir, extNames); err != nil {
+	if err := generateInitSQL(targetDir, extNames, pgVersion); err != nil {
 		return err
 	}
 
@@ -174,15 +174,15 @@ func generateDockerfile(targetDir, pgVersion string, extList []string) error {
 	return nil
 }
 
-func generateInitSQL(targetDir string, extList []string) error {
+func generateInitSQL(targetDir string, extList []string, pgVersion string) error {
 	initPath := filepath.Join(targetDir, "init.sql")
 
-	var extensions []scaffold.ExtensionInfo
+	var exts []scaffold.ExtensionInfo
 	if len(extList) > 0 {
 		for _, ext := range extList {
-			extensions = append(extensions, scaffold.ExtensionInfo{
+			exts = append(exts, scaffold.ExtensionInfo{
 				Name:    ext,
-				SQLName: scaffold.MapExtensionToSQLName(ext),
+				SQLName: extensions.GetSQLName(ext, pgVersion),
 			})
 		}
 	} else {
@@ -191,7 +191,7 @@ func generateInitSQL(targetDir string, extList []string) error {
 	}
 
 	data := scaffold.InitSQLData{
-		Extensions: extensions,
+		Extensions: exts,
 	}
 
 	content, err := scaffold.GenerateInitSQL(data)
@@ -200,7 +200,7 @@ func generateInitSQL(targetDir string, extList []string) error {
 	}
 
 	// If no extensions, add example comment
-	if len(extensions) == 0 {
+	if len(exts) == 0 {
 		content = "-- Initialize PostgreSQL database\n-- Add any custom SQL initialization here\n\n-- Example: CREATE EXTENSION IF NOT EXISTS pg_stat_statements;\n"
 	}
 

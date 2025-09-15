@@ -150,13 +150,3 @@ func GenerateInitSQL(data InitSQLData) (string, error) {
 	return buf.String(), nil
 }
 
-// MapExtensionToSQLName converts extension names to their PostgreSQL CREATE EXTENSION names
-func MapExtensionToSQLName(extName string) string {
-	// Map special cases where the package name differs from the extension name
-	switch extName {
-	case "pgvector":
-		return "vector"
-	default:
-		return extName
-	}
-}

@@ -189,7 +189,11 @@ func buildCustomImage(pgVersion string, extNames []string) (string, error) {
 	if err := os.MkdirAll(buildDir, 0755); err != nil {
 		return "", fmt.Errorf("failed to create build directory: %w", err)
 	}
-	defer os.RemoveAll(buildDir)
+	defer func() {
+		if err := os.RemoveAll(buildDir); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to remove build directory %s: %v\n", buildDir, err)
+		}
+	}()
 
 	// Write Dockerfile
 	dockerfilePath := filepath.Join(buildDir, "Dockerfile")

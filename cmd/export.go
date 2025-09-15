@@ -185,9 +185,6 @@ func generateInitSQL(targetDir string, extList []string, pgVersion string) error
 				SQLName: extensions.GetSQLName(ext, pgVersion),
 			})
 		}
-	} else {
-		// Add a comment placeholder for empty extension list
-		// The template will handle this case
 	}
 
 	data := scaffold.InitSQLData{

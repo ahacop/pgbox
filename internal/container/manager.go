@@ -50,13 +50,14 @@ func SelectPgboxContainer(dockerPsOutput string) (string, error) {
 		}
 	}
 
-	// Second priority: any container with postgres image
+	// Second priority: any container with postgres or pgbox custom image
 	for _, line := range lines {
 		parts := strings.Split(line, "\t")
 		if len(parts) >= 2 {
 			name := strings.TrimSpace(parts[0])
 			image := strings.TrimSpace(parts[1])
-			if strings.HasPrefix(image, "postgres:") {
+			// Match both standard postgres images and our custom pgbox images
+			if strings.HasPrefix(image, "postgres:") || strings.HasPrefix(image, "pgbox-pg") {
 				return name, nil
 			}
 		}

@@ -145,9 +145,9 @@ func generateDockerfile(targetDir, pgVersion string, extList []string) error {
 			dockerfile.WriteString("    apt-get update; \\\n")
 
 			// Add PostgreSQL apt repository if we have packages
-			dockerfile.WriteString("    apt-get install -y --no-install-recommends curl gnupg ca-certificates; \\\n")
+			dockerfile.WriteString("    apt-get install -y --no-install-recommends curl gnupg ca-certificates lsb-release; \\\n")
 			dockerfile.WriteString("    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg; \\\n")
-			dockerfile.WriteString("    echo \"deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main\" > /etc/apt/sources.list.d/pgdg.list; \\\n")
+			dockerfile.WriteString("    echo \"deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main\" > /etc/apt/sources.list.d/pgdg.list; \\\n")
 			dockerfile.WriteString("    apt-get update; \\\n")
 			dockerfile.WriteString("    apt-get install -y --no-install-recommends \\\n")
 
@@ -161,7 +161,7 @@ func generateDockerfile(targetDir, pgVersion string, extList []string) error {
 				}
 			}
 
-			dockerfile.WriteString("    apt-get purge -y --auto-remove curl gnupg; \\\n")
+			dockerfile.WriteString("    apt-get purge -y --auto-remove curl gnupg lsb-release; \\\n")
 			dockerfile.WriteString("    rm -rf /var/lib/apt/lists/*\n")
 		} else if len(extList) > 0 {
 			dockerfile.WriteString("# Extensions are builtin - no additional packages needed\n")
@@ -186,7 +186,12 @@ func generateInitSQL(targetDir string, extList []string) error {
 	if len(extList) > 0 {
 		sql.WriteString("-- Create extensions\n\n")
 		for _, ext := range extList {
-			sql.WriteString(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS \"%s\";\n", ext))
+			// Map extension names to their actual PostgreSQL names
+			pgExtName := ext
+			if ext == "pgvector" {
+				pgExtName = "vector"
+			}
+			sql.WriteString(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS \"%s\";\n", pgExtName))
 		}
 	} else {
 		sql.WriteString("-- Add any custom SQL initialization here\n\n")

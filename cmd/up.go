@@ -2,22 +2,26 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/container"
 	"github.com/ahacop/pgbox/internal/docker"
+	"github.com/ahacop/pgbox/internal/extensions"
 	"github.com/spf13/cobra"
 )
 
 var (
-	pgVersion string
-	port      string
-	name      string
-	password  string
-	database  string
-	user      string
-	detach    bool
+	pgVersion     string
+	port          string
+	name          string
+	password      string
+	database      string
+	user          string
+	detach        bool
+	extensionList string
 )
 
 func UpCmd() *cobra.Command {
@@ -37,6 +41,9 @@ The container runs in the background by default (detached mode).`,
   # Start PostgreSQL with custom name
   pgbox up -n my-postgres
 
+  # Start with extensions
+  pgbox up --ext hypopg,pgvector
+
   # Start in foreground (attached mode)
   pgbox up --detach=false
 
@@ -52,6 +59,7 @@ The container runs in the background by default (detached mode).`,
 	upCmd.Flags().StringVar(&database, "database", "postgres", "Default database name")
 	upCmd.Flags().StringVar(&user, "user", "postgres", "PostgreSQL user")
 	upCmd.Flags().BoolVarP(&detach, "detach", "d", true, "Run container in background")
+	upCmd.Flags().StringVar(&extensionList, "ext", "", "Comma-separated list of extensions to install")
 
 	return upCmd
 }
@@ -78,6 +86,28 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		pgConfig.Password = password
 	}
 
+	// Parse and validate extensions
+	var extNames []string
+	if extensionList != "" {
+		extNames = strings.Split(extensionList, ",")
+		for i := range extNames {
+			extNames[i] = strings.TrimSpace(extNames[i])
+		}
+
+		// Validate extensions
+		mgr := extensions.NewManager(pgConfig.Version)
+		if err := mgr.ValidateExtensions(extNames); err != nil {
+			return err
+		}
+
+		// Build custom image with extensions
+		customImage, err := buildCustomImage(pgConfig.Version, extNames)
+		if err != nil {
+			return fmt.Errorf("failed to build custom image: %w", err)
+		}
+		pgConfig.CustomImage = customImage
+	}
+
 	// Determine container name
 	containerMgr := container.NewManager()
 	containerName := name
@@ -91,6 +121,9 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	fmt.Printf("Port: %s\n", pgConfig.Port)
 	fmt.Printf("User: %s\n", pgConfig.User)
 	fmt.Printf("Database: %s\n", pgConfig.Database)
+	if len(extNames) > 0 {
+		fmt.Printf("Extensions: %s\n", strings.Join(extNames, ", "))
+	}
 
 	if !detach {
 		fmt.Println("\nPress Ctrl+C to stop the container")
@@ -109,5 +142,87 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		opts.ExtraArgs = append(opts.ExtraArgs, "-d")
 	}
 
+	// Mount init.sql if we have extensions
+	if len(extNames) > 0 {
+		initSQL := generateInitSQLContent(extNames)
+		initFile := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-init-%s.sql", containerName))
+		if err := os.WriteFile(initFile, []byte(initSQL), 0644); err != nil {
+			return fmt.Errorf("failed to write init.sql: %w", err)
+		}
+		defer os.Remove(initFile)
+
+		opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/docker-entrypoint-initdb.d/init.sql:ro", initFile))
+	}
+
 	return client.RunPostgres(pgConfig, opts)
+}
+
+func buildCustomImage(pgVersion string, extNames []string) (string, error) {
+	mgr := extensions.NewManager(pgVersion)
+	packages := mgr.GetRequiredPackages(extNames)
+
+	// Generate temp directory for build context
+	buildDir := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-build-%d", os.Getpid()))
+	if err := os.MkdirAll(buildDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create build directory: %w", err)
+	}
+	defer os.RemoveAll(buildDir)
+
+	// Write Dockerfile
+	dockerfilePath := filepath.Join(buildDir, "Dockerfile")
+	dockerfile := generateDockerfileContent(pgVersion, packages)
+	if err := os.WriteFile(dockerfilePath, []byte(dockerfile), 0644); err != nil {
+		return "", fmt.Errorf("failed to write Dockerfile: %w", err)
+	}
+
+	// Build image
+	imageName := fmt.Sprintf("pgbox-pg%s-custom:%d", pgVersion, os.Getpid())
+	client := docker.NewClient()
+
+	fmt.Println("Building custom PostgreSQL image with extensions...")
+	buildArgs := []string{"build", "-t", imageName, "--build-arg", fmt.Sprintf("PG_MAJOR=%s", pgVersion), buildDir}
+	if err := client.RunCommand(buildArgs...); err != nil {
+		return "", fmt.Errorf("failed to build Docker image: %w", err)
+	}
+
+	return imageName, nil
+}
+
+func generateDockerfileContent(pgVersion string, packages []string) string {
+	var dockerfile strings.Builder
+	dockerfile.WriteString(fmt.Sprintf("ARG PG_MAJOR=%s\n", pgVersion))
+	dockerfile.WriteString("FROM postgres:${PG_MAJOR}\n\n")
+
+	if len(packages) > 0 {
+		dockerfile.WriteString("# Install PostgreSQL extensions\n")
+		dockerfile.WriteString("RUN set -eux; \\\n")
+		dockerfile.WriteString("    apt-get update; \\\n")
+		dockerfile.WriteString("    apt-get install -y --no-install-recommends curl gnupg ca-certificates; \\\n")
+		dockerfile.WriteString("    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg; \\\n")
+		dockerfile.WriteString("    echo \"deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main\" > /etc/apt/sources.list.d/pgdg.list; \\\n")
+		dockerfile.WriteString("    apt-get update; \\\n")
+		dockerfile.WriteString("    apt-get install -y --no-install-recommends \\\n")
+
+		for i, pkg := range packages {
+			if i < len(packages)-1 {
+				dockerfile.WriteString(fmt.Sprintf("        %s \\\n", pkg))
+			} else {
+				dockerfile.WriteString(fmt.Sprintf("        %s; \\\n", pkg))
+			}
+		}
+
+		dockerfile.WriteString("    apt-get purge -y --auto-remove curl gnupg; \\\n")
+		dockerfile.WriteString("    rm -rf /var/lib/apt/lists/*\n")
+	}
+
+	return dockerfile.String()
+}
+
+func generateInitSQLContent(extNames []string) string {
+	var sql strings.Builder
+	sql.WriteString("-- Initialize PostgreSQL extensions\n\n")
+	for _, ext := range extNames {
+		sql.WriteString(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS \"%s\";\n", ext))
+	}
+	return sql.String()
 }

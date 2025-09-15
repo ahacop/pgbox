@@ -29,8 +29,7 @@ func TestBuildPostgresArgs(t *testing.T) {
 				Name: "test-pg",
 			},
 			expected: []string{
-				"run", "-d",
-				"--name", "test-pg",
+				"run", "--name", "test-pg",
 				"-p", "5432:5432",
 				"-e", "POSTGRES_DB=testdb",
 				"-e", "POSTGRES_USER=testuser",
@@ -51,8 +50,7 @@ func TestBuildPostgresArgs(t *testing.T) {
 				Name: "test-pg",
 			},
 			expected: []string{
-				"run", "-d",
-				"--name", "test-pg",
+				"run", "--name", "test-pg",
 				"-p", "5433:5432",
 				"-e", "POSTGRES_DB=mydb",
 				"-e", "POSTGRES_USER=myuser",
@@ -75,8 +73,7 @@ func TestBuildPostgresArgs(t *testing.T) {
 				ExtraArgs: []string{"--rm", "-v", "pgdata:/var/lib/postgresql/data"},
 			},
 			expected: []string{
-				"run", "-d",
-				"--name", "test-pg",
+				"run", "--name", "test-pg",
 				"-p", "5432:5432",
 				"-e", "POSTGRES_DB=testdb",
 				"-e", "POSTGRES_USER=testuser",
@@ -100,8 +97,7 @@ func TestBuildPostgresArgs(t *testing.T) {
 				Command: []string{"-c", "shared_buffers=256MB"},
 			},
 			expected: []string{
-				"run", "-d",
-				"--name", "test-pg",
+				"run", "--name", "test-pg",
 				"-p", "5432:5432",
 				"-e", "POSTGRES_DB=testdb",
 				"-e", "POSTGRES_USER=testuser",

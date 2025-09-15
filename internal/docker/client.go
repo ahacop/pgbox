@@ -119,7 +119,7 @@ func (c *Client) RunPostgres(pgConfig *config.PostgresConfig, opts ContainerOpti
 
 // buildPostgresArgs builds the docker run arguments for PostgreSQL
 func (c *Client) buildPostgresArgs(pgConfig *config.PostgresConfig, opts ContainerOptions) []string {
-	args := []string{"run", "-d"}
+	args := []string{"run"}
 	args = append(args, "--name", opts.Name)
 	args = append(args, "-p", fmt.Sprintf("%s:5432", pgConfig.Port))
 

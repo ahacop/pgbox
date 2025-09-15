@@ -90,6 +90,7 @@ help:
 	@echo "  dev           - Build and run for development"
 	@echo "  version       - Show version information"
 	@echo "  update-extensions - Update extension catalogs"
+	@echo "  update-nix-hash - Update Nix vendorHash after Go module changes"
 	@echo "  help          - Show this help message"
 
 # Update extension catalogs
@@ -103,3 +104,8 @@ update-extensions:
 	./scripts/build-extension-mappings.bash
 	@echo "Merging extension data into single file..."
 	./scripts/build-merged-extensions.bash
+
+# Update Nix vendorHash
+.PHONY: update-nix-hash
+update-nix-hash:
+	@./scripts/update-nix-hash.sh

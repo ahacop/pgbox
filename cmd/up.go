@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 
+	"github.com/ahacop/pgbox/internal/applier"
 	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/container"
 	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/ahacop/pgbox/internal/extensions"
-	"github.com/ahacop/pgbox/pkg/scaffold"
+	"github.com/ahacop/pgbox/internal/model"
+	"github.com/ahacop/pgbox/internal/render"
 	"github.com/spf13/cobra"
 )
 
@@ -88,26 +89,13 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		pgConfig.Password = password
 	}
 
-	// Parse and validate extensions
+	// Parse extension list
 	var extNames []string
 	if extensionList != "" {
 		extNames = strings.Split(extensionList, ",")
 		for i := range extNames {
 			extNames[i] = strings.TrimSpace(extNames[i])
 		}
-
-		// Validate extensions
-		mgr := extensions.NewManager(pgConfig.Version)
-		if err := mgr.ValidateExtensions(extNames); err != nil {
-			return err
-		}
-
-		// Build custom image with extensions
-		customImage, err := buildCustomImage(pgConfig.Version, extNames)
-		if err != nil {
-			return fmt.Errorf("failed to build custom image: %w", err)
-		}
-		pgConfig.CustomImage = customImage
 	}
 
 	// Determine container name
@@ -129,6 +117,42 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		}
 		fmt.Printf("Container %s restarted successfully\n", containerName)
 		return nil
+	}
+
+	// Initialize models
+	baseImage := fmt.Sprintf("postgres:%s", pgVersion)
+	dockerfileModel := model.NewDockerfileModel(baseImage)
+	pgConfModel := model.NewPGConfModel()
+	initModel := model.NewInitModel()
+
+	// Process extensions if specified
+	if len(extNames) > 0 {
+		// Create TOML manager
+		tomlMgr := extensions.NewTOMLManager(pgVersion)
+
+		// Validate extensions
+		if err := tomlMgr.ValidateExtensions(extNames); err != nil {
+			return err
+		}
+
+		// Get extension specs
+		specs, err := tomlMgr.GetSpecs(extNames)
+		if err != nil {
+			return fmt.Errorf("failed to load extension specs: %w", err)
+		}
+
+		// Apply specs to models
+		app := applier.New()
+		if err := app.Apply(specs, dockerfileModel, nil, pgConfModel, initModel); err != nil {
+			return fmt.Errorf("failed to apply extensions: %w", err)
+		}
+
+		// Build custom image with extensions
+		customImage, err := buildCustomImage(pgVersion, dockerfileModel)
+		if err != nil {
+			return fmt.Errorf("failed to build custom image: %w", err)
+		}
+		pgConfig.CustomImage = customImage
 	}
 
 	// Show the command being run
@@ -161,29 +185,45 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	volumeName := fmt.Sprintf("%s-data", containerName)
 	opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/var/lib/postgresql/data", volumeName))
 
-	// Mount init.sql if we have extensions
+	// Handle extensions configuration
 	if len(extNames) > 0 {
-		initSQL, err := generateInitSQLContent(extNames, pgConfig.Version)
-		if err != nil {
-			return fmt.Errorf("failed to generate init SQL: %w", err)
-		}
+		// Generate and mount init.sql
 		initFile := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-init-%s.sql", containerName))
-		if err := os.WriteFile(initFile, []byte(initSQL), 0644); err != nil {
+		if err := render.RenderInitSQL(initModel, os.TempDir()); err != nil {
+			return fmt.Errorf("failed to render init SQL: %w", err)
+		}
+		// Move the generated init.sql to the right location
+		generatedInitPath := filepath.Join(os.TempDir(), "init.sql")
+		initContent, err := os.ReadFile(generatedInitPath)
+		if err != nil {
+			return fmt.Errorf("failed to read generated init.sql: %w", err)
+		}
+		if err := os.WriteFile(initFile, initContent, 0644); err != nil {
 			return fmt.Errorf("failed to write init.sql: %w", err)
 		}
-		// Don't remove the file - let it persist in temp directory
-		// The file is small and /tmp is usually cleaned on reboot
-
+		os.Remove(generatedInitPath) // Clean up temp file
 		opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/docker-entrypoint-initdb.d/init.sql:ro", initFile))
+
+		// Add shared_preload_libraries if needed
+		if len(pgConfModel.SharedPreload) > 0 {
+			preloadStr := pgConfModel.GetSharedPreloadString()
+			opts.Command = append(opts.Command, "-c", fmt.Sprintf("shared_preload_libraries=%s", preloadStr))
+		}
+
+		// Add other PostgreSQL configuration parameters
+		for key, value := range pgConfModel.GUCs {
+			// Skip shared_preload_libraries as it's handled above
+			if key == "shared_preload_libraries" {
+				continue
+			}
+			opts.Command = append(opts.Command, "-c", fmt.Sprintf("%s=%s", key, value))
+		}
 	}
 
 	return client.RunPostgres(pgConfig, opts)
 }
 
-func buildCustomImage(pgVersion string, extNames []string) (string, error) {
-	mgr := extensions.NewManager(pgVersion)
-	packages := mgr.GetRequiredPackages(extNames)
-
+func buildCustomImage(pgVersion string, dockerfileModel *model.DockerfileModel) (string, error) {
 	// Generate temp directory for build context
 	buildDir := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-build-%d", os.Getpid()))
 	if err := os.MkdirAll(buildDir, 0755); err != nil {
@@ -195,14 +235,9 @@ func buildCustomImage(pgVersion string, extNames []string) (string, error) {
 		}
 	}()
 
-	// Write Dockerfile
-	dockerfilePath := filepath.Join(buildDir, "Dockerfile")
-	dockerfile, err := generateDockerfileContent(pgVersion, packages)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate Dockerfile: %w", err)
-	}
-	if err := os.WriteFile(dockerfilePath, []byte(dockerfile), 0644); err != nil {
-		return "", fmt.Errorf("failed to write Dockerfile: %w", err)
+	// Render Dockerfile
+	if err := render.RenderDockerfile(dockerfileModel, buildDir); err != nil {
+		return "", fmt.Errorf("failed to render Dockerfile: %w", err)
 	}
 
 	// Build image
@@ -216,43 +251,4 @@ func buildCustomImage(pgVersion string, extNames []string) (string, error) {
 	}
 
 	return imageName, nil
-}
-
-func generateDockerfileContent(pgVersion string, packages []string) (string, error) {
-	// Sort packages for consistency
-	sort.Strings(packages)
-
-	data := scaffold.DockerfileData{
-		PGMajor:     pgVersion,
-		HasPackages: len(packages) > 0,
-		Packages:    packages,
-	}
-
-	content, err := scaffold.GenerateDockerfile(data)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate Dockerfile: %w", err)
-	}
-
-	return content, nil
-}
-
-func generateInitSQLContent(extNames []string, pgVersion string) (string, error) {
-	var exts []scaffold.ExtensionInfo
-	for _, ext := range extNames {
-		exts = append(exts, scaffold.ExtensionInfo{
-			Name:    ext,
-			SQLName: extensions.GetSQLName(ext, pgVersion),
-		})
-	}
-
-	data := scaffold.InitSQLData{
-		Extensions: exts,
-	}
-
-	content, err := scaffold.GenerateInitSQL(data)
-	if err != nil {
-		return "", fmt.Errorf("failed to generate init SQL: %w", err)
-	}
-
-	return content, nil
 }

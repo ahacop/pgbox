@@ -3,13 +3,13 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"path/filepath"
-	"sort"
 	"strings"
 
+	"github.com/ahacop/pgbox/internal/applier"
 	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/extensions"
-	"github.com/ahacop/pgbox/pkg/scaffold"
+	"github.com/ahacop/pgbox/internal/model"
+	"github.com/ahacop/pgbox/internal/render"
 	"github.com/spf13/cobra"
 )
 
@@ -17,6 +17,7 @@ func ExportCmd() *cobra.Command {
 	var pgVersion string
 	var port string
 	var extList string
+	var baseImage string
 
 	exportCmd := &cobra.Command{
 		Use:   "export [directory]",
@@ -32,24 +33,33 @@ used independently of pgbox to run PostgreSQL with your chosen configuration.`,
   pgbox export ./my-postgres -v 16 --ext hypopg,pgvector
 
   # Export with custom port
-  pgbox export ./my-postgres -p 5433`,
+  pgbox export ./my-postgres -p 5433
+
+  # Export with custom base image
+  pgbox export ./my-postgres --base-image postgres:17-alpine`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return exportScaffold(args[0], pgVersion, port, extList)
+			return exportScaffold(args[0], pgVersion, port, extList, baseImage)
 		},
 	}
 
 	exportCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
 	exportCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
 	exportCmd.Flags().StringVar(&extList, "ext", "", "Comma-separated list of extensions")
+	exportCmd.Flags().StringVar(&baseImage, "base-image", "", "Base Docker image (default: postgres:<version>)")
 
 	return exportCmd
 }
 
-func exportScaffold(targetDir, pgVersion, port, extList string) error {
+func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error {
 	// Validate version
 	if pgVersion != "16" && pgVersion != "17" {
 		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
+	}
+
+	// Set default base image if not specified
+	if baseImage == "" {
+		baseImage = fmt.Sprintf("postgres:%s", pgVersion)
 	}
 
 	// Create PostgresConfig with defaults and environment overrides
@@ -68,18 +78,12 @@ func exportScaffold(targetDir, pgVersion, port, extList string) error {
 		pgConfig.Database = database
 	}
 
-	// Parse and validate extensions
+	// Parse extension list
 	var extNames []string
 	if extList != "" {
 		extNames = strings.Split(extList, ",")
 		for i := range extNames {
 			extNames[i] = strings.TrimSpace(extNames[i])
-		}
-
-		// Validate extensions
-		mgr := extensions.NewManager(pgVersion)
-		if err := mgr.ValidateExtensions(extNames); err != nil {
-			return err
 		}
 	}
 
@@ -88,21 +92,66 @@ func exportScaffold(targetDir, pgVersion, port, extList string) error {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	// Generate docker-compose.yml
-	if err := generateDockerCompose(targetDir, pgConfig); err != nil {
-		return err
+	// Initialize models
+	dockerfileModel := model.NewDockerfileModel(baseImage)
+	composeModel := model.NewComposeModel("db")
+	pgConfModel := model.NewPGConfModel()
+	initModel := model.NewInitModel()
+
+	// Configure compose model basics
+	composeModel.BuildPath = "."
+	composeModel.Image = baseImage
+	composeModel.AddPort(fmt.Sprintf("%s:5432", port))
+	composeModel.AddVolume("postgres_data:/var/lib/postgresql/data")
+	composeModel.AddVolume("./init.sql:/docker-entrypoint-initdb.d/init.sql:ro")
+	composeModel.SetEnv("POSTGRES_USER", pgConfig.User)
+	composeModel.SetEnv("POSTGRES_PASSWORD", pgConfig.Password)
+	composeModel.SetEnv("POSTGRES_DB", pgConfig.Database)
+
+	// Process extensions if specified
+	if len(extNames) > 0 {
+		// Create TOML manager
+		tomlMgr := extensions.NewTOMLManager(pgVersion)
+
+		// Validate extensions
+		if err := tomlMgr.ValidateExtensions(extNames); err != nil {
+			return err
+		}
+
+		// Get extension specs
+		specs, err := tomlMgr.GetSpecs(extNames)
+		if err != nil {
+			return fmt.Errorf("failed to load extension specs: %w", err)
+		}
+
+		// Apply specs to models
+		app := applier.New()
+		if err := app.Apply(specs, dockerfileModel, composeModel, pgConfModel, initModel); err != nil {
+			return fmt.Errorf("failed to apply extensions: %w", err)
+		}
 	}
 
-	// Generate Dockerfile
-	if err := generateDockerfile(targetDir, pgConfig.Version, extNames); err != nil {
-		return err
+	// Render files
+	if err := render.RenderDockerfile(dockerfileModel, targetDir); err != nil {
+		return fmt.Errorf("failed to render Dockerfile: %w", err)
 	}
 
-	// Generate init.sql
-	if err := generateInitSQL(targetDir, extNames, pgVersion); err != nil {
-		return err
+	if err := render.RenderCompose(composeModel, pgConfModel, targetDir); err != nil {
+		return fmt.Errorf("failed to render docker-compose.yml: %w", err)
 	}
 
+	if err := render.RenderInitSQL(initModel, targetDir); err != nil {
+		return fmt.Errorf("failed to render init.sql: %w", err)
+	}
+
+	// Optionally render postgresql.conf snippet if there are config changes
+	if len(pgConfModel.SharedPreload) > 0 || len(pgConfModel.GUCs) > 0 {
+		if err := render.RenderPostgreSQLConf(pgConfModel, targetDir); err != nil {
+			return fmt.Errorf("failed to render postgresql.conf: %w", err)
+		}
+	}
+
+	// Success message
 	fmt.Printf("Exported Docker configuration to %s\n", targetDir)
 	if len(extNames) > 0 {
 		fmt.Printf("With extensions: %s\n", strings.Join(extNames, ", "))
@@ -111,98 +160,9 @@ func exportScaffold(targetDir, pgVersion, port, extList string) error {
 	fmt.Printf("  cd %s\n", targetDir)
 	fmt.Printf("  docker-compose up -d\n")
 
-	return nil
-}
-
-func generateDockerCompose(targetDir string, pgConfig *config.PostgresConfig) error {
-	composePath := filepath.Join(targetDir, "docker-compose.yml")
-
-	// Get container name from environment or use default
-	containerName := os.Getenv("PGBOX_CONTAINER_NAME")
-	if containerName == "" {
-		containerName = "pgbox-postgres"
-	}
-
-	data := scaffold.DockerComposeData{
-		PGMajor:       pgConfig.Version,
-		ContainerName: containerName,
-		Port:          pgConfig.Port,
-		User:          pgConfig.User,
-		Password:      pgConfig.Password,
-		Database:      pgConfig.Database,
-		HasExtensions: true, // Always true for export since we always generate init.sql
-	}
-
-	content, err := scaffold.GenerateDockerCompose(data)
-	if err != nil {
-		return fmt.Errorf("failed to generate docker-compose.yml: %w", err)
-	}
-
-	if err := os.WriteFile(composePath, []byte(content), 0644); err != nil {
-		return fmt.Errorf("failed to write docker-compose.yml: %w", err)
-	}
-
-	return nil
-}
-
-func generateDockerfile(targetDir, pgVersion string, extList []string) error {
-	dockerfilePath := filepath.Join(targetDir, "Dockerfile")
-
-	var packages []string
-	if len(extList) > 0 {
-		mgr := extensions.NewManager(pgVersion)
-		packages = mgr.GetRequiredPackages(extList)
-		// Sort packages for consistency
-		sort.Strings(packages)
-	}
-
-	data := scaffold.DockerfileData{
-		PGMajor:     pgVersion,
-		HasPackages: len(packages) > 0,
-		Packages:    packages,
-	}
-
-	content, err := scaffold.GenerateDockerfile(data)
-	if err != nil {
-		return fmt.Errorf("failed to generate Dockerfile: %w", err)
-	}
-
-	if err := os.WriteFile(dockerfilePath, []byte(content), 0644); err != nil {
-		return fmt.Errorf("failed to write Dockerfile: %w", err)
-	}
-
-	return nil
-}
-
-func generateInitSQL(targetDir string, extList []string, pgVersion string) error {
-	initPath := filepath.Join(targetDir, "init.sql")
-
-	var exts []scaffold.ExtensionInfo
-	if len(extList) > 0 {
-		for _, ext := range extList {
-			exts = append(exts, scaffold.ExtensionInfo{
-				Name:    ext,
-				SQLName: extensions.GetSQLName(ext, pgVersion),
-			})
-		}
-	}
-
-	data := scaffold.InitSQLData{
-		Extensions: exts,
-	}
-
-	content, err := scaffold.GenerateInitSQL(data)
-	if err != nil {
-		return fmt.Errorf("failed to generate init.sql: %w", err)
-	}
-
-	// If no extensions, add example comment
-	if len(exts) == 0 {
-		content = "-- Initialize PostgreSQL database\n-- Add any custom SQL initialization here\n\n-- Example: CREATE EXTENSION IF NOT EXISTS pg_stat_statements;\n"
-	}
-
-	if err := os.WriteFile(initPath, []byte(content), 0644); err != nil {
-		return fmt.Errorf("failed to write init.sql: %w", err)
+	if pgConfModel.RequireRestart {
+		fmt.Printf("\nNote: Some extensions require server configuration changes.\n")
+		fmt.Printf("The container will start with the required settings.\n")
 	}
 
 	return nil

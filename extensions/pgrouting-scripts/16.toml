@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgrouting-scripts"
+package = "postgresql-16-pgrouting-scripts"
+description = "Routing functionality support for PostgreSQL/PostGIS - SQL scripts"
+
+[image]
+apt_packages = ["postgresql-16-pgrouting-scripts"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgrouting-scripts;"

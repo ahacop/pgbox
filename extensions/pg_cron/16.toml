@@ -1,0 +1,13 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pg_cron"
+display_name = "cron"
+package = "postgresql-16-cron"
+description = "Run periodic jobs in PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-cron"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg_cron;"

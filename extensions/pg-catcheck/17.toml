@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg-catcheck"
+package = "postgresql-17-pg-catcheck"
+description = "Postgres system catalog checker"
+
+[image]
+apt_packages = ["postgresql-17-pg-catcheck"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-catcheck;"

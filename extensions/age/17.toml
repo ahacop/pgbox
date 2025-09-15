@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "age"
+package = "postgresql-17-age"
+description = "Graph database optimized for fast analysis and real-time data processing"
+
+[image]
+apt_packages = ["postgresql-17-age"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS age;"

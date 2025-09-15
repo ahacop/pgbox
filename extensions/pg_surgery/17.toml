@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg_surgery"
+description = "extension to perform surgery on a damaged relation"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg_surgery;"

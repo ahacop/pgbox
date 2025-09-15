@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "postgis-3"
+package = "postgresql-16-postgis-3"
+description = "Geographic objects support for PostgreSQL 16"
+
+[image]
+apt_packages = ["postgresql-16-postgis-3"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS postgis-3;"

@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "tdigest"
+package = "postgresql-17-tdigest"
+description = "t-digest algorithm for on-line accumulation of rank-based statistics"
+
+[image]
+apt_packages = ["postgresql-17-tdigest"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS tdigest;"

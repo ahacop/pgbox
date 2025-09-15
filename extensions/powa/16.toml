@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "powa"
+package = "postgresql-16-powa"
+description = "PostgreSQL Workload Analyzer -- PostgreSQL 16 extension"
+
+[image]
+apt_packages = ["postgresql-16-powa"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS powa;"

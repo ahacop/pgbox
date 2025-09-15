@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "toastinfo"
+package = "postgresql-16-toastinfo"
+description = "Show storage structure of varlena datatypes in PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-toastinfo"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS toastinfo;"

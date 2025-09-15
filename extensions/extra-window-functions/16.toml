@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "extra-window-functions"
+package = "postgresql-16-extra-window-functions"
+description = "Extra Window Functions for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-extra-window-functions"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS extra-window-functions;"

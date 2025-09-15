@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pgrouting"
+package = "postgresql-17-pgrouting"
+description = "Routing functionality support for PostgreSQL/PostGIS"
+
+[image]
+apt_packages = ["postgresql-17-pgrouting"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgrouting;"

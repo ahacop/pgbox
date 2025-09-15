@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "similarity"
+package = "postgresql-17-similarity"
+description = "PostgreSQL similarity functions extension"
+
+[image]
+apt_packages = ["postgresql-17-similarity"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS similarity;"

@@ -4,6 +4,11 @@
 BINARY_NAME := pgbox
 GO := go
 
+# Extension and PostgreSQL configuration
+EXTS ?= pgvector,pg_cron
+PG_VERSION ?= 17
+PORT ?= 5432
+
 # Version information
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo v0.0.0-dev)
 COMMIT  := $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown)
@@ -93,7 +98,7 @@ help:
 	@echo "  update-nix-hash - Update Nix vendorHash after Go module changes"
 	@echo "  help          - Show this help message"
 
-# Update extension catalogs
+# Update extension catalogs and generate TOML files
 .PHONY: update-extensions
 update-extensions:
 	@echo "Updating builtin extensions catalog..."
@@ -102,8 +107,31 @@ update-extensions:
 	./scripts/build-apt-clist.bash
 	@echo "Generating extension name mappings..."
 	./scripts/build-extension-mappings.bash
-	@echo "Merging extension data into single file..."
-	./scripts/build-merged-extensions.bash
+	@echo "Generating TOML files from extension data..."
+	$(GO) run scripts/generate-extension-toml.go
+
+# Generate TOML files from existing JSON data
+.PHONY: generate-toml
+generate-toml:
+	@echo "Generating TOML files from extension data..."
+	$(GO) run scripts/generate-extension-toml.go
+
+# Force regenerate all TOML files
+.PHONY: generate-toml-force
+generate-toml-force:
+	@echo "Force regenerating all TOML files..."
+	$(GO) run scripts/generate-extension-toml.go --force
+
+# Export Docker configuration with extensions
+.PHONY: export
+export:
+	@mkdir -p out
+	$(GO) run . export out --ext $(EXTS) --version $(PG_VERSION)
+
+# Run PostgreSQL with extensions
+.PHONY: run
+run:
+	$(GO) run . up --ext $(EXTS) --version $(PG_VERSION) --port $(PORT)
 
 # Update Nix vendorHash
 .PHONY: update-nix-hash

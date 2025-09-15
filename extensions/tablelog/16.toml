@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "tablelog"
+package = "postgresql-16-tablelog"
+description = "log changes on tables and restore tables to point in time"
+
+[image]
+apt_packages = ["postgresql-16-tablelog"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS tablelog;"

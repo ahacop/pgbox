@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "repmgr"
+package = "postgresql-17-repmgr"
+description = "replication manager for PostgreSQL 17"
+
+[image]
+apt_packages = ["postgresql-17-repmgr"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS repmgr;"

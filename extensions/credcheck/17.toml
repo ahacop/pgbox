@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "credcheck"
+package = "postgresql-17-credcheck"
+description = "PostgreSQL username/password checks"
+
+[image]
+apt_packages = ["postgresql-17-credcheck"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS credcheck;"

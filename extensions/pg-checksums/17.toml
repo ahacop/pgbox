@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg-checksums"
+package = "postgresql-17-pg-checksums"
+description = "Activate/deactivate/verify PostgreSQL data checksums"
+
+[image]
+apt_packages = ["postgresql-17-pg-checksums"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-checksums;"

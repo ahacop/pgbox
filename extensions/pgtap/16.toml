@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgtap"
+package = "postgresql-16-pgtap"
+description = "Unit testing framework extension for PostgreSQL 16"
+
+[image]
+apt_packages = ["postgresql-16-pgtap"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgtap;"

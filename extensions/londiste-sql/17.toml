@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "londiste-sql"
+package = "postgresql-17-londiste-sql"
+description = "SQL infrastructure for Londiste"
+
+[image]
+apt_packages = ["postgresql-17-londiste-sql"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS londiste-sql;"

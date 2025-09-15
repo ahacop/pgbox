@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgnodemx"
+package = "postgresql-16-pgnodemx"
+description = "capture node OS metrics from PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-pgnodemx"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgnodemx;"

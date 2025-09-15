@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pllua"
+package = "postgresql-16-pllua"
+description = "Lua procedural language for PostgreSQL 16"
+
+[image]
+apt_packages = ["postgresql-16-pllua"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pllua;"

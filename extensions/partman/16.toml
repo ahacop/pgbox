@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "partman"
+package = "postgresql-16-partman"
+description = "PostgreSQL Partition Manager"
+
+[image]
+apt_packages = ["postgresql-16-partman"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS partman;"

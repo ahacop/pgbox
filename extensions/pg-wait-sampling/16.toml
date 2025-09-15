@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pg-wait-sampling"
+package = "postgresql-16-pg-wait-sampling"
+description = "Extension providing statistics about PostgreSQL wait events"
+
+[image]
+apt_packages = ["postgresql-16-pg-wait-sampling"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-wait-sampling;"

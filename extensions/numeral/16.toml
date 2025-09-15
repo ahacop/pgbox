@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "numeral"
+package = "postgresql-16-numeral"
+description = "numeral datatypes for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-numeral"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS numeral;"

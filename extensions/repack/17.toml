@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "repack"
+package = "postgresql-17-repack"
+description = "reorganize tables in PostgreSQL databases with minimal locks"
+
+[image]
+apt_packages = ["postgresql-17-repack"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS repack;"

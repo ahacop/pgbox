@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "plproxy"
+package = "postgresql-17-plproxy"
+description = "database partitioning system for PostgreSQL 17"
+
+[image]
+apt_packages = ["postgresql-17-plproxy"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS plproxy;"

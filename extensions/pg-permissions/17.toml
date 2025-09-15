@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg-permissions"
+package = "postgresql-17-pg-permissions"
+description = "see all permissions in a PostgreSQL database"
+
+[image]
+apt_packages = ["postgresql-17-pg-permissions"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-permissions;"

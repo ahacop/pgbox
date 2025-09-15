@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "rdkit"
+package = "postgresql-16-rdkit"
+description = "Cheminformatics and machine-learning software (PostgreSQL Cartridge)"
+
+[image]
+apt_packages = ["postgresql-16-rdkit"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS rdkit;"

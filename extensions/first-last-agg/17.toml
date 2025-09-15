@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "first-last-agg"
+package = "postgresql-17-first-last-agg"
+description = "PostgreSQL extension providing first and last aggregate functions"
+
+[image]
+apt_packages = ["postgresql-17-first-last-agg"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS first-last-agg;"

@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgauditlogtofile"
+package = "postgresql-16-pgauditlogtofile"
+description = "PostgreSQL pgAudit Add-On to redirect audit logs"
+
+[image]
+apt_packages = ["postgresql-16-pgauditlogtofile"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgauditlogtofile;"

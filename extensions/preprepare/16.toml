@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "preprepare"
+package = "postgresql-16-preprepare"
+description = "pre prepare your PostgreSQL statements server side"
+
+[image]
+apt_packages = ["postgresql-16-preprepare"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS preprepare;"

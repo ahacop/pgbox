@@ -1,0 +1,13 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "vector"
+display_name = "pgvector"
+package = "postgresql-17-pgvector"
+description = "Open-source vector similarity search for Postgres"
+
+[image]
+apt_packages = ["postgresql-17-pgvector"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS vector;"

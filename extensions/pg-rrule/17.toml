@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg-rrule"
+package = "postgresql-17-pg-rrule"
+description = "RRULE data type for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-17-pg-rrule"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-rrule;"

@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pgfincore"
+package = "postgresql-17-pgfincore"
+description = "set of PostgreSQL functions to manage blocks in memory"
+
+[image]
+apt_packages = ["postgresql-17-pgfincore"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgfincore;"

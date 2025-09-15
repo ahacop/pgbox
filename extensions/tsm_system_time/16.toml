@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "tsm_system_time"
+description = "TABLESAMPLE method which accepts time in milliseconds as a limit"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS tsm_system_time;"

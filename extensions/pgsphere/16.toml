@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgsphere"
+package = "postgresql-16-pgsphere"
+description = "Spherical data types for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-pgsphere"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgsphere;"

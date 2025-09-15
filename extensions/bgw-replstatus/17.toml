@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "bgw-replstatus"
+package = "postgresql-17-bgw-replstatus"
+description = "report whether PostgreSQL node is master or standby"
+
+[image]
+apt_packages = ["postgresql-17-bgw-replstatus"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS bgw-replstatus;"

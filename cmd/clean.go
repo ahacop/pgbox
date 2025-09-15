@@ -131,7 +131,9 @@ func cleanPgbox(force bool, all bool) error {
 	if !force {
 		fmt.Print("\nAre you sure you want to remove these resources? (y/N): ")
 		var response string
-		fmt.Scanln(&response)
+		if _, err := fmt.Scanln(&response); err != nil {
+			return fmt.Errorf("failed to read response: %w", err)
+		}
 		if response != "y" && response != "Y" {
 			fmt.Println("Clean cancelled.")
 			return nil

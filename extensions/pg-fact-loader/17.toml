@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg-fact-loader"
+package = "postgresql-17-pg-fact-loader"
+description = "Build fact tables asynchronously with Postgres"
+
+[image]
+apt_packages = ["postgresql-17-pg-fact-loader"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-fact-loader;"

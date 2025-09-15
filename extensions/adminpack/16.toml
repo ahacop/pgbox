@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "adminpack"
+description = "administrative functions for PostgreSQL"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS adminpack;"

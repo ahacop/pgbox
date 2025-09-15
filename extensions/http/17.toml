@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "http"
+package = "postgresql-17-http"
+description = "HTTP client for PostgreSQL, retrieve a web page from inside the database"
+
+[image]
+apt_packages = ["postgresql-17-http"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS http;"

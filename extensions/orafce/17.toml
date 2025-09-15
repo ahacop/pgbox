@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "orafce"
+package = "postgresql-17-orafce"
+description = "Oracle support functions for PostgreSQL 17"
+
+[image]
+apt_packages = ["postgresql-17-orafce"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS orafce;"

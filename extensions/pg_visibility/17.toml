@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg_visibility"
+description = "examine the visibility map (VM) and page-level visibility info"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg_visibility;"

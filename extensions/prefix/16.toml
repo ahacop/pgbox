@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "prefix"
+package = "postgresql-16-prefix"
+description = "Prefix Range module for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-prefix"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS prefix;"

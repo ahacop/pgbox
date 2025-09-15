@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "wal2json"
+package = "postgresql-16-wal2json"
+description = "PostgreSQL logical decoding JSON output plugin"
+
+[image]
+apt_packages = ["postgresql-16-wal2json"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS wal2json;"

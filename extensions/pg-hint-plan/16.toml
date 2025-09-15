@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pg-hint-plan"
+package = "postgresql-16-pg-hint-plan"
+description = "support for optimizer hints in PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-pg-hint-plan"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-hint-plan;"

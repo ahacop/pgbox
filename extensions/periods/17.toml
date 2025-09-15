@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "periods"
+package = "postgresql-17-periods"
+description = "PERIODs and SYSTEM VERSIONING for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-17-periods"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS periods;"

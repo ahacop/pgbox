@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "ip4r"
+package = "postgresql-16-ip4r"
+description = "IPv4 and IPv6 types for PostgreSQL 16"
+
+[image]
+apt_packages = ["postgresql-16-ip4r"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS ip4r;"

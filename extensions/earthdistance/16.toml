@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "earthdistance"
+description = "calculate great-circle distances on the surface of the Earth"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS earthdistance;"

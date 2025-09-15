@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "ogr-fdw"
+package = "postgresql-17-ogr-fdw"
+description = "PostgreSQL foreign data wrapper for OGR"
+
+[image]
+apt_packages = ["postgresql-17-ogr-fdw"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS ogr-fdw;"

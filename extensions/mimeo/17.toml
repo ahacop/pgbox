@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "mimeo"
+package = "postgresql-17-mimeo"
+description = "specialized, per-table replication between PostgreSQL instances"
+
+[image]
+apt_packages = ["postgresql-17-mimeo"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS mimeo;"

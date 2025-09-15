@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "old_snapshot"
+description = "utilities in support of old_snapshot_threshold"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS old_snapshot;"

@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "ip4r"
+package = "postgresql-17-ip4r"
+description = "IPv4 and IPv6 types for PostgreSQL 17"
+
+[image]
+apt_packages = ["postgresql-17-ip4r"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS ip4r;"

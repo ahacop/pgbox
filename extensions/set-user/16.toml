@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "set-user"
+package = "postgresql-16-set-user"
+description = "PostgreSQL privilege escalation with enhanced logging and control"
+
+[image]
+apt_packages = ["postgresql-16-set-user"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS set-user;"

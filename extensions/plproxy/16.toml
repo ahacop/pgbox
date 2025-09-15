@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "plproxy"
+package = "postgresql-16-plproxy"
+description = "database partitioning system for PostgreSQL 16"
+
+[image]
+apt_packages = ["postgresql-16-plproxy"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS plproxy;"

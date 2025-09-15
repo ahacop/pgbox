@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "snakeoil"
+package = "postgresql-17-snakeoil"
+description = "PostgreSQL anti-virus scanner based on ClamAV"
+
+[image]
+apt_packages = ["postgresql-17-snakeoil"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS snakeoil;"

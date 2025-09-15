@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "statviz"
+package = "postgresql-16-statviz"
+description = "PostgreSQL internal statistics analysis and visualization"
+
+[image]
+apt_packages = ["postgresql-16-statviz"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS statviz;"

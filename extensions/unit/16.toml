@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "unit"
+package = "postgresql-16-unit"
+description = "SI Units for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-unit"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS unit;"

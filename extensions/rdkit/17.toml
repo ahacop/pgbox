@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "rdkit"
+package = "postgresql-17-rdkit"
+description = "Cheminformatics and machine-learning software (PostgreSQL Cartridge)"
+
+[image]
+apt_packages = ["postgresql-17-rdkit"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS rdkit;"

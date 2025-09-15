@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg-qualstats"
+package = "postgresql-17-pg-qualstats"
+description = "PostgreSQL extension to gather statistics about predicates."
+
+[image]
+apt_packages = ["postgresql-17-pg-qualstats"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-qualstats;"

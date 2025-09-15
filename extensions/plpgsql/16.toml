@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "plpgsql"
+description = "PL/pgSQL procedural language"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS plpgsql;"

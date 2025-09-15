@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "prioritize"
+package = "postgresql-17-prioritize"
+description = "Get and set the nice priorities of PostgreSQL backends"
+
+[image]
+apt_packages = ["postgresql-17-prioritize"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS prioritize;"

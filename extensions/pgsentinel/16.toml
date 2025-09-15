@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgsentinel"
+package = "postgresql-16-pgsentinel"
+description = "PostgreSQL extension pgsentinel"
+
+[image]
+apt_packages = ["postgresql-16-pgsentinel"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgsentinel;"

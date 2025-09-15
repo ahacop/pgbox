@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "dirtyread"
+package = "postgresql-16-dirtyread"
+description = "Read dead but unvacuumed tuples from a PostgreSQL relation"
+
+[image]
+apt_packages = ["postgresql-16-dirtyread"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS dirtyread;"

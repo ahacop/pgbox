@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pg-rewrite"
+package = "postgresql-16-pg-rewrite"
+description = "Rewrite PostgreSQL tables with less locking"
+
+[image]
+apt_packages = ["postgresql-16-pg-rewrite"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg-rewrite;"

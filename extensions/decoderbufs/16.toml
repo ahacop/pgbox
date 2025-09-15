@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "decoderbufs"
+package = "postgresql-16-decoderbufs"
+description = "logical decoder output plugin to deliver data as Protocol Buffers"
+
+[image]
+apt_packages = ["postgresql-16-decoderbufs"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS decoderbufs;"

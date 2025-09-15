@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pglogical"
+package = "postgresql-17-pglogical"
+description = "Logical Replication Extension for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-17-pglogical"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pglogical;"

@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "squeeze"
+package = "postgresql-16-squeeze"
+description = "PostgreSQL extension for automatic bloat cleanup"
+
+[image]
+apt_packages = ["postgresql-16-squeeze"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS squeeze;"

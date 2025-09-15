@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "intagg"
+description = "integer aggregator and enumerator (obsolete)"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS intagg;"

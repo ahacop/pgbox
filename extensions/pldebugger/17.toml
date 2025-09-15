@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pldebugger"
+package = "postgresql-17-pldebugger"
+description = "PostgreSQL pl/pgsql Debugger API"
+
+[image]
+apt_packages = ["postgresql-17-pldebugger"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pldebugger;"

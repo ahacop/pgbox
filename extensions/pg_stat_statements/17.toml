@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pg_stat_statements"
+description = "track planning and execution statistics of all SQL statements executed"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"

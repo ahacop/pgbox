@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 16
+
+extension = "pgq3"
+package = "postgresql-16-pgq3"
+description = "Generic queue for PostgreSQL"
+
+[image]
+apt_packages = ["postgresql-16-pgq3"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgq3;"

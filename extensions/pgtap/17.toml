@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pgtap"
+package = "postgresql-17-pgtap"
+description = "Unit testing framework extension for PostgreSQL 17"
+
+[image]
+apt_packages = ["postgresql-17-pgtap"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgtap;"

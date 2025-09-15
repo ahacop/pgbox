@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pgrowlocks"
+description = "show row-level locking information"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgrowlocks;"

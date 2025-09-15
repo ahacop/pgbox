@@ -1,0 +1,8 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "tcn"
+description = "Triggered change notifications"
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS tcn;"

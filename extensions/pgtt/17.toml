@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "pgtt"
+package = "postgresql-17-pgtt"
+description = "PostgreSQL Global Temporary Tables"
+
+[image]
+apt_packages = ["postgresql-17-pgtt"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pgtt;"

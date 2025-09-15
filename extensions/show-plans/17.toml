@@ -1,0 +1,12 @@
+# Auto-generated from pgbox-data - PostgreSQL 17
+
+extension = "show-plans"
+package = "postgresql-17-show-plans"
+description = "Show query plans of currently running PostgreSQL statements"
+
+[image]
+apt_packages = ["postgresql-17-show-plans"]
+
+# SQL initialization
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS show-plans;"

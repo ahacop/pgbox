@@ -146,7 +146,10 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 
 	// Mount init.sql if we have extensions
 	if len(extNames) > 0 {
-		initSQL := generateInitSQLContent(extNames)
+		initSQL, err := generateInitSQLContent(extNames)
+		if err != nil {
+			return fmt.Errorf("failed to generate init SQL: %w", err)
+		}
 		initFile := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-init-%s.sql", containerName))
 		if err := os.WriteFile(initFile, []byte(initSQL), 0644); err != nil {
 			return fmt.Errorf("failed to write init.sql: %w", err)
@@ -173,7 +176,10 @@ func buildCustomImage(pgVersion string, extNames []string) (string, error) {
 
 	// Write Dockerfile
 	dockerfilePath := filepath.Join(buildDir, "Dockerfile")
-	dockerfile := generateDockerfileContent(pgVersion, packages)
+	dockerfile, err := generateDockerfileContent(pgVersion, packages)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate Dockerfile: %w", err)
+	}
 	if err := os.WriteFile(dockerfilePath, []byte(dockerfile), 0644); err != nil {
 		return "", fmt.Errorf("failed to write Dockerfile: %w", err)
 	}
@@ -191,7 +197,7 @@ func buildCustomImage(pgVersion string, extNames []string) (string, error) {
 	return imageName, nil
 }
 
-func generateDockerfileContent(pgVersion string, packages []string) string {
+func generateDockerfileContent(pgVersion string, packages []string) (string, error) {
 	// Sort packages for consistency
 	sort.Strings(packages)
 
@@ -203,14 +209,13 @@ func generateDockerfileContent(pgVersion string, packages []string) string {
 
 	content, err := scaffold.GenerateDockerfile(data)
 	if err != nil {
-		// Fallback to basic Dockerfile if template fails
-		return fmt.Sprintf("FROM postgres:%s\n", pgVersion)
+		return "", fmt.Errorf("failed to generate Dockerfile: %w", err)
 	}
 
-	return content
+	return content, nil
 }
 
-func generateInitSQLContent(extNames []string) string {
+func generateInitSQLContent(extNames []string) (string, error) {
 	var extensions []scaffold.ExtensionInfo
 	for _, ext := range extNames {
 		extensions = append(extensions, scaffold.ExtensionInfo{
@@ -225,9 +230,8 @@ func generateInitSQLContent(extNames []string) string {
 
 	content, err := scaffold.GenerateInitSQL(data)
 	if err != nil {
-		// Fallback to basic SQL if template fails
-		return "-- Initialize PostgreSQL extensions\n"
+		return "", fmt.Errorf("failed to generate init SQL: %w", err)
 	}
 
-	return content
+	return content, nil
 }

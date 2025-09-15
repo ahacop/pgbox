@@ -44,9 +44,9 @@ You can pass additional arguments to psql after a '--' separator.`,
 
   # Execute a SQL file
   pgbox psql -- -f /path/to/file.sql`,
-		RunE: runPsql,
+		RunE:               runPsql,
 		DisableFlagParsing: false,
-		Args: cobra.ArbitraryArgs,
+		Args:               cobra.ArbitraryArgs,
 	}
 
 	psqlCmd.Flags().StringVarP(&psqlDatabase, "database", "d", "postgres", "Database name to connect to")
@@ -110,9 +110,9 @@ func runPsql(cmd *cobra.Command, args []string) error {
 	isInteractive := stdinIsTerminal
 	for _, arg := range psqlArgs {
 		if arg == "-c" || arg == "--command" ||
-		   arg == "-f" || arg == "--file" ||
-		   arg == "-l" || arg == "--list" ||
-		   arg == "--help" || arg == "--version" {
+			arg == "-f" || arg == "--file" ||
+			arg == "-l" || arg == "--list" ||
+			arg == "--help" || arg == "--version" {
 			isInteractive = false
 			break
 		}

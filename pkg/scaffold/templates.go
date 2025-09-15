@@ -15,12 +15,12 @@ type DockerfileData struct {
 
 // DockerComposeData contains the data needed to generate a docker-compose.yml
 type DockerComposeData struct {
-	PGMajor      string
+	PGMajor       string
 	ContainerName string
-	Port         string
-	User         string
-	Password     string
-	Database     string
+	Port          string
+	User          string
+	Password      string
+	Database      string
 	HasExtensions bool
 }
 
@@ -31,7 +31,7 @@ type InitSQLData struct {
 
 // ExtensionInfo contains information about an extension for SQL generation
 type ExtensionInfo struct {
-	Name   string
+	Name    string
 	SQLName string // The actual name to use in CREATE EXTENSION (e.g., "vector" for pgvector)
 }
 

@@ -1,6 +1,7 @@
 package container
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -25,12 +26,15 @@ func (m *Manager) DefaultName() string {
 	return "pgbox-pg17"
 }
 
+// ErrNoContainerFound is returned when no suitable container is found
+var ErrNoContainerFound = errors.New("no pgbox or postgres container found")
+
 // SelectPgboxContainer selects the best pgbox container from docker ps output
 // This is pure business logic with no side effects
 // Priority: 1) containers starting with "pgbox-", 2) any postgres container
-func SelectPgboxContainer(dockerPsOutput string) string {
+func SelectPgboxContainer(dockerPsOutput string) (string, error) {
 	if dockerPsOutput == "" {
-		return ""
+		return "", ErrNoContainerFound
 	}
 
 	lines := strings.Split(dockerPsOutput, "\n")
@@ -41,7 +45,7 @@ func SelectPgboxContainer(dockerPsOutput string) string {
 		if len(parts) >= 1 {
 			name := strings.TrimSpace(parts[0])
 			if strings.HasPrefix(name, "pgbox-") {
-				return name
+				return name, nil
 			}
 		}
 	}
@@ -53,10 +57,10 @@ func SelectPgboxContainer(dockerPsOutput string) string {
 			name := strings.TrimSpace(parts[0])
 			image := strings.TrimSpace(parts[1])
 			if strings.HasPrefix(image, "postgres:") {
-				return name
+				return name, nil
 			}
 		}
 	}
 
-	return ""
+	return "", ErrNoContainerFound
 }

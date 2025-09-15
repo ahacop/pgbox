@@ -36,10 +36,11 @@ func downContainer(name string) error {
 
 	// Try to find a running container if name not specified
 	if name == "" {
-		name = client.FindPgboxContainer()
-		if name == "" {
+		foundName, err := client.FindPgboxContainer()
+		if err != nil {
 			return fmt.Errorf("no running pgbox container found. Specify container name with -n flag")
 		}
+		name = foundName
 		fmt.Printf("Found running container: %s\n", name)
 	}
 

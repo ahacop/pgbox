@@ -6,6 +6,15 @@ PostgreSQL-in-Docker with selectable extensions.
 
 pgbox is a CLI tool that simplifies running PostgreSQL in Docker with your choice of extensions. It provides an easy way to spin up PostgreSQL instances with specific extensions for development and testing purposes.
 
+### Key Features
+
+- **200+ Extensions**: Comprehensive support for PostgreSQL extensions from apt.postgresql.org
+- **TOML-based Configuration**: Declarative extension specifications with support for complex configurations
+- **Smart Configuration Merging**: Automatically handles shared_preload_libraries and PostgreSQL GUCs
+- **Export to Docker**: Generate production-ready Docker Compose configurations
+- **Multiple PostgreSQL Versions**: Support for PostgreSQL 16 and 17
+- **Development-Friendly**: Quick spin-up of PostgreSQL instances with specific extensions
+
 ## Installation
 
 ### Using Nix Flake (no installation required)
@@ -120,19 +129,23 @@ make install
 #### Exporting for Production
 
 ```bash
-# Export Docker configuration to current directory
-./pgbox export
+# Export Docker configuration to directory
+./pgbox export ./my-postgres
 
-# Export to specific directory
-./pgbox export --dir ./my-postgres-setup
+# Export with specific version and extensions
+./pgbox export ./my-postgres -v 16 --ext pgvector,hypopg
 
-# Export with specific extensions
-./pgbox export --ext pgvector,hypopg --dir ./prod-setup
+# Export with custom port
+./pgbox export ./my-postgres -p 5433
+
+# Export with custom base image
+./pgbox export ./my-postgres --base-image postgres:17-alpine
 
 # Generated files:
 # - Dockerfile: Custom image with extensions
-# - docker-compose.yml: Complete Docker Compose setup
+# - docker-compose.yml: Complete Docker Compose setup with required configurations
 # - init.sql: SQL script to create extensions
+# - postgresql.conf (if needed): PostgreSQL configuration for extensions requiring preload
 ```
 
 ### Examples
@@ -163,31 +176,76 @@ make install
 
 ```bash
 # Create a production-ready setup
-./pgbox export --ext pgvector,pg_stat_statements --dir ./docker
+./pgbox export ./docker --ext pgvector,pg_stat_statements
+
+# Extensions with complex requirements (e.g., pg_cron)
+./pgbox export ./docker --ext pg_cron,wal2json
 
 # Use the generated files in your project
 cd ./docker
 docker compose up -d
 ```
 
+#### Working with Extensions Requiring Preload
+
+Some extensions like `pg_cron` and `wal2json` require shared_preload_libraries:
+
+```bash
+# Export with pg_cron (automatically configures preload and GUCs)
+./pgbox export ./cron-setup --ext pg_cron
+
+# The system will:
+# - Add pg_cron to shared_preload_libraries
+# - Configure cron.database_name and other GUCs
+# - Generate proper init.sql with CREATE EXTENSION
+```
+
 ### Extension Support
 
-pgbox supports hundreds of PostgreSQL extensions from apt.postgresql.org. Some popular ones:
+pgbox supports 200+ PostgreSQL extensions from apt.postgresql.org. Each extension is defined using a TOML specification that includes:
+
+- Package dependencies
+- PostgreSQL configuration requirements (shared_preload_libraries, GUCs)
+- SQL initialization commands
+- Docker compose hints
+
+#### Popular Extensions
 
 - **pgvector**: Vector similarity search for AI applications
 - **postgis**: Geographic objects and spatial processing
+- **pg_cron**: Job scheduling inside PostgreSQL (with automatic preload configuration)
 - **hypopg**: Hypothetical indexes for query planning
-- **pg_trgm**: Trigram-based text similarity
 - **pg_stat_statements**: Query performance tracking
+- **timescaledb**: Time-series data optimization
+- **wal2json**: Logical replication with JSON output
+- **pgtap**: Unit testing framework for PostgreSQL
 - **uuid-ossp**: UUID generation functions
 - **hstore**: Key-value store within PostgreSQL
-- **pg_cron**: Job scheduling inside PostgreSQL
 
 View all available extensions:
 
 ```bash
 ./pgbox list-extensions
 ```
+
+#### Extension Configuration System
+
+Extensions are defined in TOML files under `extensions/<name>/<version>.toml`. Complex extensions can specify:
+
+```toml
+# Example: pg_cron configuration
+[postgresql.conf]
+shared_preload_libraries = ["pg_cron"]
+"cron.database_name" = "postgres"
+
+[[sql.initdb]]
+text = "CREATE EXTENSION IF NOT EXISTS pg_cron;"
+```
+
+The system automatically:
+- Merges configurations from multiple extensions
+- Detects and reports conflicts
+- Preserves user customizations in generated files
 
 ## Development
 
@@ -211,6 +269,12 @@ make check
 
 # Clean build artifacts
 make clean
+
+# Update extension catalogs and generate TOML files
+make update-extensions
+
+# Generate TOML files from existing JSON data
+make generate-toml
 ```
 
 ### Testing
@@ -221,4 +285,38 @@ make test
 
 # Run tests with coverage
 make test-coverage
+
+# Test export functionality
+make export EXTS=pgvector,pg_cron PG_VERSION=17
+
+# Run PostgreSQL with extensions
+make run EXTS=pgvector,pg_cron PORT=5432
 ```
+
+## Architecture
+
+### Extension System
+
+The extension system uses a declarative TOML-based approach:
+
+1. **Extension Specifications** (`extensions/<name>/<version>.toml`): Define package dependencies, PostgreSQL configuration, and SQL initialization
+2. **Model Layer** (`internal/model/`): In-memory representations of Docker artifacts
+3. **Applier** (`internal/applier/`): Merges extension requirements into models
+4. **Renderer** (`internal/render/`): Generates Docker files with anchored blocks for user customizations
+
+### Key Components
+
+- **cmd/**: Command implementations (up, down, psql, export, etc.)
+- **internal/config/**: PostgreSQL configuration management
+- **internal/container/**: Container lifecycle management
+- **internal/docker/**: Docker command wrapper
+- **internal/extensions/**: Extension validation and TOML loading
+- **pkg/scaffold/**: Template-based Docker artifact generation
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT

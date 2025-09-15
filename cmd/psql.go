@@ -45,13 +45,22 @@ This command executes psql inside the container, so no local PostgreSQL client i
 func runPsql(cmd *cobra.Command, args []string) error {
 	client := docker.NewClient()
 
-	// Use the new GetOrFindContainerName method
-	psqlName = client.GetOrFindContainerName(psqlName)
+	// If no container name specified, try to find a running one
+	if psqlName == "" {
+		foundName, err := client.FindPgboxContainer()
+		if err != nil {
+			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
+		}
+		psqlName = foundName
+	}
 
-	// Check if container is running
+	// Check if the specified container is actually running
 	running, err := client.IsContainerRunning(psqlName)
-	if err != nil || !running {
-		return fmt.Errorf("no pgbox container is running. Start one with: pgbox up")
+	if err != nil {
+		return fmt.Errorf("failed to check container status: %w", err)
+	}
+	if !running {
+		return fmt.Errorf("container %s is not running. Start it with: pgbox up", psqlName)
 	}
 
 	// If user and database weren't specified, try to get them from container env vars

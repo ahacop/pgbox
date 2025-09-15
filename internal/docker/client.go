@@ -160,21 +160,3 @@ func (c *Client) FindPgboxContainer() (string, error) {
 
 	return containerName, nil
 }
-
-// GetOrFindContainerName returns the specified container name or finds a running pgbox container
-// If no container is specified and no running container is found, it returns the default name
-func (c *Client) GetOrFindContainerName(specifiedName string) string {
-	if specifiedName != "" {
-		return specifiedName
-	}
-
-	// Try to find a running pgbox container
-	foundName, err := c.FindPgboxContainer()
-	if err == nil {
-		return foundName
-	}
-
-	// Fall back to default name
-	containerMgr := container.NewManager()
-	return containerMgr.DefaultName()
-}

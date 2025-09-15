@@ -146,7 +146,7 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 
 	// Mount init.sql if we have extensions
 	if len(extNames) > 0 {
-		initSQL, err := generateInitSQLContent(extNames)
+		initSQL, err := generateInitSQLContent(extNames, pgConfig.Version)
 		if err != nil {
 			return fmt.Errorf("failed to generate init SQL: %w", err)
 		}
@@ -215,17 +215,17 @@ func generateDockerfileContent(pgVersion string, packages []string) (string, err
 	return content, nil
 }
 
-func generateInitSQLContent(extNames []string) (string, error) {
-	var extensions []scaffold.ExtensionInfo
+func generateInitSQLContent(extNames []string, pgVersion string) (string, error) {
+	var exts []scaffold.ExtensionInfo
 	for _, ext := range extNames {
-		extensions = append(extensions, scaffold.ExtensionInfo{
+		exts = append(exts, scaffold.ExtensionInfo{
 			Name:    ext,
-			SQLName: scaffold.MapExtensionToSQLName(ext),
+			SQLName: extensions.GetSQLName(ext, pgVersion),
 		})
 	}
 
 	data := scaffold.InitSQLData{
-		Extensions: extensions,
+		Extensions: exts,
 	}
 
 	content, err := scaffold.GenerateInitSQL(data)

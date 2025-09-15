@@ -117,6 +117,20 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		containerName = containerMgr.Name(pgConfig)
 	}
 
+	// Create Docker client
+	client := docker.NewClient()
+
+	// Check if container already exists (stopped)
+	existingOutput, _ := client.RunCommandWithOutput("ps", "-a", "--filter", fmt.Sprintf("name=^%s$", containerName), "--format", "{{.Names}}")
+	if strings.TrimSpace(existingOutput) == containerName {
+		fmt.Printf("Restarting existing container: %s\n", containerName)
+		if err := client.RunCommand("start", containerName); err != nil {
+			return fmt.Errorf("failed to restart container: %w", err)
+		}
+		fmt.Printf("Container %s restarted successfully\n", containerName)
+		return nil
+	}
+
 	// Show the command being run
 	fmt.Printf("Starting PostgreSQL %s...\n", pgConfig.Version)
 	fmt.Printf("Container: %s\n", containerName)
@@ -134,17 +148,18 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	}
 	fmt.Println(strings.Repeat("-", 40))
 
-	// Create Docker client and run PostgreSQL
-	client := docker.NewClient()
+	// Run PostgreSQL with options
 	opts := docker.ContainerOptions{
 		Name:      containerName,
 		ExtraArgs: []string{},
 	}
 	if detach {
-		opts.ExtraArgs = append(opts.ExtraArgs, "-d", "--rm")
-	} else {
-		opts.ExtraArgs = append(opts.ExtraArgs, "--rm")
+		opts.ExtraArgs = append(opts.ExtraArgs, "-d")
 	}
+
+	// Add volume for data persistence
+	volumeName := fmt.Sprintf("%s-data", containerName)
+	opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/var/lib/postgresql/data", volumeName))
 
 	// Mount init.sql if we have extensions
 	if len(extNames) > 0 {

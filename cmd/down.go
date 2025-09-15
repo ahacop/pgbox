@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ahacop/pgbox/internal/container"
 	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/spf13/cobra"
 )
@@ -33,18 +32,20 @@ This command stops and removes the container but preserves any volumes.`,
 }
 
 func downContainer(name string) error {
-	// Use default name if not provided
+	client := docker.NewClient()
+
+	// Try to find a running container if name not specified
 	if name == "" {
-		containerMgr := container.NewManager()
-		name = containerMgr.DefaultName()
+		name = client.FindPgboxContainer()
+		if name == "" {
+			return fmt.Errorf("no running pgbox container found. Specify container name with -n flag")
+		}
+		fmt.Printf("Found running container: %s\n", name)
 	}
 
 	fmt.Printf("Stopping container %s...\n", name)
 
-	// Create Docker client and stop container
-	client := docker.NewClient()
 	err := client.StopContainer(name)
-
 	if err != nil {
 		return fmt.Errorf("failed to stop container: %w", err)
 	}

@@ -144,21 +144,21 @@ func (c *Client) buildPostgresArgs(pgConfig *config.PostgresConfig, opts Contain
 }
 
 // FindPgboxContainer searches for running pgbox containers
-// Returns the best matching container name or empty string if none found
-func (c *Client) FindPgboxContainer() string {
+// Returns the best matching container name or error if none found
+func (c *Client) FindPgboxContainer() (string, error) {
 	// Get list of running containers
 	output, err := c.RunCommandWithOutput("ps", "--format", "{{.Names}}\t{{.Image}}")
 	if err != nil {
-		return ""
+		return "", fmt.Errorf("failed to list containers: %w", err)
 	}
 
 	// Use the container package's selection logic
-	containerName := container.SelectPgboxContainer(output)
-	if containerName != "" {
-		return containerName
+	containerName, err := container.SelectPgboxContainer(output)
+	if err != nil {
+		return "", err
 	}
 
-	return ""
+	return containerName, nil
 }
 
 // GetOrFindContainerName returns the specified container name or finds a running pgbox container
@@ -169,8 +169,8 @@ func (c *Client) GetOrFindContainerName(specifiedName string) string {
 	}
 
 	// Try to find a running pgbox container
-	foundName := c.FindPgboxContainer()
-	if foundName != "" {
+	foundName, err := c.FindPgboxContainer()
+	if err == nil {
 		return foundName
 	}
 

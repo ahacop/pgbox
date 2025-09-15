@@ -12,11 +12,13 @@ func TestSelectPgboxContainer(t *testing.T) {
 		name           string
 		dockerPsOutput string
 		expected       string
+		expectError    bool
 	}{
 		{
-			name:           "empty output returns empty",
+			name:           "empty output returns error",
 			dockerPsOutput: "",
 			expected:       "",
+			expectError:    true,
 		},
 		{
 			name:           "selects pgbox- prefixed container first",
@@ -34,9 +36,10 @@ func TestSelectPgboxContainer(t *testing.T) {
 			expected:       "my-postgres",
 		},
 		{
-			name:           "returns empty when no postgres containers",
+			name:           "returns error when no postgres containers",
 			dockerPsOutput: "nginx\tnginx:latest\nredis\tredis:7\n",
 			expected:       "",
+			expectError:    true,
 		},
 		{
 			name:           "handles malformed lines gracefully",
@@ -52,7 +55,13 @@ func TestSelectPgboxContainer(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := SelectPgboxContainer(tt.dockerPsOutput)
+			result, err := SelectPgboxContainer(tt.dockerPsOutput)
+			if tt.expectError {
+				assert.Error(t, err)
+				assert.Equal(t, ErrNoContainerFound, err)
+			} else {
+				assert.NoError(t, err)
+			}
 			assert.Equal(t, tt.expected, result)
 		})
 	}

@@ -149,7 +149,8 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		if err := os.WriteFile(initFile, []byte(initSQL), 0644); err != nil {
 			return fmt.Errorf("failed to write init.sql: %w", err)
 		}
-		defer os.Remove(initFile)
+		// Don't remove the file - let it persist in temp directory
+		// The file is small and /tmp is usually cleaned on reboot
 
 		opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/docker-entrypoint-initdb.d/init.sql:ro", initFile))
 	}
@@ -197,9 +198,9 @@ func generateDockerfileContent(pgVersion string, packages []string) string {
 		dockerfile.WriteString("# Install PostgreSQL extensions\n")
 		dockerfile.WriteString("RUN set -eux; \\\n")
 		dockerfile.WriteString("    apt-get update; \\\n")
-		dockerfile.WriteString("    apt-get install -y --no-install-recommends curl gnupg ca-certificates; \\\n")
+		dockerfile.WriteString("    apt-get install -y --no-install-recommends curl gnupg ca-certificates lsb-release; \\\n")
 		dockerfile.WriteString("    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg; \\\n")
-		dockerfile.WriteString("    echo \"deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main\" > /etc/apt/sources.list.d/pgdg.list; \\\n")
+		dockerfile.WriteString("    echo \"deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main\" > /etc/apt/sources.list.d/pgdg.list; \\\n")
 		dockerfile.WriteString("    apt-get update; \\\n")
 		dockerfile.WriteString("    apt-get install -y --no-install-recommends \\\n")
 
@@ -211,7 +212,7 @@ func generateDockerfileContent(pgVersion string, packages []string) string {
 			}
 		}
 
-		dockerfile.WriteString("    apt-get purge -y --auto-remove curl gnupg; \\\n")
+		dockerfile.WriteString("    apt-get purge -y --auto-remove curl gnupg lsb-release; \\\n")
 		dockerfile.WriteString("    rm -rf /var/lib/apt/lists/*\n")
 	}
 
@@ -222,7 +223,12 @@ func generateInitSQLContent(extNames []string) string {
 	var sql strings.Builder
 	sql.WriteString("-- Initialize PostgreSQL extensions\n\n")
 	for _, ext := range extNames {
-		sql.WriteString(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS \"%s\";\n", ext))
+		// Map extension names to their actual PostgreSQL names
+		pgExtName := ext
+		if ext == "pgvector" {
+			pgExtName = "vector"
+		}
+		sql.WriteString(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS \"%s\";\n", pgExtName))
 	}
 	return sql.String()
 }

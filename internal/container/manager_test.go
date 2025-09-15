@@ -51,6 +51,21 @@ func TestSelectPgboxContainer(t *testing.T) {
 			dockerPsOutput: "  pgbox-pg17  \t  postgres:17  \n",
 			expected:       "pgbox-pg17",
 		},
+		{
+			name:           "detects pgbox container with custom image like user scenario",
+			dockerPsOutput: "pgbox-pg17\tpgbox-pg17-custom:183329",
+			expected:       "pgbox-pg17",
+		},
+		{
+			name:           "detects pgbox-pg17 with custom extension image",
+			dockerPsOutput: "pgbox-pg17\tpgbox-pg17-custom:183329\t\"docker-entrypoint.s…\"\t4 minutes ago\tUp 4 minutes\t0.0.0.0:5432->5432/tcp, :::5432->5432/tcp",
+			expected:       "pgbox-pg17",
+		},
+		{
+			name:           "regression test - detects container with custom image built for extensions",
+			dockerPsOutput: "pgbox-pg17\tpgbox-pg17-custom:192484",
+			expected:       "pgbox-pg17",
+		},
 	}
 
 	for _, tt := range tests {

@@ -1,4 +1,4 @@
-package cmd
+package container
 
 import (
 	"testing"
@@ -52,7 +52,7 @@ func TestSelectPgboxContainer(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := selectPgboxContainer(tt.dockerPsOutput)
+			result := SelectPgboxContainer(tt.dockerPsOutput)
 			assert.Equal(t, tt.expected, result)
 		})
 	}

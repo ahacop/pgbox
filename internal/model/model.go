@@ -10,7 +10,7 @@ import (
 
 // DockerfileModel represents a concrete Dockerfile with anchored, mergeable blocks
 type DockerfileModel struct {
-	BaseImage   string              // Base Docker image (e.g., "postgres:17-bookworm")
+	BaseImage   string              // Base Docker image (e.g., "postgres:17")
 	AptPackages []string            // Debian/Ubuntu packages to install
 	ApkPackages []string            // Alpine packages to install
 	YumPackages []string            // RHEL/CentOS packages to install

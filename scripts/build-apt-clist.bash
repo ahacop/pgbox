@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# gen-apt-bookworm-pgdg.sh
 OUT_DIR="${1:-pgbox-data/apt-pgdg}"
 mkdir -p "$OUT_DIR"
 

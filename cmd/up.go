@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/container"
 	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/ahacop/pgbox/internal/extensions"
+	"github.com/ahacop/pgbox/pkg/scaffold"
 	"github.com/spf13/cobra"
 )
 
@@ -190,45 +192,42 @@ func buildCustomImage(pgVersion string, extNames []string) (string, error) {
 }
 
 func generateDockerfileContent(pgVersion string, packages []string) string {
-	var dockerfile strings.Builder
-	dockerfile.WriteString(fmt.Sprintf("ARG PG_MAJOR=%s\n", pgVersion))
-	dockerfile.WriteString("FROM postgres:${PG_MAJOR}\n\n")
+	// Sort packages for consistency
+	sort.Strings(packages)
 
-	if len(packages) > 0 {
-		dockerfile.WriteString("# Install PostgreSQL extensions\n")
-		dockerfile.WriteString("RUN set -eux; \\\n")
-		dockerfile.WriteString("    apt-get update; \\\n")
-		dockerfile.WriteString("    apt-get install -y --no-install-recommends curl gnupg ca-certificates lsb-release; \\\n")
-		dockerfile.WriteString("    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg; \\\n")
-		dockerfile.WriteString("    echo \"deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main\" > /etc/apt/sources.list.d/pgdg.list; \\\n")
-		dockerfile.WriteString("    apt-get update; \\\n")
-		dockerfile.WriteString("    apt-get install -y --no-install-recommends \\\n")
-
-		for i, pkg := range packages {
-			if i < len(packages)-1 {
-				dockerfile.WriteString(fmt.Sprintf("        %s \\\n", pkg))
-			} else {
-				dockerfile.WriteString(fmt.Sprintf("        %s; \\\n", pkg))
-			}
-		}
-
-		dockerfile.WriteString("    apt-get purge -y --auto-remove curl gnupg lsb-release; \\\n")
-		dockerfile.WriteString("    rm -rf /var/lib/apt/lists/*\n")
+	data := scaffold.DockerfileData{
+		PGMajor:     pgVersion,
+		HasPackages: len(packages) > 0,
+		Packages:    packages,
 	}
 
-	return dockerfile.String()
+	content, err := scaffold.GenerateDockerfile(data)
+	if err != nil {
+		// Fallback to basic Dockerfile if template fails
+		return fmt.Sprintf("FROM postgres:%s\n", pgVersion)
+	}
+
+	return content
 }
 
 func generateInitSQLContent(extNames []string) string {
-	var sql strings.Builder
-	sql.WriteString("-- Initialize PostgreSQL extensions\n\n")
+	var extensions []scaffold.ExtensionInfo
 	for _, ext := range extNames {
-		// Map extension names to their actual PostgreSQL names
-		pgExtName := ext
-		if ext == "pgvector" {
-			pgExtName = "vector"
-		}
-		sql.WriteString(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS \"%s\";\n", pgExtName))
+		extensions = append(extensions, scaffold.ExtensionInfo{
+			Name:    ext,
+			SQLName: scaffold.MapExtensionToSQLName(ext),
+		})
 	}
-	return sql.String()
+
+	data := scaffold.InitSQLData{
+		Extensions: extensions,
+	}
+
+	content, err := scaffold.GenerateInitSQL(data)
+	if err != nil {
+		// Fallback to basic SQL if template fails
+		return "-- Initialize PostgreSQL extensions\n"
+	}
+
+	return content
 }

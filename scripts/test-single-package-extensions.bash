@@ -2,39 +2,49 @@
 set -euo pipefail
 
 # Test a single package to discover what PostgreSQL extensions it provides
-# This tests in ISOLATION by using a fresh container for each package
-# Usage: ./test-single-package-extensions.bash <unused> <package-name> <pg-major>
+# Can work in two modes:
+# 1. Reuse mode: Use an existing container (pass container ID)
+# 2. Isolated mode: Create a fresh container (pass "isolated")
+# Usage: ./test-single-package-extensions.bash <container-id|isolated> <package-name> <pg-major>
 
-# First parameter is no longer used but kept for compatibility
-_UNUSED="${1:-}"
+CID_OR_MODE="${1:-}"
 PKG_NAME="${2:-}"
 MAJOR="${3:-}"
 
-if [ "$PKG_NAME" = "" ] || [ "$MAJOR" = "" ]; then
-	echo "Usage: $0 <unused> <package-name> <pg-major>"
-	echo "This script tests each package in isolation"
+if [ "$CID_OR_MODE" = "" ] || [ "$PKG_NAME" = "" ] || [ "$MAJOR" = "" ]; then
+	echo "Usage: $0 <container-id|isolated> <package-name> <pg-major>" >&2
+	echo "  container-id: ID of existing container to reuse" >&2
+	echo "  isolated: Create a fresh container for this test" >&2
 	exit 1
 fi
 
 PKG="postgresql-${MAJOR}-${PKG_NAME}"
-IMG="postgres:${MAJOR}"
+CLEANUP_CONTAINER=false
 
-# Start a fresh container for this package
-CID=$(docker run -d \
-	-e POSTGRES_PASSWORD=test \
-	-e POSTGRES_HOST_AUTH_METHOD=trust \
-	"$IMG" 2>/dev/null)
+# Determine mode and set container ID
+if [ "$CID_OR_MODE" = "isolated" ]; then
+	# Create a fresh container for isolated testing
+	IMG="postgres:${MAJOR}"
+	CID=$(docker run -d \
+		-e POSTGRES_PASSWORD=test \
+		-e POSTGRES_HOST_AUTH_METHOD=trust \
+		"$IMG" 2>/dev/null)
+	CLEANUP_CONTAINER=true
 
-# Wait for PostgreSQL to be ready
-for i in {1..30}; do
-	if docker exec "$CID" pg_isready -U postgres >/dev/null 2>&1; then
-		break
-	fi
-	sleep 1
-done
+	# Wait for PostgreSQL to be ready
+	for i in {1..30}; do
+		if docker exec "$CID" pg_isready -U postgres >/dev/null 2>&1; then
+			break
+		fi
+		sleep 1
+	done
 
-# Update apt cache
-docker exec "$CID" apt-get update -qq >/dev/null 2>&1
+	# Update apt cache
+	docker exec "$CID" apt-get update -qq >/dev/null 2>&1
+else
+	# Use existing container
+	CID="$CID_OR_MODE"
+fi
 
 # Get baseline extensions before install
 BEFORE=$(docker exec "$CID" psql -U postgres -t -A -c \
@@ -49,6 +59,16 @@ if docker exec "$CID" apt-get install -y "$PKG" >/dev/null 2>&1; then
 	# Find new extensions
 	NEW_EXTS=$(comm -13 <(echo "$BEFORE" | sort) <(echo "$AFTER" | sort))
 
+	# Uninstall the package to restore clean state (only in reuse mode)
+	if [ "$CLEANUP_CONTAINER" = false ]; then
+		# Remove the package and auto-remove dependencies
+		docker exec "$CID" apt-get remove -y "$PKG" >/dev/null 2>&1
+		docker exec "$CID" apt-get autoremove -y >/dev/null 2>&1
+
+		# Restart PostgreSQL to ensure clean state
+		docker exec "$CID" pg_ctl -D /var/lib/postgresql/data restart -w >/dev/null 2>&1 || true
+	fi
+
 	if [ "$NEW_EXTS" != "" ]; then
 		# Output as JSON array
 		echo "$NEW_EXTS" | jq -R -s -c 'split("\n") | map(select(length > 0))'
@@ -60,6 +80,8 @@ else
 	echo "[]"
 fi
 
-# Clean up container
-docker stop "$CID" >/dev/null 2>&1
-docker rm "$CID" >/dev/null 2>&1
+# Clean up container if we created it
+if [ "$CLEANUP_CONTAINER" = true ]; then
+	docker stop "$CID" >/dev/null 2>&1
+	docker rm "$CID" >/dev/null 2>&1
+fi

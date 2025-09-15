@@ -22,7 +22,7 @@
           
           buildPhase = ''
             runHook preBuild
-            go build -ldflags="-s -w" -o pgbox ./cmd/pgbox
+            go build -ldflags="-s -w" -o pgbox .
             runHook postBuild
           '';
           

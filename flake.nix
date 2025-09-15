@@ -18,7 +18,7 @@
           
           src = ./.;
           
-          vendorHash = "sha256-qpDNiYOzuXGzyV6m5KG2vtamJKOO6dNgF/2ga82jUZA=";
+          vendorHash = "sha256-SWMKURW+Midc20j3ZB6uJkJnCoSDoJc8fGVe33IpLFw=";
           
           buildPhase = ''
             runHook preBuild

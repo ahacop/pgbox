@@ -21,6 +21,7 @@ specific extensions for development and testing purposes.`,
 	rootCmd.AddCommand(UpCmd())
 	rootCmd.AddCommand(DownCmd())
 	rootCmd.AddCommand(StatusCmd())
+	rootCmd.AddCommand(LogsCmd())
 	rootCmd.AddCommand(PsqlCmd())
 
 	return rootCmd

@@ -1,12 +1,52 @@
-# Auto-generated from pgbox-data - PostgreSQL 17
+# PostGIS - Geographic objects support for PostgreSQL 17
+# Complete spatial database extender with raster, topology, and 3D support
 
-extension = "postgis-3"
+extension = "postgis"
+display_name = "PostGIS"
 package = "postgresql-17-postgis-3"
-description = "Geographic objects support for PostgreSQL 17"
+description = "Geographic objects support for PostgreSQL with full spatial capabilities"
+min_pg = "12"
 
 [image]
-apt_packages = ["postgresql-17-postgis-3"]
+apt_packages = [
+    "postgresql-17-postgis-3",
+    "postgresql-17-postgis-3-scripts",
+    "postgis"
+]
 
-# SQL initialization
+# PostgreSQL configuration
+# PostGIS doesn't require shared_preload_libraries for basic functionality
+[postgresql.conf]
+# Optional: Increase work_mem for complex spatial operations
+# "work_mem" = "16MB"
+# Optional: Increase maintenance_work_mem for spatial index creation
+# "maintenance_work_mem" = "256MB"
+
+# SQL initialization - Core PostGIS and common extensions
 [[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS postgis-3;"
+text = """
+-- Core PostGIS extension
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+-- PostGIS Raster support (if needed)
+-- CREATE EXTENSION IF NOT EXISTS postgis_raster;
+
+-- PostGIS Topology support (if needed)
+-- CREATE EXTENSION IF NOT EXISTS postgis_topology;
+
+-- Advanced 3D support via SFCGAL (if needed)
+-- CREATE EXTENSION IF NOT EXISTS postgis_sfcgal;
+
+-- Tiger Geocoder (US-specific, requires fuzzystrmatch)
+-- CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+-- CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
+
+-- Address Standardizer (for geocoding)
+-- CREATE EXTENSION IF NOT EXISTS address_standardizer;
+
+-- Grant usage on spatial_ref_sys to public
+GRANT SELECT ON spatial_ref_sys TO PUBLIC;
+"""
+
+[pgbox]
+needs_restart = false

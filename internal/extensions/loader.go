@@ -11,10 +11,10 @@ import (
 // ExtensionData represents a PostgreSQL extension with all its metadata from the JSONL file
 type ExtensionData struct {
 	PgMajor     int    `json:"pg_major"`
-	Name        string `json:"name"`        // Package/extension name
-	Type        string `json:"type"`        // "builtin" or "package"
-	Package     string `json:"package"`     // Full package name (e.g., postgresql-17-pgvector)
-	SQLName     string `json:"sql_name"`    // Name used in CREATE EXTENSION
+	Name        string `json:"name"`     // Package/extension name
+	Type        string `json:"type"`     // "builtin" or "package"
+	Package     string `json:"package"`  // Full package name (e.g., postgresql-17-pgvector)
+	SQLName     string `json:"sql_name"` // Name used in CREATE EXTENSION
 	Description string `json:"description"`
 }
 

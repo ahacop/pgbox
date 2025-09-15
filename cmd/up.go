@@ -138,10 +138,12 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	client := docker.NewClient()
 	opts := docker.ContainerOptions{
 		Name:      containerName,
-		ExtraArgs: []string{"--rm"},
+		ExtraArgs: []string{},
 	}
 	if detach {
-		opts.ExtraArgs = append(opts.ExtraArgs, "-d")
+		opts.ExtraArgs = append(opts.ExtraArgs, "-d", "--rm")
+	} else {
+		opts.ExtraArgs = append(opts.ExtraArgs, "--rm")
 	}
 
 	// Mount init.sql if we have extensions

@@ -57,6 +57,7 @@ check: fmt vet test
 clean:
 	rm -f $(BINARY_NAME)
 	rm -f coverage.out coverage.html
+	rm -rf pgbox-data
 
 # Install to GOPATH/bin
 .PHONY: install

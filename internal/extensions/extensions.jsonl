@@ -108,6 +108,8 @@
 {"pg_major":16,"name":"pgl-ddl-deploy","type":"package","package":"postgresql-16-pgl-ddl-deploy","sql_name":"pgl_ddl_deploy","description":"- Transparent DDL replication for PostgreSQL"}
 {"pg_major":16,"name":"pglogical","type":"package","package":"postgresql-16-pglogical","sql_name":"pglogical","description":"- Logical Replication Extension for PostgreSQL"}
 {"pg_major":16,"name":"pglogical","type":"package","package":"postgresql-16-pglogical","sql_name":"pglogical_origin","description":"- Logical Replication Extension for PostgreSQL"}
+{"pg_major":16,"name":"pglogical-ticker","type":"package","package":"postgresql-16-pglogical-ticker","sql_name":"pglogical","description":"- Have time-based replication delay for pglogical"}
+{"pg_major":16,"name":"pglogical-ticker","type":"package","package":"postgresql-16-pglogical-ticker","sql_name":"pglogical_origin","description":"- Have time-based replication delay for pglogical"}
 {"pg_major":16,"name":"pglogical-ticker","type":"package","package":"postgresql-16-pglogical-ticker","sql_name":"pglogical_ticker","description":"- Have time-based replication delay for pglogical"}
 {"pg_major":16,"name":"pgmemcache","type":"package","package":"postgresql-16-pgmemcache","sql_name":"pgmemcache","description":"- PostgreSQL interface to memcached"}
 {"pg_major":16,"name":"pgmp","type":"package","package":"postgresql-16-pgmp","sql_name":"pgmp","description":"- arbitrary precision integers and rationals for PostgreSQL 16"}
@@ -118,13 +120,28 @@
 {"pg_major":16,"name":"pgpool2","type":"package","package":"postgresql-16-pgpool2","sql_name":"pgpool_adm","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
 {"pg_major":16,"name":"pgpool2","type":"package","package":"postgresql-16-pgpool2","sql_name":"pgpool_recovery","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
 {"pg_major":16,"name":"pgpool2","type":"package","package":"postgresql-16-pgpool2","sql_name":"pgpool_regclass","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
-{"pg_major":16,"name":"pgq3","type":"package","package":"postgresql-16-pgq3","sql_name":"pgq3","description":"- Generic queue for PostgreSQL"}
-{"pg_major":16,"name":"pgq-node","type":"package","package":"postgresql-16-pgq-node","sql_name":"pgq-node","description":"- Cascaded queueing on top of PgQ"}
+{"pg_major":16,"name":"pgq3","type":"package","package":"postgresql-16-pgq3","sql_name":"pgq","description":"- Generic queue for PostgreSQL"}
+{"pg_major":16,"name":"pgq-node","type":"package","package":"postgresql-16-pgq-node","sql_name":"pgq","description":"- Cascaded queueing on top of PgQ"}
+{"pg_major":16,"name":"pgq-node","type":"package","package":"postgresql-16-pgq-node","sql_name":"pgq_node","description":"- Cascaded queueing on top of PgQ"}
 {"pg_major":16,"name":"pg-qualstats","type":"package","package":"postgresql-16-pg-qualstats","sql_name":"pg_qualstats","description":"- PostgreSQL extension to gather statistics about predicates."}
 {"pg_major":16,"name":"pg-rewrite","type":"package","package":"postgresql-16-pg-rewrite","sql_name":"pg_rewrite","description":"- Rewrite PostgreSQL tables with less locking"}
 {"pg_major":16,"name":"pgrouting-doc","type":"package","package":"postgresql-16-pgrouting-doc","sql_name":"pgrouting-doc","description":"- Routing functionality support for PostgreSQL/PostGIS (Documentation)"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"address_standardizer","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"address_standardizer-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"address_standardizer_data_us","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"address_standardizer_data_us-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
 {"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"pgrouting","description":"- Routing functionality support for PostgreSQL/PostGIS"}
-{"pg_major":16,"name":"pgrouting-scripts","type":"package","package":"postgresql-16-pgrouting-scripts","sql_name":"pgrouting-scripts","description":"- Routing functionality support for PostgreSQL/PostGIS - SQL scripts"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_raster","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_raster-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_sfcgal","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_sfcgal-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_tiger_geocoder","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_tiger_geocoder-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_topology","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"postgis_topology-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting-scripts","type":"package","package":"postgresql-16-pgrouting-scripts","sql_name":"pgrouting","description":"- Routing functionality support for PostgreSQL/PostGIS - SQL scripts"}
 {"pg_major":16,"name":"pg-rrule","type":"package","package":"postgresql-16-pg-rrule","sql_name":"pg_rrule","description":"- RRULE data type for PostgreSQL"}
 {"pg_major":16,"name":"pgsentinel","type":"package","package":"postgresql-16-pgsentinel","sql_name":"pgsentinel","description":"- PostgreSQL extension pgsentinel"}
 {"pg_major":16,"name":"pgsphere","type":"package","package":"postgresql-16-pgsphere","sql_name":"pg_sphere","description":"- Spherical data types for PostgreSQL"}
@@ -148,8 +165,34 @@
 {"pg_major":16,"name":"plsh","type":"package","package":"postgresql-16-plsh","sql_name":"plsh","description":"- PL/sh procedural language for PostgreSQL 16"}
 {"pg_major":16,"name":"pointcloud","type":"package","package":"postgresql-16-pointcloud","sql_name":"pointcloud","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
 {"pg_major":16,"name":"pointcloud","type":"package","package":"postgresql-16-pointcloud","sql_name":"pointcloud_postgis","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"address_standardizer","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"address_standardizer-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"address_standardizer_data_us","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"address_standardizer_data_us-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis","description":"- Geographic objects support for PostgreSQL 16"}
 {"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis-3","description":"- Geographic objects support for PostgreSQL 16"}
-{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis-3-scripts","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_raster","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_raster-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_sfcgal","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_sfcgal-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_tiger_geocoder","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_tiger_geocoder-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_topology","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis_topology-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"address_standardizer","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"address_standardizer-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"address_standardizer_data_us","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"address_standardizer_data_us-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_raster","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_raster-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_sfcgal","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_sfcgal-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_tiger_geocoder","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_tiger_geocoder-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_topology","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis_topology-3","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
 {"pg_major":16,"name":"powa","type":"package","package":"postgresql-16-powa","sql_name":"powa","description":"- PostgreSQL Workload Analyzer -- PostgreSQL 16 extension"}
 {"pg_major":16,"name":"prefix","type":"package","package":"postgresql-16-prefix","sql_name":"prefix","description":"- Prefix Range module for PostgreSQL"}
 {"pg_major":16,"name":"preprepare","type":"package","package":"postgresql-16-preprepare","sql_name":"pre_prepare","description":"- pre prepare your PostgreSQL statements server side"}
@@ -284,6 +327,8 @@
 {"pg_major":17,"name":"pgl-ddl-deploy","type":"package","package":"postgresql-17-pgl-ddl-deploy","sql_name":"pgl_ddl_deploy","description":"- Transparent DDL replication for PostgreSQL"}
 {"pg_major":17,"name":"pglogical","type":"package","package":"postgresql-17-pglogical","sql_name":"pglogical","description":"- Logical Replication Extension for PostgreSQL"}
 {"pg_major":17,"name":"pglogical","type":"package","package":"postgresql-17-pglogical","sql_name":"pglogical_origin","description":"- Logical Replication Extension for PostgreSQL"}
+{"pg_major":17,"name":"pglogical-ticker","type":"package","package":"postgresql-17-pglogical-ticker","sql_name":"pglogical","description":"- Have time-based replication delay for pglogical"}
+{"pg_major":17,"name":"pglogical-ticker","type":"package","package":"postgresql-17-pglogical-ticker","sql_name":"pglogical_origin","description":"- Have time-based replication delay for pglogical"}
 {"pg_major":17,"name":"pglogical-ticker","type":"package","package":"postgresql-17-pglogical-ticker","sql_name":"pglogical_ticker","description":"- Have time-based replication delay for pglogical"}
 {"pg_major":17,"name":"pgmemcache","type":"package","package":"postgresql-17-pgmemcache","sql_name":"pgmemcache","description":"- PostgreSQL interface to memcached"}
 {"pg_major":17,"name":"pgmp","type":"package","package":"postgresql-17-pgmp","sql_name":"pgmp","description":"- arbitrary precision integers and rationals for PostgreSQL 17"}
@@ -294,13 +339,28 @@
 {"pg_major":17,"name":"pgpool2","type":"package","package":"postgresql-17-pgpool2","sql_name":"pgpool_adm","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
 {"pg_major":17,"name":"pgpool2","type":"package","package":"postgresql-17-pgpool2","sql_name":"pgpool_recovery","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
 {"pg_major":17,"name":"pgpool2","type":"package","package":"postgresql-17-pgpool2","sql_name":"pgpool_regclass","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
-{"pg_major":17,"name":"pgq3","type":"package","package":"postgresql-17-pgq3","sql_name":"pgq3","description":"- Generic queue for PostgreSQL"}
-{"pg_major":17,"name":"pgq-node","type":"package","package":"postgresql-17-pgq-node","sql_name":"pgq-node","description":"- Cascaded queueing on top of PgQ"}
+{"pg_major":17,"name":"pgq3","type":"package","package":"postgresql-17-pgq3","sql_name":"pgq","description":"- Generic queue for PostgreSQL"}
+{"pg_major":17,"name":"pgq-node","type":"package","package":"postgresql-17-pgq-node","sql_name":"pgq","description":"- Cascaded queueing on top of PgQ"}
+{"pg_major":17,"name":"pgq-node","type":"package","package":"postgresql-17-pgq-node","sql_name":"pgq_node","description":"- Cascaded queueing on top of PgQ"}
 {"pg_major":17,"name":"pg-qualstats","type":"package","package":"postgresql-17-pg-qualstats","sql_name":"pg_qualstats","description":"- PostgreSQL extension to gather statistics about predicates."}
 {"pg_major":17,"name":"pg-rewrite","type":"package","package":"postgresql-17-pg-rewrite","sql_name":"pg_rewrite","description":"- Rewrite PostgreSQL tables with less locking"}
 {"pg_major":17,"name":"pgrouting-doc","type":"package","package":"postgresql-17-pgrouting-doc","sql_name":"pgrouting-doc","description":"- Routing functionality support for PostgreSQL/PostGIS (Documentation)"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"address_standardizer","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"address_standardizer-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"address_standardizer_data_us","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"address_standardizer_data_us-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
 {"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"pgrouting","description":"- Routing functionality support for PostgreSQL/PostGIS"}
-{"pg_major":17,"name":"pgrouting-scripts","type":"package","package":"postgresql-17-pgrouting-scripts","sql_name":"pgrouting-scripts","description":"- Routing functionality support for PostgreSQL/PostGIS - SQL scripts"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_raster","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_raster-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_sfcgal","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_sfcgal-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_tiger_geocoder","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_tiger_geocoder-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_topology","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"postgis_topology-3","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting-scripts","type":"package","package":"postgresql-17-pgrouting-scripts","sql_name":"pgrouting","description":"- Routing functionality support for PostgreSQL/PostGIS - SQL scripts"}
 {"pg_major":17,"name":"pg-rrule","type":"package","package":"postgresql-17-pg-rrule","sql_name":"pg_rrule","description":"- RRULE data type for PostgreSQL"}
 {"pg_major":17,"name":"pgsentinel","type":"package","package":"postgresql-17-pgsentinel","sql_name":"pgsentinel","description":"- PostgreSQL extension pgsentinel"}
 {"pg_major":17,"name":"pgsphere","type":"package","package":"postgresql-17-pgsphere","sql_name":"pg_sphere","description":"- Spherical data types for PostgreSQL"}
@@ -324,8 +384,34 @@
 {"pg_major":17,"name":"plsh","type":"package","package":"postgresql-17-plsh","sql_name":"plsh","description":"- PL/sh procedural language for PostgreSQL 17"}
 {"pg_major":17,"name":"pointcloud","type":"package","package":"postgresql-17-pointcloud","sql_name":"pointcloud","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
 {"pg_major":17,"name":"pointcloud","type":"package","package":"postgresql-17-pointcloud","sql_name":"pointcloud_postgis","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"address_standardizer","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"address_standardizer-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"address_standardizer_data_us","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"address_standardizer_data_us-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis","description":"- Geographic objects support for PostgreSQL 17"}
 {"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis-3","description":"- Geographic objects support for PostgreSQL 17"}
-{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis-3-scripts","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_raster","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_raster-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_sfcgal","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_sfcgal-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_tiger_geocoder","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_tiger_geocoder-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_topology","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis_topology-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"address_standardizer","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"address_standardizer-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"address_standardizer_data_us","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"address_standardizer_data_us-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_raster","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_raster-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_sfcgal","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_sfcgal-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_tiger_geocoder","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_tiger_geocoder-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_topology","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis_topology-3","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
 {"pg_major":17,"name":"powa","type":"package","package":"postgresql-17-powa","sql_name":"powa","description":"- PostgreSQL Workload Analyzer -- PostgreSQL 17 extension"}
 {"pg_major":17,"name":"prefix","type":"package","package":"postgresql-17-prefix","sql_name":"prefix","description":"- Prefix Range module for PostgreSQL"}
 {"pg_major":17,"name":"preprepare","type":"package","package":"postgresql-17-preprepare","sql_name":"pre_prepare","description":"- pre prepare your PostgreSQL statements server side"}

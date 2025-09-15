@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
+	"github.com/ahacop/pgbox/internal/container"
 )
 
 // Client provides an interface to Docker operations
@@ -140,4 +141,40 @@ func (c *Client) buildPostgresArgs(pgConfig *config.PostgresConfig, opts Contain
 	args = append(args, opts.Command...)
 
 	return args
+}
+
+// FindPgboxContainer searches for running pgbox containers
+// Returns the best matching container name or empty string if none found
+func (c *Client) FindPgboxContainer() string {
+	// Get list of running containers
+	output, err := c.RunCommandWithOutput("ps", "--format", "{{.Names}}\t{{.Image}}")
+	if err != nil {
+		return ""
+	}
+
+	// Use the container package's selection logic
+	containerName := container.SelectPgboxContainer(output)
+	if containerName != "" {
+		return containerName
+	}
+
+	return ""
+}
+
+// GetOrFindContainerName returns the specified container name or finds a running pgbox container
+// If no container is specified and no running container is found, it returns the default name
+func (c *Client) GetOrFindContainerName(specifiedName string) string {
+	if specifiedName != "" {
+		return specifiedName
+	}
+
+	// Try to find a running pgbox container
+	foundName := c.FindPgboxContainer()
+	if foundName != "" {
+		return foundName
+	}
+
+	// Fall back to default name
+	containerMgr := container.NewManager()
+	return containerMgr.DefaultName()
 }

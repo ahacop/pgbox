@@ -1,0 +1,354 @@
+{"pg_major":16,"name":"adminpack","type":"builtin","package":null,"sql_name":"adminpack","description":"administrative functions for PostgreSQL"}
+{"pg_major":16,"name":"amcheck","type":"builtin","package":null,"sql_name":"amcheck","description":"functions for verifying relation integrity"}
+{"pg_major":16,"name":"autoinc","type":"builtin","package":null,"sql_name":"autoinc","description":"functions for autoincrementing fields"}
+{"pg_major":16,"name":"bloom","type":"builtin","package":null,"sql_name":"bloom","description":"bloom access method - signature file based index"}
+{"pg_major":16,"name":"btree_gin","type":"builtin","package":null,"sql_name":"btree_gin","description":"support for indexing common datatypes in GIN"}
+{"pg_major":16,"name":"btree_gist","type":"builtin","package":null,"sql_name":"btree_gist","description":"support for indexing common datatypes in GiST"}
+{"pg_major":16,"name":"citext","type":"builtin","package":null,"sql_name":"citext","description":"data type for case-insensitive character strings"}
+{"pg_major":16,"name":"cube","type":"builtin","package":null,"sql_name":"cube","description":"data type for multidimensional cubes"}
+{"pg_major":16,"name":"dblink","type":"builtin","package":null,"sql_name":"dblink","description":"connect to other PostgreSQL databases from within a database"}
+{"pg_major":16,"name":"dict_int","type":"builtin","package":null,"sql_name":"dict_int","description":"text search dictionary template for integers"}
+{"pg_major":16,"name":"dict_xsyn","type":"builtin","package":null,"sql_name":"dict_xsyn","description":"text search dictionary template for extended synonym processing"}
+{"pg_major":16,"name":"earthdistance","type":"builtin","package":null,"sql_name":"earthdistance","description":"calculate great-circle distances on the surface of the Earth"}
+{"pg_major":16,"name":"file_fdw","type":"builtin","package":null,"sql_name":"file_fdw","description":"foreign-data wrapper for flat file access"}
+{"pg_major":16,"name":"fuzzystrmatch","type":"builtin","package":null,"sql_name":"fuzzystrmatch","description":"determine similarities and distance between strings"}
+{"pg_major":16,"name":"hstore","type":"builtin","package":null,"sql_name":"hstore","description":"data type for storing sets of (key, value) pairs"}
+{"pg_major":16,"name":"insert_username","type":"builtin","package":null,"sql_name":"insert_username","description":"functions for tracking who changed a table"}
+{"pg_major":16,"name":"intagg","type":"builtin","package":null,"sql_name":"intagg","description":"integer aggregator and enumerator (obsolete)"}
+{"pg_major":16,"name":"intarray","type":"builtin","package":null,"sql_name":"intarray","description":"functions, operators, and index support for 1-D arrays of integers"}
+{"pg_major":16,"name":"isn","type":"builtin","package":null,"sql_name":"isn","description":"data types for international product numbering standards"}
+{"pg_major":16,"name":"lo","type":"builtin","package":null,"sql_name":"lo","description":"Large Object maintenance"}
+{"pg_major":16,"name":"ltree","type":"builtin","package":null,"sql_name":"ltree","description":"data type for hierarchical tree-like structures"}
+{"pg_major":16,"name":"moddatetime","type":"builtin","package":null,"sql_name":"moddatetime","description":"functions for tracking last modification time"}
+{"pg_major":16,"name":"old_snapshot","type":"builtin","package":null,"sql_name":"old_snapshot","description":"utilities in support of old_snapshot_threshold"}
+{"pg_major":16,"name":"pageinspect","type":"builtin","package":null,"sql_name":"pageinspect","description":"inspect the contents of database pages at a low level"}
+{"pg_major":16,"name":"pg_buffercache","type":"builtin","package":null,"sql_name":"pg_buffercache","description":"examine the shared buffer cache"}
+{"pg_major":16,"name":"pg_freespacemap","type":"builtin","package":null,"sql_name":"pg_freespacemap","description":"examine the free space map (FSM)"}
+{"pg_major":16,"name":"pg_prewarm","type":"builtin","package":null,"sql_name":"pg_prewarm","description":"prewarm relation data"}
+{"pg_major":16,"name":"pg_stat_statements","type":"builtin","package":null,"sql_name":"pg_stat_statements","description":"track planning and execution statistics of all SQL statements executed"}
+{"pg_major":16,"name":"pg_surgery","type":"builtin","package":null,"sql_name":"pg_surgery","description":"extension to perform surgery on a damaged relation"}
+{"pg_major":16,"name":"pg_trgm","type":"builtin","package":null,"sql_name":"pg_trgm","description":"text similarity measurement and index searching based on trigrams"}
+{"pg_major":16,"name":"pg_visibility","type":"builtin","package":null,"sql_name":"pg_visibility","description":"examine the visibility map (VM) and page-level visibility info"}
+{"pg_major":16,"name":"pg_walinspect","type":"builtin","package":null,"sql_name":"pg_walinspect","description":"functions to inspect contents of PostgreSQL Write-Ahead Log"}
+{"pg_major":16,"name":"pgcrypto","type":"builtin","package":null,"sql_name":"pgcrypto","description":"cryptographic functions"}
+{"pg_major":16,"name":"pgrowlocks","type":"builtin","package":null,"sql_name":"pgrowlocks","description":"show row-level locking information"}
+{"pg_major":16,"name":"pgstattuple","type":"builtin","package":null,"sql_name":"pgstattuple","description":"show tuple-level statistics"}
+{"pg_major":16,"name":"plpgsql","type":"builtin","package":null,"sql_name":"plpgsql","description":"PL/pgSQL procedural language"}
+{"pg_major":16,"name":"postgres_fdw","type":"builtin","package":null,"sql_name":"postgres_fdw","description":"foreign-data wrapper for remote PostgreSQL servers"}
+{"pg_major":16,"name":"refint","type":"builtin","package":null,"sql_name":"refint","description":"functions for implementing referential integrity (obsolete)"}
+{"pg_major":16,"name":"seg","type":"builtin","package":null,"sql_name":"seg","description":"data type for representing line segments or floating-point intervals"}
+{"pg_major":16,"name":"sslinfo","type":"builtin","package":null,"sql_name":"sslinfo","description":"information about SSL certificates"}
+{"pg_major":16,"name":"tablefunc","type":"builtin","package":null,"sql_name":"tablefunc","description":"functions that manipulate whole tables, including crosstab"}
+{"pg_major":16,"name":"tcn","type":"builtin","package":null,"sql_name":"tcn","description":"Triggered change notifications"}
+{"pg_major":16,"name":"tsm_system_rows","type":"builtin","package":null,"sql_name":"tsm_system_rows","description":"TABLESAMPLE method which accepts number of rows as a limit"}
+{"pg_major":16,"name":"tsm_system_time","type":"builtin","package":null,"sql_name":"tsm_system_time","description":"TABLESAMPLE method which accepts time in milliseconds as a limit"}
+{"pg_major":16,"name":"unaccent","type":"builtin","package":null,"sql_name":"unaccent","description":"text search dictionary that removes accents"}
+{"pg_major":16,"name":"uuid-ossp","type":"builtin","package":null,"sql_name":"uuid-ossp","description":"generate universally unique identifiers (UUIDs)"}
+{"pg_major":16,"name":"xml2","type":"builtin","package":null,"sql_name":"xml2","description":"XPath querying and XSLT"}
+{"pg_major":16,"name":"age","type":"package","package":"postgresql-16-age","sql_name":"age","description":"- Graph database optimized for fast analysis and real-time data processing"}
+{"pg_major":16,"name":"asn1oid","type":"package","package":"postgresql-16-asn1oid","sql_name":"asn1oid","description":"- ASN.1 OID data type for PostgreSQL"}
+{"pg_major":16,"name":"auto-failover","type":"package","package":"postgresql-16-auto-failover","sql_name":"pgautofailover","description":"- Postgres high availability support"}
+{"pg_major":16,"name":"bgw-replstatus","type":"package","package":"postgresql-16-bgw-replstatus","sql_name":"bgw-replstatus","description":"- report whether PostgreSQL node is master or standby"}
+{"pg_major":16,"name":"credcheck","type":"package","package":"postgresql-16-credcheck","sql_name":"credcheck","description":"- PostgreSQL username/password checks"}
+{"pg_major":16,"name":"cron","type":"package","package":"postgresql-16-cron","sql_name":"pg_cron","description":"- Run periodic jobs in PostgreSQL"}
+{"pg_major":16,"name":"debversion","type":"package","package":"postgresql-16-debversion","sql_name":"debversion","description":"- Debian version number type for PostgreSQL"}
+{"pg_major":16,"name":"decoderbufs","type":"package","package":"postgresql-16-decoderbufs","sql_name":"decoderbufs","description":"- logical decoder output plugin to deliver data as Protocol Buffers"}
+{"pg_major":16,"name":"dirtyread","type":"package","package":"postgresql-16-dirtyread","sql_name":"pg_dirtyread","description":"- Read dead but unvacuumed tuples from a PostgreSQL relation"}
+{"pg_major":16,"name":"extra-window-functions","type":"package","package":"postgresql-16-extra-window-functions","sql_name":"extra_window_functions","description":"- Extra Window Functions for PostgreSQL"}
+{"pg_major":16,"name":"first-last-agg","type":"package","package":"postgresql-16-first-last-agg","sql_name":"first_last_agg","description":"- PostgreSQL extension providing first and last aggregate functions"}
+{"pg_major":16,"name":"h3","type":"package","package":"postgresql-16-h3","sql_name":"h3","description":"- PostgreSQL bindings for H3, a hierarchical hexagonal geospatial indexing system"}
+{"pg_major":16,"name":"h3","type":"package","package":"postgresql-16-h3","sql_name":"h3_postgis","description":"- PostgreSQL bindings for H3, a hierarchical hexagonal geospatial indexing system"}
+{"pg_major":16,"name":"hll","type":"package","package":"postgresql-16-hll","sql_name":"hll","description":"- HyperLogLog extension for PostgreSQL"}
+{"pg_major":16,"name":"http","type":"package","package":"postgresql-16-http","sql_name":"http","description":"- HTTP client for PostgreSQL, retrieve a web page from inside the database"}
+{"pg_major":16,"name":"hypopg","type":"package","package":"postgresql-16-hypopg","sql_name":"hypopg","description":"- PostgreSQL extension adding support for hypothetical indexes."}
+{"pg_major":16,"name":"icu-ext","type":"package","package":"postgresql-16-icu-ext","sql_name":"icu_ext","description":"- PostgreSQL extension exposing functionality from the ICU library"}
+{"pg_major":16,"name":"ip4r","type":"package","package":"postgresql-16-ip4r","sql_name":"ip4r","description":"- IPv4 and IPv6 types for PostgreSQL 16"}
+{"pg_major":16,"name":"jsquery","type":"package","package":"postgresql-16-jsquery","sql_name":"jsquery","description":"- PostgreSQL JSON query language with GIN indexing support"}
+{"pg_major":16,"name":"londiste-sql","type":"package","package":"postgresql-16-londiste-sql","sql_name":"londiste","description":"- SQL infrastructure for Londiste"}
+{"pg_major":16,"name":"londiste-sql","type":"package","package":"postgresql-16-londiste-sql","sql_name":"pgq","description":"- SQL infrastructure for Londiste"}
+{"pg_major":16,"name":"londiste-sql","type":"package","package":"postgresql-16-londiste-sql","sql_name":"pgq_node","description":"- SQL infrastructure for Londiste"}
+{"pg_major":16,"name":"mimeo","type":"package","package":"postgresql-16-mimeo","sql_name":"mimeo","description":"- specialized, per-table replication between PostgreSQL instances"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"address_standardizer","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"address_standardizer-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"address_standardizer_data_us","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"address_standardizer_data_us-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"mobilitydb","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_raster","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_raster-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_sfcgal","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_sfcgal-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_tiger_geocoder","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_tiger_geocoder-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_topology","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mobilitydb","type":"package","package":"postgresql-16-mobilitydb","sql_name":"postgis_topology-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":16,"name":"mysql-fdw","type":"package","package":"postgresql-16-mysql-fdw","sql_name":"mysql_fdw","description":"- Postgres 16 Foreign Data Wrapper for MySQL"}
+{"pg_major":16,"name":"numeral","type":"package","package":"postgresql-16-numeral","sql_name":"numeral","description":"- numeral datatypes for PostgreSQL"}
+{"pg_major":16,"name":"ogr-fdw","type":"package","package":"postgresql-16-ogr-fdw","sql_name":"ogr_fdw","description":"- PostgreSQL foreign data wrapper for OGR"}
+{"pg_major":16,"name":"omnidb","type":"package","package":"postgresql-16-omnidb","sql_name":"omnidb_plpgsql_debugger","description":"- PostgreSQL PL/pgSQL debugger extension for OmniDB"}
+{"pg_major":16,"name":"oracle-fdw","type":"package","package":"postgresql-16-oracle-fdw","sql_name":"oracle_fdw","description":"- PostgreSQL Foreign Data Wrapper for Oracle"}
+{"pg_major":16,"name":"orafce","type":"package","package":"postgresql-16-orafce","sql_name":"orafce","description":"- Oracle support functions for PostgreSQL 16"}
+{"pg_major":16,"name":"partman","type":"package","package":"postgresql-16-partman","sql_name":"pg_partman","description":"- PostgreSQL Partition Manager"}
+{"pg_major":16,"name":"periods","type":"package","package":"postgresql-16-periods","sql_name":"periods","description":"- PERIODs and SYSTEM VERSIONING for PostgreSQL"}
+{"pg_major":16,"name":"pgauditlogtofile","type":"package","package":"postgresql-16-pgauditlogtofile","sql_name":"pgaudit","description":"- PostgreSQL pgAudit Add-On to redirect audit logs"}
+{"pg_major":16,"name":"pgauditlogtofile","type":"package","package":"postgresql-16-pgauditlogtofile","sql_name":"pgauditlogtofile","description":"- PostgreSQL pgAudit Add-On to redirect audit logs"}
+{"pg_major":16,"name":"pgaudit","type":"package","package":"postgresql-16-pgaudit","sql_name":"pgaudit","description":"- PostgreSQL Audit Extension"}
+{"pg_major":16,"name":"pg-catcheck","type":"package","package":"postgresql-16-pg-catcheck","sql_name":"pg-catcheck","description":"- Postgres system catalog checker"}
+{"pg_major":16,"name":"pg-checksums","type":"package","package":"postgresql-16-pg-checksums","sql_name":"pg-checksums","description":"- Activate/deactivate/verify PostgreSQL data checksums"}
+{"pg_major":16,"name":"pg-crash","type":"package","package":"postgresql-16-pg-crash","sql_name":"pg-crash","description":"- Periodically crash your PostgreSQL database"}
+{"pg_major":16,"name":"pgextwlist","type":"package","package":"postgresql-16-pgextwlist","sql_name":"pgextwlist","description":"- PostgreSQL Extension Whitelisting"}
+{"pg_major":16,"name":"pgfaceting","type":"package","package":"postgresql-16-pgfaceting","sql_name":"pgfaceting","description":"- Faceted query acceleration for PostgreSQL using roaring bitmaps"}
+{"pg_major":16,"name":"pgfaceting","type":"package","package":"postgresql-16-pgfaceting","sql_name":"roaringbitmap","description":"- Faceted query acceleration for PostgreSQL using roaring bitmaps"}
+{"pg_major":16,"name":"pg-fact-loader","type":"package","package":"postgresql-16-pg-fact-loader","sql_name":"pg_fact_loader","description":"- Build fact tables asynchronously with Postgres"}
+{"pg_major":16,"name":"pg-failover-slots","type":"package","package":"postgresql-16-pg-failover-slots","sql_name":"pg-failover-slots","description":"- High-availability support for PostgreSQL logical replication"}
+{"pg_major":16,"name":"pgfincore","type":"package","package":"postgresql-16-pgfincore","sql_name":"pgfincore","description":"- set of PostgreSQL functions to manage blocks in memory"}
+{"pg_major":16,"name":"pg-gvm","type":"package","package":"postgresql-16-pg-gvm","sql_name":"pg-gvm","description":"- PostgreSQL extension for ical object manipulation"}
+{"pg_major":16,"name":"pg-hint-plan","type":"package","package":"postgresql-16-pg-hint-plan","sql_name":"pg_hint_plan","description":"- support for optimizer hints in PostgreSQL"}
+{"pg_major":16,"name":"pgl-ddl-deploy","type":"package","package":"postgresql-16-pgl-ddl-deploy","sql_name":"pgl_ddl_deploy","description":"- Transparent DDL replication for PostgreSQL"}
+{"pg_major":16,"name":"pglogical","type":"package","package":"postgresql-16-pglogical","sql_name":"pglogical","description":"- Logical Replication Extension for PostgreSQL"}
+{"pg_major":16,"name":"pglogical","type":"package","package":"postgresql-16-pglogical","sql_name":"pglogical_origin","description":"- Logical Replication Extension for PostgreSQL"}
+{"pg_major":16,"name":"pglogical-ticker","type":"package","package":"postgresql-16-pglogical-ticker","sql_name":"pglogical_ticker","description":"- Have time-based replication delay for pglogical"}
+{"pg_major":16,"name":"pgmemcache","type":"package","package":"postgresql-16-pgmemcache","sql_name":"pgmemcache","description":"- PostgreSQL interface to memcached"}
+{"pg_major":16,"name":"pgmp","type":"package","package":"postgresql-16-pgmp","sql_name":"pgmp","description":"- arbitrary precision integers and rationals for PostgreSQL 16"}
+{"pg_major":16,"name":"pgnodemx","type":"package","package":"postgresql-16-pgnodemx","sql_name":"pgnodemx","description":"- capture node OS metrics from PostgreSQL"}
+{"pg_major":16,"name":"pgnodemx","type":"package","package":"postgresql-16-pgnodemx","sql_name":"pg_proctab","description":"- capture node OS metrics from PostgreSQL"}
+{"pg_major":16,"name":"pgpcre","type":"package","package":"postgresql-16-pgpcre","sql_name":"pgpcre","description":"- Perl Compatible Regular Expressions (PCRE) extension for PostgreSQL"}
+{"pg_major":16,"name":"pg-permissions","type":"package","package":"postgresql-16-pg-permissions","sql_name":"pg_permissions","description":"- see all permissions in a PostgreSQL database"}
+{"pg_major":16,"name":"pgpool2","type":"package","package":"postgresql-16-pgpool2","sql_name":"pgpool_adm","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
+{"pg_major":16,"name":"pgpool2","type":"package","package":"postgresql-16-pgpool2","sql_name":"pgpool_recovery","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
+{"pg_major":16,"name":"pgpool2","type":"package","package":"postgresql-16-pgpool2","sql_name":"pgpool_regclass","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
+{"pg_major":16,"name":"pgq3","type":"package","package":"postgresql-16-pgq3","sql_name":"pgq3","description":"- Generic queue for PostgreSQL"}
+{"pg_major":16,"name":"pgq-node","type":"package","package":"postgresql-16-pgq-node","sql_name":"pgq-node","description":"- Cascaded queueing on top of PgQ"}
+{"pg_major":16,"name":"pg-qualstats","type":"package","package":"postgresql-16-pg-qualstats","sql_name":"pg_qualstats","description":"- PostgreSQL extension to gather statistics about predicates."}
+{"pg_major":16,"name":"pg-rewrite","type":"package","package":"postgresql-16-pg-rewrite","sql_name":"pg_rewrite","description":"- Rewrite PostgreSQL tables with less locking"}
+{"pg_major":16,"name":"pgrouting-doc","type":"package","package":"postgresql-16-pgrouting-doc","sql_name":"pgrouting-doc","description":"- Routing functionality support for PostgreSQL/PostGIS (Documentation)"}
+{"pg_major":16,"name":"pgrouting","type":"package","package":"postgresql-16-pgrouting","sql_name":"pgrouting","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":16,"name":"pgrouting-scripts","type":"package","package":"postgresql-16-pgrouting-scripts","sql_name":"pgrouting-scripts","description":"- Routing functionality support for PostgreSQL/PostGIS - SQL scripts"}
+{"pg_major":16,"name":"pg-rrule","type":"package","package":"postgresql-16-pg-rrule","sql_name":"pg_rrule","description":"- RRULE data type for PostgreSQL"}
+{"pg_major":16,"name":"pgsentinel","type":"package","package":"postgresql-16-pgsentinel","sql_name":"pgsentinel","description":"- PostgreSQL extension pgsentinel"}
+{"pg_major":16,"name":"pgsphere","type":"package","package":"postgresql-16-pgsphere","sql_name":"pg_sphere","description":"- Spherical data types for PostgreSQL"}
+{"pg_major":16,"name":"pg-stat-kcache","type":"package","package":"postgresql-16-pg-stat-kcache","sql_name":"pg_stat_kcache","description":"- PostgreSQL extension to gather per-query kernel statistics."}
+{"pg_major":16,"name":"pgtap","type":"package","package":"postgresql-16-pgtap","sql_name":"pgtap","description":"- Unit testing framework extension for PostgreSQL 16"}
+{"pg_major":16,"name":"pg-track-settings","type":"package","package":"postgresql-16-pg-track-settings","sql_name":"pg_track_settings","description":"- PostgreSQL extension tracking of configuration settings"}
+{"pg_major":16,"name":"pgtt","type":"package","package":"postgresql-16-pgtt","sql_name":"pgtt","description":"- PostgreSQL Global Temporary Tables"}
+{"pg_major":16,"name":"pgvector","type":"package","package":"postgresql-16-pgvector","sql_name":"vector","description":"- Open-source vector similarity search for Postgres"}
+{"pg_major":16,"name":"pg-wait-sampling","type":"package","package":"postgresql-16-pg-wait-sampling","sql_name":"pg_wait_sampling","description":"- Extension providing statistics about PostgreSQL wait events"}
+{"pg_major":16,"name":"pldebugger","type":"package","package":"postgresql-16-pldebugger","sql_name":"pldbgapi","description":"- PostgreSQL pl/pgsql Debugger API"}
+{"pg_major":16,"name":"pljava","type":"package","package":"postgresql-16-pljava","sql_name":"pljava","description":"- Java procedural language for PostgreSQL 16"}
+{"pg_major":16,"name":"pljs","type":"package","package":"postgresql-16-pljs","sql_name":"pljs","description":"- Javascript Language Plugin for PostgreSQL"}
+{"pg_major":16,"name":"pllua","type":"package","package":"postgresql-16-pllua","sql_name":"hstore_pllua","description":"- Lua procedural language for PostgreSQL 16"}
+{"pg_major":16,"name":"pllua","type":"package","package":"postgresql-16-pllua","sql_name":"hstore_plluau","description":"- Lua procedural language for PostgreSQL 16"}
+{"pg_major":16,"name":"pllua","type":"package","package":"postgresql-16-pllua","sql_name":"pllua","description":"- Lua procedural language for PostgreSQL 16"}
+{"pg_major":16,"name":"pllua","type":"package","package":"postgresql-16-pllua","sql_name":"plluau","description":"- Lua procedural language for PostgreSQL 16"}
+{"pg_major":16,"name":"plpgsql-check","type":"package","package":"postgresql-16-plpgsql-check","sql_name":"plpgsql_check","description":"- plpgsql_check extension for PostgreSQL"}
+{"pg_major":16,"name":"plprofiler","type":"package","package":"postgresql-16-plprofiler","sql_name":"plprofiler","description":"- PostgreSQL PL/pgSQL functions performance profiler"}
+{"pg_major":16,"name":"plproxy","type":"package","package":"postgresql-16-plproxy","sql_name":"plproxy","description":"- database partitioning system for PostgreSQL 16"}
+{"pg_major":16,"name":"plr","type":"package","package":"postgresql-16-plr","sql_name":"plr","description":"- Procedural language interface between PostgreSQL and R"}
+{"pg_major":16,"name":"plsh","type":"package","package":"postgresql-16-plsh","sql_name":"plsh","description":"- PL/sh procedural language for PostgreSQL 16"}
+{"pg_major":16,"name":"pointcloud","type":"package","package":"postgresql-16-pointcloud","sql_name":"pointcloud","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
+{"pg_major":16,"name":"pointcloud","type":"package","package":"postgresql-16-pointcloud","sql_name":"pointcloud_postgis","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
+{"pg_major":16,"name":"postgis-3","type":"package","package":"postgresql-16-postgis-3","sql_name":"postgis-3","description":"- Geographic objects support for PostgreSQL 16"}
+{"pg_major":16,"name":"postgis-3-scripts","type":"package","package":"postgresql-16-postgis-3-scripts","sql_name":"postgis-3-scripts","description":"- Geographic objects support for PostgreSQL 16 -- SQL scripts"}
+{"pg_major":16,"name":"powa","type":"package","package":"postgresql-16-powa","sql_name":"powa","description":"- PostgreSQL Workload Analyzer -- PostgreSQL 16 extension"}
+{"pg_major":16,"name":"prefix","type":"package","package":"postgresql-16-prefix","sql_name":"prefix","description":"- Prefix Range module for PostgreSQL"}
+{"pg_major":16,"name":"preprepare","type":"package","package":"postgresql-16-preprepare","sql_name":"pre_prepare","description":"- pre prepare your PostgreSQL statements server side"}
+{"pg_major":16,"name":"prioritize","type":"package","package":"postgresql-16-prioritize","sql_name":"prioritize","description":"- Get and set the nice priorities of PostgreSQL backends"}
+{"pg_major":16,"name":"q3c","type":"package","package":"postgresql-16-q3c","sql_name":"q3c","description":"- PostgreSQL 16 extension used for indexing the sky"}
+{"pg_major":16,"name":"rational","type":"package","package":"postgresql-16-rational","sql_name":"pg_rational","description":"- Precise fractional arithmetic for PostgreSQL"}
+{"pg_major":16,"name":"rdkit","type":"package","package":"postgresql-16-rdkit","sql_name":"rdkit","description":"- Cheminformatics and machine-learning software (PostgreSQL Cartridge)"}
+{"pg_major":16,"name":"repack","type":"package","package":"postgresql-16-repack","sql_name":"pg_repack","description":"- reorganize tables in PostgreSQL databases with minimal locks"}
+{"pg_major":16,"name":"repmgr","type":"package","package":"postgresql-16-repmgr","sql_name":"repmgr","description":"- replication manager for PostgreSQL 16"}
+{"pg_major":16,"name":"roaringbitmap","type":"package","package":"postgresql-16-roaringbitmap","sql_name":"roaringbitmap","description":"- RoaringBitmap extension for PostgreSQL"}
+{"pg_major":16,"name":"rum","type":"package","package":"postgresql-16-rum","sql_name":"rum","description":"- PostgreSQL RUM access method"}
+{"pg_major":16,"name":"semver","type":"package","package":"postgresql-16-semver","sql_name":"semver","description":"- Semantic version number type for PostgreSQL"}
+{"pg_major":16,"name":"set-user","type":"package","package":"postgresql-16-set-user","sql_name":"set_user","description":"- PostgreSQL privilege escalation with enhanced logging and control"}
+{"pg_major":16,"name":"show-plans","type":"package","package":"postgresql-16-show-plans","sql_name":"pg_show_plans","description":"- Show query plans of currently running PostgreSQL statements"}
+{"pg_major":16,"name":"similarity","type":"package","package":"postgresql-16-similarity","sql_name":"pg_similarity","description":"- PostgreSQL similarity functions extension"}
+{"pg_major":16,"name":"slony1-2","type":"package","package":"postgresql-16-slony1-2","sql_name":"slony1-2","description":"- replication system for PostgreSQL: PostgreSQL 16 server plug-in"}
+{"pg_major":16,"name":"snakeoil","type":"package","package":"postgresql-16-snakeoil","sql_name":"pg_snakeoil","description":"- PostgreSQL anti-virus scanner based on ClamAV"}
+{"pg_major":16,"name":"squeeze","type":"package","package":"postgresql-16-squeeze","sql_name":"pg_squeeze","description":"- PostgreSQL extension for automatic bloat cleanup"}
+{"pg_major":16,"name":"statviz","type":"package","package":"postgresql-16-statviz","sql_name":"pg_statviz","description":"- PostgreSQL internal statistics analysis and visualization"}
+{"pg_major":16,"name":"tablelog","type":"package","package":"postgresql-16-tablelog","sql_name":"table_log","description":"- log changes on tables and restore tables to point in time"}
+{"pg_major":16,"name":"tdigest","type":"package","package":"postgresql-16-tdigest","sql_name":"tdigest","description":"- t-digest algorithm for on-line accumulation of rank-based statistics"}
+{"pg_major":16,"name":"tds-fdw","type":"package","package":"postgresql-16-tds-fdw","sql_name":"tds_fdw","description":"- PostgreSQL foreign data wrapper for TDS databases"}
+{"pg_major":16,"name":"timescaledb","type":"package","package":"postgresql-16-timescaledb","sql_name":"timescaledb","description":"- time-series SQL database optimized for fast ingest and complex queries"}
+{"pg_major":16,"name":"toastinfo","type":"package","package":"postgresql-16-toastinfo","sql_name":"toastinfo","description":"- Show storage structure of varlena datatypes in PostgreSQL"}
+{"pg_major":16,"name":"unit","type":"package","package":"postgresql-16-unit","sql_name":"unit","description":"- SI Units for PostgreSQL"}
+{"pg_major":16,"name":"wal2json","type":"package","package":"postgresql-16-wal2json","sql_name":"wal2json","description":"- PostgreSQL logical decoding JSON output plugin"}
+{"pg_major":17,"name":"amcheck","type":"builtin","package":null,"sql_name":"amcheck","description":"functions for verifying relation integrity"}
+{"pg_major":17,"name":"autoinc","type":"builtin","package":null,"sql_name":"autoinc","description":"functions for autoincrementing fields"}
+{"pg_major":17,"name":"bloom","type":"builtin","package":null,"sql_name":"bloom","description":"bloom access method - signature file based index"}
+{"pg_major":17,"name":"btree_gin","type":"builtin","package":null,"sql_name":"btree_gin","description":"support for indexing common datatypes in GIN"}
+{"pg_major":17,"name":"btree_gist","type":"builtin","package":null,"sql_name":"btree_gist","description":"support for indexing common datatypes in GiST"}
+{"pg_major":17,"name":"citext","type":"builtin","package":null,"sql_name":"citext","description":"data type for case-insensitive character strings"}
+{"pg_major":17,"name":"cube","type":"builtin","package":null,"sql_name":"cube","description":"data type for multidimensional cubes"}
+{"pg_major":17,"name":"dblink","type":"builtin","package":null,"sql_name":"dblink","description":"connect to other PostgreSQL databases from within a database"}
+{"pg_major":17,"name":"dict_int","type":"builtin","package":null,"sql_name":"dict_int","description":"text search dictionary template for integers"}
+{"pg_major":17,"name":"dict_xsyn","type":"builtin","package":null,"sql_name":"dict_xsyn","description":"text search dictionary template for extended synonym processing"}
+{"pg_major":17,"name":"earthdistance","type":"builtin","package":null,"sql_name":"earthdistance","description":"calculate great-circle distances on the surface of the Earth"}
+{"pg_major":17,"name":"file_fdw","type":"builtin","package":null,"sql_name":"file_fdw","description":"foreign-data wrapper for flat file access"}
+{"pg_major":17,"name":"fuzzystrmatch","type":"builtin","package":null,"sql_name":"fuzzystrmatch","description":"determine similarities and distance between strings"}
+{"pg_major":17,"name":"hstore","type":"builtin","package":null,"sql_name":"hstore","description":"data type for storing sets of (key, value) pairs"}
+{"pg_major":17,"name":"insert_username","type":"builtin","package":null,"sql_name":"insert_username","description":"functions for tracking who changed a table"}
+{"pg_major":17,"name":"intagg","type":"builtin","package":null,"sql_name":"intagg","description":"integer aggregator and enumerator (obsolete)"}
+{"pg_major":17,"name":"intarray","type":"builtin","package":null,"sql_name":"intarray","description":"functions, operators, and index support for 1-D arrays of integers"}
+{"pg_major":17,"name":"isn","type":"builtin","package":null,"sql_name":"isn","description":"data types for international product numbering standards"}
+{"pg_major":17,"name":"lo","type":"builtin","package":null,"sql_name":"lo","description":"Large Object maintenance"}
+{"pg_major":17,"name":"ltree","type":"builtin","package":null,"sql_name":"ltree","description":"data type for hierarchical tree-like structures"}
+{"pg_major":17,"name":"moddatetime","type":"builtin","package":null,"sql_name":"moddatetime","description":"functions for tracking last modification time"}
+{"pg_major":17,"name":"pageinspect","type":"builtin","package":null,"sql_name":"pageinspect","description":"inspect the contents of database pages at a low level"}
+{"pg_major":17,"name":"pg_buffercache","type":"builtin","package":null,"sql_name":"pg_buffercache","description":"examine the shared buffer cache"}
+{"pg_major":17,"name":"pg_freespacemap","type":"builtin","package":null,"sql_name":"pg_freespacemap","description":"examine the free space map (FSM)"}
+{"pg_major":17,"name":"pg_prewarm","type":"builtin","package":null,"sql_name":"pg_prewarm","description":"prewarm relation data"}
+{"pg_major":17,"name":"pg_stat_statements","type":"builtin","package":null,"sql_name":"pg_stat_statements","description":"track planning and execution statistics of all SQL statements executed"}
+{"pg_major":17,"name":"pg_surgery","type":"builtin","package":null,"sql_name":"pg_surgery","description":"extension to perform surgery on a damaged relation"}
+{"pg_major":17,"name":"pg_trgm","type":"builtin","package":null,"sql_name":"pg_trgm","description":"text similarity measurement and index searching based on trigrams"}
+{"pg_major":17,"name":"pg_visibility","type":"builtin","package":null,"sql_name":"pg_visibility","description":"examine the visibility map (VM) and page-level visibility info"}
+{"pg_major":17,"name":"pg_walinspect","type":"builtin","package":null,"sql_name":"pg_walinspect","description":"functions to inspect contents of PostgreSQL Write-Ahead Log"}
+{"pg_major":17,"name":"pgcrypto","type":"builtin","package":null,"sql_name":"pgcrypto","description":"cryptographic functions"}
+{"pg_major":17,"name":"pgrowlocks","type":"builtin","package":null,"sql_name":"pgrowlocks","description":"show row-level locking information"}
+{"pg_major":17,"name":"pgstattuple","type":"builtin","package":null,"sql_name":"pgstattuple","description":"show tuple-level statistics"}
+{"pg_major":17,"name":"plpgsql","type":"builtin","package":null,"sql_name":"plpgsql","description":"PL/pgSQL procedural language"}
+{"pg_major":17,"name":"postgres_fdw","type":"builtin","package":null,"sql_name":"postgres_fdw","description":"foreign-data wrapper for remote PostgreSQL servers"}
+{"pg_major":17,"name":"refint","type":"builtin","package":null,"sql_name":"refint","description":"functions for implementing referential integrity (obsolete)"}
+{"pg_major":17,"name":"seg","type":"builtin","package":null,"sql_name":"seg","description":"data type for representing line segments or floating-point intervals"}
+{"pg_major":17,"name":"sslinfo","type":"builtin","package":null,"sql_name":"sslinfo","description":"information about SSL certificates"}
+{"pg_major":17,"name":"tablefunc","type":"builtin","package":null,"sql_name":"tablefunc","description":"functions that manipulate whole tables, including crosstab"}
+{"pg_major":17,"name":"tcn","type":"builtin","package":null,"sql_name":"tcn","description":"Triggered change notifications"}
+{"pg_major":17,"name":"tsm_system_rows","type":"builtin","package":null,"sql_name":"tsm_system_rows","description":"TABLESAMPLE method which accepts number of rows as a limit"}
+{"pg_major":17,"name":"tsm_system_time","type":"builtin","package":null,"sql_name":"tsm_system_time","description":"TABLESAMPLE method which accepts time in milliseconds as a limit"}
+{"pg_major":17,"name":"unaccent","type":"builtin","package":null,"sql_name":"unaccent","description":"text search dictionary that removes accents"}
+{"pg_major":17,"name":"uuid-ossp","type":"builtin","package":null,"sql_name":"uuid-ossp","description":"generate universally unique identifiers (UUIDs)"}
+{"pg_major":17,"name":"xml2","type":"builtin","package":null,"sql_name":"xml2","description":"XPath querying and XSLT"}
+{"pg_major":17,"name":"age","type":"package","package":"postgresql-17-age","sql_name":"age","description":"- Graph database optimized for fast analysis and real-time data processing"}
+{"pg_major":17,"name":"asn1oid","type":"package","package":"postgresql-17-asn1oid","sql_name":"asn1oid","description":"- ASN.1 OID data type for PostgreSQL"}
+{"pg_major":17,"name":"auto-failover","type":"package","package":"postgresql-17-auto-failover","sql_name":"pgautofailover","description":"- Postgres high availability support"}
+{"pg_major":17,"name":"bgw-replstatus","type":"package","package":"postgresql-17-bgw-replstatus","sql_name":"bgw-replstatus","description":"- report whether PostgreSQL node is master or standby"}
+{"pg_major":17,"name":"credcheck","type":"package","package":"postgresql-17-credcheck","sql_name":"credcheck","description":"- PostgreSQL username/password checks"}
+{"pg_major":17,"name":"cron","type":"package","package":"postgresql-17-cron","sql_name":"pg_cron","description":"- Run periodic jobs in PostgreSQL"}
+{"pg_major":17,"name":"debversion","type":"package","package":"postgresql-17-debversion","sql_name":"debversion","description":"- Debian version number type for PostgreSQL"}
+{"pg_major":17,"name":"decoderbufs","type":"package","package":"postgresql-17-decoderbufs","sql_name":"decoderbufs","description":"- logical decoder output plugin to deliver data as Protocol Buffers"}
+{"pg_major":17,"name":"dirtyread","type":"package","package":"postgresql-17-dirtyread","sql_name":"pg_dirtyread","description":"- Read dead but unvacuumed tuples from a PostgreSQL relation"}
+{"pg_major":17,"name":"extra-window-functions","type":"package","package":"postgresql-17-extra-window-functions","sql_name":"extra_window_functions","description":"- Extra Window Functions for PostgreSQL"}
+{"pg_major":17,"name":"first-last-agg","type":"package","package":"postgresql-17-first-last-agg","sql_name":"first_last_agg","description":"- PostgreSQL extension providing first and last aggregate functions"}
+{"pg_major":17,"name":"h3","type":"package","package":"postgresql-17-h3","sql_name":"h3","description":"- PostgreSQL bindings for H3, a hierarchical hexagonal geospatial indexing system"}
+{"pg_major":17,"name":"h3","type":"package","package":"postgresql-17-h3","sql_name":"h3_postgis","description":"- PostgreSQL bindings for H3, a hierarchical hexagonal geospatial indexing system"}
+{"pg_major":17,"name":"hll","type":"package","package":"postgresql-17-hll","sql_name":"hll","description":"- HyperLogLog extension for PostgreSQL"}
+{"pg_major":17,"name":"http","type":"package","package":"postgresql-17-http","sql_name":"http","description":"- HTTP client for PostgreSQL, retrieve a web page from inside the database"}
+{"pg_major":17,"name":"hypopg","type":"package","package":"postgresql-17-hypopg","sql_name":"hypopg","description":"- PostgreSQL extension adding support for hypothetical indexes."}
+{"pg_major":17,"name":"icu-ext","type":"package","package":"postgresql-17-icu-ext","sql_name":"icu_ext","description":"- PostgreSQL extension exposing functionality from the ICU library"}
+{"pg_major":17,"name":"ip4r","type":"package","package":"postgresql-17-ip4r","sql_name":"ip4r","description":"- IPv4 and IPv6 types for PostgreSQL 17"}
+{"pg_major":17,"name":"jsquery","type":"package","package":"postgresql-17-jsquery","sql_name":"jsquery","description":"- PostgreSQL JSON query language with GIN indexing support"}
+{"pg_major":17,"name":"londiste-sql","type":"package","package":"postgresql-17-londiste-sql","sql_name":"londiste","description":"- SQL infrastructure for Londiste"}
+{"pg_major":17,"name":"londiste-sql","type":"package","package":"postgresql-17-londiste-sql","sql_name":"pgq","description":"- SQL infrastructure for Londiste"}
+{"pg_major":17,"name":"londiste-sql","type":"package","package":"postgresql-17-londiste-sql","sql_name":"pgq_node","description":"- SQL infrastructure for Londiste"}
+{"pg_major":17,"name":"mimeo","type":"package","package":"postgresql-17-mimeo","sql_name":"mimeo","description":"- specialized, per-table replication between PostgreSQL instances"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"address_standardizer","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"address_standardizer-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"address_standardizer_data_us","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"address_standardizer_data_us-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"mobilitydb","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_raster","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_raster-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_sfcgal","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_sfcgal-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_tiger_geocoder","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_tiger_geocoder-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_topology","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mobilitydb","type":"package","package":"postgresql-17-mobilitydb","sql_name":"postgis_topology-3","description":"- Open source geospatial trajectory data management & analysis platform"}
+{"pg_major":17,"name":"mysql-fdw","type":"package","package":"postgresql-17-mysql-fdw","sql_name":"mysql_fdw","description":"- Postgres 17 Foreign Data Wrapper for MySQL"}
+{"pg_major":17,"name":"numeral","type":"package","package":"postgresql-17-numeral","sql_name":"numeral","description":"- numeral datatypes for PostgreSQL"}
+{"pg_major":17,"name":"ogr-fdw","type":"package","package":"postgresql-17-ogr-fdw","sql_name":"ogr_fdw","description":"- PostgreSQL foreign data wrapper for OGR"}
+{"pg_major":17,"name":"omnidb","type":"package","package":"postgresql-17-omnidb","sql_name":"omnidb_plpgsql_debugger","description":"- PostgreSQL PL/pgSQL debugger extension for OmniDB"}
+{"pg_major":17,"name":"oracle-fdw","type":"package","package":"postgresql-17-oracle-fdw","sql_name":"oracle_fdw","description":"- PostgreSQL Foreign Data Wrapper for Oracle"}
+{"pg_major":17,"name":"orafce","type":"package","package":"postgresql-17-orafce","sql_name":"orafce","description":"- Oracle support functions for PostgreSQL 17"}
+{"pg_major":17,"name":"partman","type":"package","package":"postgresql-17-partman","sql_name":"pg_partman","description":"- PostgreSQL Partition Manager"}
+{"pg_major":17,"name":"periods","type":"package","package":"postgresql-17-periods","sql_name":"periods","description":"- PERIODs and SYSTEM VERSIONING for PostgreSQL"}
+{"pg_major":17,"name":"pgauditlogtofile","type":"package","package":"postgresql-17-pgauditlogtofile","sql_name":"pgaudit","description":"- PostgreSQL pgAudit Add-On to redirect audit logs"}
+{"pg_major":17,"name":"pgauditlogtofile","type":"package","package":"postgresql-17-pgauditlogtofile","sql_name":"pgauditlogtofile","description":"- PostgreSQL pgAudit Add-On to redirect audit logs"}
+{"pg_major":17,"name":"pgaudit","type":"package","package":"postgresql-17-pgaudit","sql_name":"pgaudit","description":"- PostgreSQL Audit Extension"}
+{"pg_major":17,"name":"pg-catcheck","type":"package","package":"postgresql-17-pg-catcheck","sql_name":"pg-catcheck","description":"- Postgres system catalog checker"}
+{"pg_major":17,"name":"pg-checksums","type":"package","package":"postgresql-17-pg-checksums","sql_name":"pg-checksums","description":"- Activate/deactivate/verify PostgreSQL data checksums"}
+{"pg_major":17,"name":"pg-crash","type":"package","package":"postgresql-17-pg-crash","sql_name":"pg-crash","description":"- Periodically crash your PostgreSQL database"}
+{"pg_major":17,"name":"pgextwlist","type":"package","package":"postgresql-17-pgextwlist","sql_name":"pgextwlist","description":"- PostgreSQL Extension Whitelisting"}
+{"pg_major":17,"name":"pgfaceting","type":"package","package":"postgresql-17-pgfaceting","sql_name":"pgfaceting","description":"- Faceted query acceleration for PostgreSQL using roaring bitmaps"}
+{"pg_major":17,"name":"pgfaceting","type":"package","package":"postgresql-17-pgfaceting","sql_name":"roaringbitmap","description":"- Faceted query acceleration for PostgreSQL using roaring bitmaps"}
+{"pg_major":17,"name":"pg-fact-loader","type":"package","package":"postgresql-17-pg-fact-loader","sql_name":"pg_fact_loader","description":"- Build fact tables asynchronously with Postgres"}
+{"pg_major":17,"name":"pg-failover-slots","type":"package","package":"postgresql-17-pg-failover-slots","sql_name":"pg-failover-slots","description":"- High-availability support for PostgreSQL logical replication"}
+{"pg_major":17,"name":"pgfincore","type":"package","package":"postgresql-17-pgfincore","sql_name":"pgfincore","description":"- set of PostgreSQL functions to manage blocks in memory"}
+{"pg_major":17,"name":"pg-gvm","type":"package","package":"postgresql-17-pg-gvm","sql_name":"pg-gvm","description":"- PostgreSQL extension for ical object manipulation"}
+{"pg_major":17,"name":"pg-hint-plan","type":"package","package":"postgresql-17-pg-hint-plan","sql_name":"pg_hint_plan","description":"- support for optimizer hints in PostgreSQL"}
+{"pg_major":17,"name":"pgl-ddl-deploy","type":"package","package":"postgresql-17-pgl-ddl-deploy","sql_name":"pgl_ddl_deploy","description":"- Transparent DDL replication for PostgreSQL"}
+{"pg_major":17,"name":"pglogical","type":"package","package":"postgresql-17-pglogical","sql_name":"pglogical","description":"- Logical Replication Extension for PostgreSQL"}
+{"pg_major":17,"name":"pglogical","type":"package","package":"postgresql-17-pglogical","sql_name":"pglogical_origin","description":"- Logical Replication Extension for PostgreSQL"}
+{"pg_major":17,"name":"pglogical-ticker","type":"package","package":"postgresql-17-pglogical-ticker","sql_name":"pglogical_ticker","description":"- Have time-based replication delay for pglogical"}
+{"pg_major":17,"name":"pgmemcache","type":"package","package":"postgresql-17-pgmemcache","sql_name":"pgmemcache","description":"- PostgreSQL interface to memcached"}
+{"pg_major":17,"name":"pgmp","type":"package","package":"postgresql-17-pgmp","sql_name":"pgmp","description":"- arbitrary precision integers and rationals for PostgreSQL 17"}
+{"pg_major":17,"name":"pgnodemx","type":"package","package":"postgresql-17-pgnodemx","sql_name":"pgnodemx","description":"- capture node OS metrics from PostgreSQL"}
+{"pg_major":17,"name":"pgnodemx","type":"package","package":"postgresql-17-pgnodemx","sql_name":"pg_proctab","description":"- capture node OS metrics from PostgreSQL"}
+{"pg_major":17,"name":"pgpcre","type":"package","package":"postgresql-17-pgpcre","sql_name":"pgpcre","description":"- Perl Compatible Regular Expressions (PCRE) extension for PostgreSQL"}
+{"pg_major":17,"name":"pg-permissions","type":"package","package":"postgresql-17-pg-permissions","sql_name":"pg_permissions","description":"- see all permissions in a PostgreSQL database"}
+{"pg_major":17,"name":"pgpool2","type":"package","package":"postgresql-17-pgpool2","sql_name":"pgpool_adm","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
+{"pg_major":17,"name":"pgpool2","type":"package","package":"postgresql-17-pgpool2","sql_name":"pgpool_recovery","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
+{"pg_major":17,"name":"pgpool2","type":"package","package":"postgresql-17-pgpool2","sql_name":"pgpool_regclass","description":"- connection pool server and replication proxy for PostgreSQL - modules"}
+{"pg_major":17,"name":"pgq3","type":"package","package":"postgresql-17-pgq3","sql_name":"pgq3","description":"- Generic queue for PostgreSQL"}
+{"pg_major":17,"name":"pgq-node","type":"package","package":"postgresql-17-pgq-node","sql_name":"pgq-node","description":"- Cascaded queueing on top of PgQ"}
+{"pg_major":17,"name":"pg-qualstats","type":"package","package":"postgresql-17-pg-qualstats","sql_name":"pg_qualstats","description":"- PostgreSQL extension to gather statistics about predicates."}
+{"pg_major":17,"name":"pg-rewrite","type":"package","package":"postgresql-17-pg-rewrite","sql_name":"pg_rewrite","description":"- Rewrite PostgreSQL tables with less locking"}
+{"pg_major":17,"name":"pgrouting-doc","type":"package","package":"postgresql-17-pgrouting-doc","sql_name":"pgrouting-doc","description":"- Routing functionality support for PostgreSQL/PostGIS (Documentation)"}
+{"pg_major":17,"name":"pgrouting","type":"package","package":"postgresql-17-pgrouting","sql_name":"pgrouting","description":"- Routing functionality support for PostgreSQL/PostGIS"}
+{"pg_major":17,"name":"pgrouting-scripts","type":"package","package":"postgresql-17-pgrouting-scripts","sql_name":"pgrouting-scripts","description":"- Routing functionality support for PostgreSQL/PostGIS - SQL scripts"}
+{"pg_major":17,"name":"pg-rrule","type":"package","package":"postgresql-17-pg-rrule","sql_name":"pg_rrule","description":"- RRULE data type for PostgreSQL"}
+{"pg_major":17,"name":"pgsentinel","type":"package","package":"postgresql-17-pgsentinel","sql_name":"pgsentinel","description":"- PostgreSQL extension pgsentinel"}
+{"pg_major":17,"name":"pgsphere","type":"package","package":"postgresql-17-pgsphere","sql_name":"pg_sphere","description":"- Spherical data types for PostgreSQL"}
+{"pg_major":17,"name":"pg-stat-kcache","type":"package","package":"postgresql-17-pg-stat-kcache","sql_name":"pg_stat_kcache","description":"- PostgreSQL extension to gather per-query kernel statistics."}
+{"pg_major":17,"name":"pgtap","type":"package","package":"postgresql-17-pgtap","sql_name":"pgtap","description":"- Unit testing framework extension for PostgreSQL 17"}
+{"pg_major":17,"name":"pg-track-settings","type":"package","package":"postgresql-17-pg-track-settings","sql_name":"pg_track_settings","description":"- PostgreSQL extension tracking of configuration settings"}
+{"pg_major":17,"name":"pgtt","type":"package","package":"postgresql-17-pgtt","sql_name":"pgtt","description":"- PostgreSQL Global Temporary Tables"}
+{"pg_major":17,"name":"pgvector","type":"package","package":"postgresql-17-pgvector","sql_name":"vector","description":"- Open-source vector similarity search for Postgres"}
+{"pg_major":17,"name":"pg-wait-sampling","type":"package","package":"postgresql-17-pg-wait-sampling","sql_name":"pg_wait_sampling","description":"- Extension providing statistics about PostgreSQL wait events"}
+{"pg_major":17,"name":"pldebugger","type":"package","package":"postgresql-17-pldebugger","sql_name":"pldbgapi","description":"- PostgreSQL pl/pgsql Debugger API"}
+{"pg_major":17,"name":"pljava","type":"package","package":"postgresql-17-pljava","sql_name":"pljava","description":"- Java procedural language for PostgreSQL 17"}
+{"pg_major":17,"name":"pljs","type":"package","package":"postgresql-17-pljs","sql_name":"pljs","description":"- Javascript Language Plugin for PostgreSQL"}
+{"pg_major":17,"name":"pllua","type":"package","package":"postgresql-17-pllua","sql_name":"hstore_pllua","description":"- Lua procedural language for PostgreSQL 17"}
+{"pg_major":17,"name":"pllua","type":"package","package":"postgresql-17-pllua","sql_name":"hstore_plluau","description":"- Lua procedural language for PostgreSQL 17"}
+{"pg_major":17,"name":"pllua","type":"package","package":"postgresql-17-pllua","sql_name":"pllua","description":"- Lua procedural language for PostgreSQL 17"}
+{"pg_major":17,"name":"pllua","type":"package","package":"postgresql-17-pllua","sql_name":"plluau","description":"- Lua procedural language for PostgreSQL 17"}
+{"pg_major":17,"name":"plpgsql-check","type":"package","package":"postgresql-17-plpgsql-check","sql_name":"plpgsql_check","description":"- plpgsql_check extension for PostgreSQL"}
+{"pg_major":17,"name":"plprofiler","type":"package","package":"postgresql-17-plprofiler","sql_name":"plprofiler","description":"- PostgreSQL PL/pgSQL functions performance profiler"}
+{"pg_major":17,"name":"plproxy","type":"package","package":"postgresql-17-plproxy","sql_name":"plproxy","description":"- database partitioning system for PostgreSQL 17"}
+{"pg_major":17,"name":"plr","type":"package","package":"postgresql-17-plr","sql_name":"plr","description":"- Procedural language interface between PostgreSQL and R"}
+{"pg_major":17,"name":"plsh","type":"package","package":"postgresql-17-plsh","sql_name":"plsh","description":"- PL/sh procedural language for PostgreSQL 17"}
+{"pg_major":17,"name":"pointcloud","type":"package","package":"postgresql-17-pointcloud","sql_name":"pointcloud","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
+{"pg_major":17,"name":"pointcloud","type":"package","package":"postgresql-17-pointcloud","sql_name":"pointcloud_postgis","description":"- PostgreSQL extension for storing point cloud (LIDAR) data"}
+{"pg_major":17,"name":"postgis-3","type":"package","package":"postgresql-17-postgis-3","sql_name":"postgis-3","description":"- Geographic objects support for PostgreSQL 17"}
+{"pg_major":17,"name":"postgis-3-scripts","type":"package","package":"postgresql-17-postgis-3-scripts","sql_name":"postgis-3-scripts","description":"- Geographic objects support for PostgreSQL 17 -- SQL scripts"}
+{"pg_major":17,"name":"powa","type":"package","package":"postgresql-17-powa","sql_name":"powa","description":"- PostgreSQL Workload Analyzer -- PostgreSQL 17 extension"}
+{"pg_major":17,"name":"prefix","type":"package","package":"postgresql-17-prefix","sql_name":"prefix","description":"- Prefix Range module for PostgreSQL"}
+{"pg_major":17,"name":"preprepare","type":"package","package":"postgresql-17-preprepare","sql_name":"pre_prepare","description":"- pre prepare your PostgreSQL statements server side"}
+{"pg_major":17,"name":"prioritize","type":"package","package":"postgresql-17-prioritize","sql_name":"prioritize","description":"- Get and set the nice priorities of PostgreSQL backends"}
+{"pg_major":17,"name":"q3c","type":"package","package":"postgresql-17-q3c","sql_name":"q3c","description":"- PostgreSQL 17 extension used for indexing the sky"}
+{"pg_major":17,"name":"rational","type":"package","package":"postgresql-17-rational","sql_name":"pg_rational","description":"- Precise fractional arithmetic for PostgreSQL"}
+{"pg_major":17,"name":"rdkit","type":"package","package":"postgresql-17-rdkit","sql_name":"rdkit","description":"- Cheminformatics and machine-learning software (PostgreSQL Cartridge)"}
+{"pg_major":17,"name":"repack","type":"package","package":"postgresql-17-repack","sql_name":"pg_repack","description":"- reorganize tables in PostgreSQL databases with minimal locks"}
+{"pg_major":17,"name":"repmgr","type":"package","package":"postgresql-17-repmgr","sql_name":"repmgr","description":"- replication manager for PostgreSQL 17"}
+{"pg_major":17,"name":"roaringbitmap","type":"package","package":"postgresql-17-roaringbitmap","sql_name":"roaringbitmap","description":"- RoaringBitmap extension for PostgreSQL"}
+{"pg_major":17,"name":"rum","type":"package","package":"postgresql-17-rum","sql_name":"rum","description":"- PostgreSQL RUM access method"}
+{"pg_major":17,"name":"semver","type":"package","package":"postgresql-17-semver","sql_name":"semver","description":"- Semantic version number type for PostgreSQL"}
+{"pg_major":17,"name":"set-user","type":"package","package":"postgresql-17-set-user","sql_name":"set_user","description":"- PostgreSQL privilege escalation with enhanced logging and control"}
+{"pg_major":17,"name":"show-plans","type":"package","package":"postgresql-17-show-plans","sql_name":"pg_show_plans","description":"- Show query plans of currently running PostgreSQL statements"}
+{"pg_major":17,"name":"similarity","type":"package","package":"postgresql-17-similarity","sql_name":"pg_similarity","description":"- PostgreSQL similarity functions extension"}
+{"pg_major":17,"name":"slony1-2","type":"package","package":"postgresql-17-slony1-2","sql_name":"slony1-2","description":"- replication system for PostgreSQL: PostgreSQL 17 server plug-in"}
+{"pg_major":17,"name":"snakeoil","type":"package","package":"postgresql-17-snakeoil","sql_name":"pg_snakeoil","description":"- PostgreSQL anti-virus scanner based on ClamAV"}
+{"pg_major":17,"name":"squeeze","type":"package","package":"postgresql-17-squeeze","sql_name":"pg_squeeze","description":"- PostgreSQL extension for automatic bloat cleanup"}
+{"pg_major":17,"name":"statviz","type":"package","package":"postgresql-17-statviz","sql_name":"pg_statviz","description":"- PostgreSQL internal statistics analysis and visualization"}
+{"pg_major":17,"name":"tablelog","type":"package","package":"postgresql-17-tablelog","sql_name":"table_log","description":"- log changes on tables and restore tables to point in time"}
+{"pg_major":17,"name":"tdigest","type":"package","package":"postgresql-17-tdigest","sql_name":"tdigest","description":"- t-digest algorithm for on-line accumulation of rank-based statistics"}
+{"pg_major":17,"name":"tds-fdw","type":"package","package":"postgresql-17-tds-fdw","sql_name":"tds_fdw","description":"- PostgreSQL foreign data wrapper for TDS databases"}
+{"pg_major":17,"name":"timescaledb","type":"package","package":"postgresql-17-timescaledb","sql_name":"timescaledb","description":"- time-series SQL database optimized for fast ingest and complex queries"}
+{"pg_major":17,"name":"toastinfo","type":"package","package":"postgresql-17-toastinfo","sql_name":"toastinfo","description":"- Show storage structure of varlena datatypes in PostgreSQL"}
+{"pg_major":17,"name":"unit","type":"package","package":"postgresql-17-unit","sql_name":"unit","description":"- SI Units for PostgreSQL"}
+{"pg_major":17,"name":"wal2json","type":"package","package":"postgresql-17-wal2json","sql_name":"wal2json","description":"- PostgreSQL logical decoding JSON output plugin"}

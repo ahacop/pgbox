@@ -149,4 +149,3 @@ func GenerateInitSQL(data InitSQLData) (string, error) {
 
 	return buf.String(), nil
 }
-

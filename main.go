@@ -11,7 +11,6 @@ import (
 var (
 	// These are set at build time via -ldflags
 	version = "dev"
-	commit  = "unknown"
 )
 
 func main() {

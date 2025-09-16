@@ -69,14 +69,10 @@ for major in 16 17; do
   process_pg_version "$major" >> "$OUT_FILE"
 done
 
-# Copy to internal/extensions for embedding
-cp "$OUT_FILE" internal/extensions/extensions.jsonl
-
 # Count and report
 total_lines=$(wc -l < "$OUT_FILE")
 echo ""
 echo "Merged extension data written to ${OUT_FILE}"
-echo "Also copied to internal/extensions/extensions.jsonl for embedding"
 echo "Total entries: ${total_lines}"
 
 # Show statistics

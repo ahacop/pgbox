@@ -21,26 +21,9 @@ func RenderDockerfile(m *model.DockerfileModel, outputPath string) error {
 	// Generate new anchored content
 	var anchoredContent []string
 
-	// Determine which package manager to use
-	packageManager := m.GetPackageManager()
-	var packages []string
-
-	switch packageManager {
-	case "apt":
-		packages = m.AptPackages
-		if len(packages) > 0 {
-			anchoredContent = generateAptInstall(m.BaseImage, packages)
-		}
-	case "apk":
-		packages = m.ApkPackages
-		if len(packages) > 0 {
-			anchoredContent = generateApkInstall(packages)
-		}
-	case "yum":
-		packages = m.YumPackages
-		if len(packages) > 0 {
-			anchoredContent = generateYumInstall(packages)
-		}
+	// Standard PostgreSQL images use apt
+	if len(m.AptPackages) > 0 {
+		anchoredContent = generateAptInstall(m.BaseImage, m.AptPackages)
 	}
 
 	// If no existing file, create default structure
@@ -120,56 +103,6 @@ func generateAptInstall(baseImage string, packages []string) []string {
 	}
 	lines = append(lines,
 		"    rm -rf /var/lib/apt/lists/*",
-	)
-
-	return lines
-}
-
-// generateApkInstall generates apk package installation commands
-func generateApkInstall(packages []string) []string {
-	if len(packages) == 0 {
-		return []string{}
-	}
-
-	lines := []string{
-		"# Install PostgreSQL extensions",
-		"RUN set -eux; \\",
-		"    apk add --no-cache \\",
-	}
-
-	for i, pkg := range packages {
-		if i < len(packages)-1 {
-			lines = append(lines, fmt.Sprintf("        %s \\", pkg))
-		} else {
-			lines = append(lines, fmt.Sprintf("        %s", pkg))
-		}
-	}
-
-	return lines
-}
-
-// generateYumInstall generates yum package installation commands
-func generateYumInstall(packages []string) []string {
-	if len(packages) == 0 {
-		return []string{}
-	}
-
-	lines := []string{
-		"# Install PostgreSQL extensions",
-		"RUN set -eux; \\",
-		"    yum install -y \\",
-	}
-
-	for i, pkg := range packages {
-		if i < len(packages)-1 {
-			lines = append(lines, fmt.Sprintf("        %s \\", pkg))
-		} else {
-			lines = append(lines, fmt.Sprintf("        %s; \\", pkg))
-		}
-	}
-
-	lines = append(lines,
-		"    yum clean all",
 	)
 
 	return lines

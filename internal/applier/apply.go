@@ -66,23 +66,10 @@ func (a *Applier) Apply(specs []*extspec.ExtensionSpec, dockerfile *model.Docker
 
 // applyImagePackages applies package requirements to the Dockerfile model
 func (a *Applier) applyImagePackages(spec *extspec.ExtensionSpec, dockerfile *model.DockerfileModel) error {
-	// Determine which packages to use based on the base image
-	packageManager := dockerfile.GetPackageManager()
-
-	switch packageManager {
-	case "apt":
+	// Standard PostgreSQL images use apt
+	if len(spec.Image.AptPackages) > 0 {
 		dockerfile.AddPackages(spec.Image.AptPackages, "apt")
-	case "apk":
-		dockerfile.AddPackages(spec.Image.ApkPackages, "apk")
-	case "yum":
-		dockerfile.AddPackages(spec.Image.YumPackages, "yum")
-	default:
-		// If we can't determine, use apt as default
-		if len(spec.Image.AptPackages) > 0 {
-			dockerfile.AddPackages(spec.Image.AptPackages, "apt")
-		}
 	}
-
 	return nil
 }
 

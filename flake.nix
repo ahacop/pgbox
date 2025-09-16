@@ -48,7 +48,10 @@
             description = "PostgreSQL-in-Docker development environment";
             homepage = "https://github.com/ahacop/pgbox";
             license = licenses.mit; # Update to match your license
-            maintainers = [];
+            maintainers = [{
+              name = "Ara Hacopian";
+              github = "ahacop";
+            }];
           };
         };
 

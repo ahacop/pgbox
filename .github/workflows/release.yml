@@ -36,14 +36,6 @@ jobs:
           # Skip lint in CI for now as it requires golangci-lint
           # make lint
 
-      - name: Import GPG key
-        id: import_gpg
-        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.GPG_PASSPHRASE }}
-
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -52,7 +44,6 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
 
   verify-install-script:
     name: Verify Install Script

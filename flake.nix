@@ -19,8 +19,8 @@
           pname = "pgbox";
           version =
             if (self ? shortRev)
-            then "0.2.1-${self.shortRev}"
-            else "0.2.1";
+            then "0.2.2-${self.shortRev}"
+            else "0.2.2";
 
           src = ./.;
 

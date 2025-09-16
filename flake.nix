@@ -28,7 +28,6 @@
             "-w"
             "-X main.version=${version}"
             "-X main.commit=${self.rev or "unknown"}"
-            "-X main.date=1970-01-01T00:00:00Z"  # Reproducible builds
           ];
 
           env.CGO_ENABLED = 0;

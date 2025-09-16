@@ -32,7 +32,7 @@ Implement git-based versioning in flake.nix using:
 - `buildGoModule rec` to allow self-referencing attributes
 - Dynamic version: `if (self ? shortRev) then "0.1.0-${self.shortRev}" else "0.1.0"`
 - Standard `ldflags` attribute instead of custom buildPhase
-- Pass version, commit, and date via ldflags
+- Pass version and commit via ldflags
 
 ## Implementation
 
@@ -46,7 +46,6 @@ packages.default = pkgs.buildGoModule rec {
     "-w"
     "-X main.version=${version}"
     "-X main.commit=${self.rev or "unknown"}"
-    "-X main.date=1970-01-01T00:00:00Z"  # Reproducible builds
   ];
   # ...
 };

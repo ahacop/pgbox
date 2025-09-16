@@ -13,7 +13,6 @@ var (
 	// These are set at build time via -ldflags
 	version = "dev"
 	commit  = "unknown"
-	date    = "unknown"
 )
 
 func main() {
@@ -23,7 +22,7 @@ func main() {
 		if len(commit) > 7 {
 			commit = commit[:7]
 		}
-		ver = fmt.Sprintf("%s (%s, %s)", version, commit, date)
+		ver = fmt.Sprintf("%s (%s)", version, commit)
 	}
 
 	if err := fang.Execute(context.Background(), cmd.RootCmd(), fang.WithVersion(ver)); err != nil {

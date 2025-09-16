@@ -6,6 +6,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 pgbox is a Go CLI application that simplifies running PostgreSQL in Docker with selectable extensions. It manages Docker containers with PostgreSQL instances and can install extensions from the apt.postgresql.org repository.
 
+## Project Structure
+
+- **cmd/**: Command implementations (up, down, psql, export, status, logs, restart, clean, list-extensions)
+- **internal/**: Core business logic
+  - **applier/**: Applies TOML specs to Docker/PostgreSQL configs
+  - **config/**: PostgreSQL configuration management
+  - **container/**: Container lifecycle management
+  - **docker/**: Docker command wrapper
+  - **extensions/**: Extension loading (legacy JSONL and TOML systems)
+  - **extspec/**: TOML schema definitions
+  - **model/**: Data models for Dockerfile, Compose, PostgreSQL configs
+  - **render/**: Renders models to Docker artifacts
+- **extensions/**: TOML extension definitions (one directory per extension)
+- **scripts/**: Build scripts for extension catalogs and TOML generation
+- **pkg/scaffold/**: Legacy template-based Docker artifact generation
+
 ## Build and Development Commands
 
 ```bash
@@ -86,27 +102,13 @@ The codebase has TWO extension configuration systems:
 
 1. **Legacy System** (used by `up` command):
    - Uses `extensions.jsonl` embedded file for extension metadata
-   - Simple package mapping via `extensions.Manager`
-   - Located in `internal/extensions/extensions.go` and `loader.go`
+   - Simple package mapping via internal/extensions/loader.go
    - Only handles package installation, not configuration
 
-2. **TOML-Based System** (used by `export` and `export-new` commands):
+2. **TOML-Based System** (used by `export` command):
    - Uses TOML files in `extensions/` directory for rich configuration
    - Handles shared_preload_libraries, GUCs, and complex SQL initialization
-   - Components:
-     - `internal/extspec/`: TOML schema definitions
-     - `internal/extensions/toml_loader.go`: TOML file loading
-     - `internal/applier/`: Applies TOML specs to Docker/PostgreSQL configs
-     - `internal/model/`: Data models for Dockerfile, Compose, PostgreSQL configs
-     - `internal/render/`: Renders models to actual files
-
-### Command Layer (`cmd/`)
-
-- **up.go**: Uses legacy system - builds custom Docker images with extensions
-- **export.go**: Legacy export using simple template system
-- **export_new.go**: Uses TOML system with full configuration support
-- **psql.go**: Connects to running PostgreSQL instance
-- **down.go**, **status.go**, **logs.go**: Container management
+   - Data flow: extspec.Loader → ExtensionSpec → applier → model → render
 
 ### Extension TOML Structure
 
@@ -135,6 +137,8 @@ When extensions are requested:
    - Sets required GUCs
 4. Mounts init.sql for extension creation
 5. Uses Docker volumes for data persistence
+6. Container naming: `pgbox-pg{version}` or custom via --name flag
+7. Image naming: deterministic based on extensions hash
 
 ## Testing Specific Components
 
@@ -160,3 +164,6 @@ go test -v ./internal/extspec ./internal/applier
 - When modifying extension support, update both `extensions.jsonl` and TOML files
 - Container names follow pattern: `pgbox-pg{version}` by default
 - Extension name mapping: some extensions have different SQL names (e.g., "pgvector" → "vector")
+- Default PostgreSQL versions: 16 and 17 (17 is default)
+- Default credentials: user=postgres, password=postgres, database=postgres
+- Default port: 5432

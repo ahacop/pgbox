@@ -17,7 +17,10 @@
       in {
         packages.default = pkgs.buildGoModule rec {
           pname = "pgbox";
-          version = if (self ? shortRev) then "0.1.0-${self.shortRev}" else "0.1.0";
+          version =
+            if (self ? shortRev)
+            then "0.2.0-${self.shortRev}"
+            else "0.2.0";
 
           src = ./.;
 
@@ -42,10 +45,12 @@
             description = "PostgreSQL-in-Docker development environment";
             homepage = "https://github.com/ahacop/pgbox";
             license = licenses.mit; # Update to match your license
-            maintainers = [{
-              name = "Ara Hacopian";
-              github = "ahacop";
-            }];
+            maintainers = [
+              {
+                name = "Ara Hacopian";
+                github = "ahacop";
+              }
+            ];
           };
         };
 

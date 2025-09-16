@@ -32,7 +32,7 @@ Implement git-based versioning in flake.nix using:
 - `buildGoModule rec` to allow self-referencing attributes
 - Dynamic version: `if (self ? shortRev) then "0.1.0-${self.shortRev}" else "0.1.0"`
 - Standard `ldflags` attribute instead of custom buildPhase
-- Pass version and commit via ldflags
+- Pass version (with embedded commit SHA) and separate commit via ldflags
 
 ## Implementation
 
@@ -44,12 +44,15 @@ packages.default = pkgs.buildGoModule rec {
   ldflags = [
     "-s"
     "-w"
-    "-X main.version=${version}"
+    "-X main.version=${version}"  # Contains SHA when available
     "-X main.commit=${self.rev or "unknown"}"
   ];
   # ...
 };
 ```
+
+The version string passed to the Go binary already contains the commit SHA (e.g., "0.1.0-be4b57b"),
+so the Go code simply uses it directly without additional formatting.
 
 ## Consequences
 

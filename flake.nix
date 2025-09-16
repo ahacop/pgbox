@@ -55,6 +55,7 @@
             docker-compose
             go
             golangci-lint
+            goreleaser
             postgresql # For psql client
           ];
         };

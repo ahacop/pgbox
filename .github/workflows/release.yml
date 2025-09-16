@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+
+      - name: Run tests
+        run: make test
+
+      - name: Run quality checks
+        run: |
+          make fmt
+          make vet
+          # Skip lint in CI for now as it requires golangci-lint
+          # make lint
+
+      - name: Import GPG key
+        id: import_gpg
+        if: ${{ secrets.GPG_PRIVATE_KEY != '' }}
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
+
+  verify-install-script:
+    name: Verify Install Script
+    needs: release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Test install script
+        run: |
+          # Test the install script
+          ./install.sh
+
+          # Verify pgbox was installed
+          if ! command -v pgbox &> /dev/null; then
+            echo "pgbox not found in PATH after installation"
+            exit 1
+          fi
+
+          # Check version
+          pgbox --version

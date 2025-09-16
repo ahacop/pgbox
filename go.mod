@@ -3,14 +3,14 @@ module github.com/ahacop/pgbox
 go 1.24.0
 
 require (
+	github.com/BurntSushi/toml v1.5.0
+	github.com/charmbracelet/fang v0.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 )
 
 require (
-	github.com/BurntSushi/toml v1.5.0 // indirect
 	github.com/charmbracelet/colorprofile v0.3.1 // indirect
-	github.com/charmbracelet/fang v0.4.0 // indirect
 	github.com/charmbracelet/lipgloss/v2 v2.0.0-beta.3 // indirect
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect

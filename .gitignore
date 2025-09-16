@@ -13,8 +13,10 @@ vendor/
 *.dylib
 *.test
 *.out
-/dist/
 /tmp/
+
+# GoReleaser output
+/dist/
 
 # IDE files
 .vscode/

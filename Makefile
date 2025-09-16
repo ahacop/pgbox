@@ -83,20 +83,22 @@ version: build
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  build         - Build the binary"
-	@echo "  test          - Run tests"
-	@echo "  test-coverage - Run tests with coverage report"
-	@echo "  fmt           - Format code"
-	@echo "  vet           - Run go vet"
-	@echo "  lint          - Run golangci-lint (must be installed)"
-	@echo "  check         - Run fmt, vet, and test"
-	@echo "  clean         - Remove build artifacts"
-	@echo "  install       - Install to GOPATH/bin"
-	@echo "  dev           - Build and run for development"
-	@echo "  version       - Show version information"
+	@echo "  build             - Build the binary"
+	@echo "  test              - Run tests"
+	@echo "  test-coverage     - Run tests with coverage report"
+	@echo "  fmt               - Format code"
+	@echo "  vet               - Run go vet"
+	@echo "  lint              - Run golangci-lint (must be installed)"
+	@echo "  check             - Run fmt, vet, and test"
+	@echo "  clean             - Remove build artifacts"
+	@echo "  install           - Install to GOPATH/bin"
+	@echo "  dev               - Build and run for development"
+	@echo "  version           - Show version information"
+	@echo "  release           - Create a release with goreleaser"
+	@echo "  release-snapshot  - Test release build without publishing"
 	@echo "  update-extensions - Update extension catalogs"
-	@echo "  update-nix-hash - Update Nix vendorHash after Go module changes"
-	@echo "  help          - Show this help message"
+	@echo "  update-nix-hash   - Update Nix vendorHash after Go module changes"
+	@echo "  help              - Show this help message"
 
 # Update extension catalogs and generate TOML files
 .PHONY: update-extensions
@@ -137,3 +139,15 @@ run:
 .PHONY: update-nix-hash
 update-nix-hash:
 	@./scripts/update-nix-hash.sh
+
+# Create a release with goreleaser
+.PHONY: release
+release:
+	@which goreleaser > /dev/null || (echo "goreleaser not found. Install from https://goreleaser.com/install/" && exit 1)
+	goreleaser release --clean
+
+# Test release build without publishing
+.PHONY: release-snapshot
+release-snapshot:
+	@which goreleaser > /dev/null || (echo "goreleaser not found. Install from https://goreleaser.com/install/" && exit 1)
+	goreleaser release --snapshot --clean

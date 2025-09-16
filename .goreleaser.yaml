@@ -1,0 +1,140 @@
+# GoReleaser configuration for pgbox
+# Documentation: https://goreleaser.com
+---
+version: 2
+
+project_name: pgbox
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: pgbox
+    binary: pgbox
+    main: .
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.ShortCommit}}
+      - -X main.date={{.Date}}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: pgbox-archive
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # Default format is tar.gz for all platforms
+    formats:
+      - tar.gz
+    files:
+      - README.md
+      - LICENSE*
+
+checksum:
+  name_template: "checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+      - "^ci:"
+      - "^Merge pull request"
+  groups:
+    - title: "Features"
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "Bug fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: "Performance improvements"
+      regexp: '^.*?perf(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: "Refactoring"
+      regexp: '^.*?refactor(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: "Other changes"
+      order: 999
+
+release:
+  github:
+    owner: ahacop
+    name: pgbox
+
+  # Create a draft release first to allow manual review
+  draft: false
+
+  # Mark as prerelease for versions containing "-"
+  prerelease: auto
+
+  # Release name template
+  name_template: "{{.ProjectName}} v{{.Version}}"
+
+  # Disable existing release update
+  mode: append
+
+  # Release notes
+  header: |
+    ## pgbox v{{.Version}}
+
+    PostgreSQL-in-Docker with selectable extensions.
+
+    ### Installation
+
+    #### Binary download
+    Download the appropriate archive for your platform from the assets below.
+
+    #### Go install
+    ```bash
+    go install github.com/ahacop/pgbox@v{{.Version}}
+    ```
+
+    #### Using install script
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/ahacop/pgbox/v{{.Version}}/install.sh | sh
+    ```
+
+  footer: |
+    ---
+    **Full Changelog**: https://github.com/ahacop/pgbox/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+    Thanks to all contributors!
+
+# Announce releases on various platforms (optional, can be added later)
+announce:
+  skip: true
+# Sign releases with GPG (optional, requires GPG key setup)
+# Commented out by default - uncomment and configure if you want GPG signing
+# signs:
+#   - artifacts: checksum
+#     args:
+#       - "--batch"
+#       - "--local-user"
+#       - "{{ .Env.GPG_FINGERPRINT }}"
+#       - "--output"
+#       - "${signature}"
+#       - "--detach-sign"
+#       - "${artifact}"

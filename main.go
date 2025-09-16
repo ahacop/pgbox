@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/ahacop/pgbox/cmd"
@@ -16,14 +15,8 @@ var (
 )
 
 func main() {
-	// Compose version string with all metadata
+	// Use version directly as it already contains commit info from build
 	ver := version
-	if commit != "" && commit != "unknown" {
-		if len(commit) > 7 {
-			commit = commit[:7]
-		}
-		ver = fmt.Sprintf("%s (%s)", version, commit)
-	}
 
 	if err := fang.Execute(context.Background(), cmd.RootCmd(), fang.WithVersion(ver)); err != nil {
 		os.Exit(1)

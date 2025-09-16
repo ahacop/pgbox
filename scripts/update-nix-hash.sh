@@ -19,14 +19,14 @@ fi
 cp flake.nix flake.nix.bak
 
 # Set vendorHash to empty string to force error with correct hash
-sed -i 's/vendorHash = ".*";/vendorHash = "";/' flake.nix
+sed -i 's|vendorHash = ".*";|vendorHash = "";|' flake.nix
 
 # Try to build and capture the output
 echo "Running nix build to get correct hash..."
 BUILD_OUTPUT=$(nix build 2>&1 || true)
 
 # Extract the correct hash from the error message
-CORRECT_HASH=$(echo "$BUILD_OUTPUT" | grep "got:" | sed 's/.*got:[[:space:]]*//')
+CORRECT_HASH=$(echo "$BUILD_OUTPUT" | grep "got:" | sed 's/.*got:[[:space:]]*//' | tr -d ' ')
 
 if [ -z "$CORRECT_HASH" ]; then
     echo -e "${RED}Error: Could not extract hash from nix build output${NC}"
@@ -38,7 +38,7 @@ if [ -z "$CORRECT_HASH" ]; then
 fi
 
 # Update flake.nix with the correct hash
-sed -i "s/vendorHash = \"\";/vendorHash = \"$CORRECT_HASH\";/" flake.nix
+sed -i "s|vendorHash = \"\";|vendorHash = \"$CORRECT_HASH\";|" flake.nix
 
 # Remove backup
 rm -f flake.nix.bak

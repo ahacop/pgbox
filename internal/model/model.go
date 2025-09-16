@@ -12,8 +12,6 @@ import (
 type DockerfileModel struct {
 	BaseImage   string              // Base Docker image (e.g., "postgres:17")
 	AptPackages []string            // Debian/Ubuntu packages to install
-	ApkPackages []string            // Alpine packages to install
-	YumPackages []string            // RHEL/CentOS packages to install
 	Blocks      map[string][]string // Named blocks for custom content
 }
 
@@ -22,35 +20,16 @@ func NewDockerfileModel(baseImage string) *DockerfileModel {
 	return &DockerfileModel{
 		BaseImage:   baseImage,
 		AptPackages: []string{},
-		ApkPackages: []string{},
-		YumPackages: []string{},
 		Blocks:      make(map[string][]string),
 	}
 }
 
-// AddPackages adds packages to the appropriate package list based on the image type
+// AddPackages adds packages to install via apt
 func (d *DockerfileModel) AddPackages(packages []string, packageType string) {
-	switch packageType {
-	case "apt":
+	// We only support apt for standard PostgreSQL images
+	if packageType == "apt" {
 		d.AptPackages = appendUnique(d.AptPackages, packages...)
-	case "apk":
-		d.ApkPackages = appendUnique(d.ApkPackages, packages...)
-	case "yum":
-		d.YumPackages = appendUnique(d.YumPackages, packages...)
 	}
-}
-
-// GetPackageManager determines the package manager based on base image
-func (d *DockerfileModel) GetPackageManager() string {
-	lower := strings.ToLower(d.BaseImage)
-	if strings.Contains(lower, "alpine") {
-		return "apk"
-	}
-	if strings.Contains(lower, "rhel") || strings.Contains(lower, "centos") || strings.Contains(lower, "rocky") {
-		return "yum"
-	}
-	// Default to apt for Debian/Ubuntu based images
-	return "apt"
 }
 
 // ComposeModel represents docker-compose.yml configuration

@@ -1,40 +1,32 @@
 # ADR-002: PostgreSQL Extension System Architecture
 
 ## Status
+
 Accepted
 
 ## Date
+
 2025-01-16
 
 ## Context
 
 pgbox needs to manage PostgreSQL extensions across different contexts:
+
 - Quick prototyping with `pgbox up` command
 - Production-ready Docker artifact generation with `pgbox export` command
 - Support for 200+ extensions from apt.postgresql.org
 - Complex extension requirements (shared libraries, GUCs, SQL initialization)
 
-The system evolved from a simple package installer to a comprehensive extension configuration framework supporting:
-- Package management across different Linux distributions (apt, apk, yum)
-- PostgreSQL configuration requirements (shared_preload_libraries, custom GUCs)
-- SQL initialization at different lifecycle stages (initdb, post-start)
-- Docker Compose hints for production deployments
-
 ### Current Challenges
 
-1. **Dual System Maintenance**: Two parallel extension systems exist:
-   - Legacy JSONL-based system for simple package installation
-   - TOML-based system for rich configuration
-
-2. **Complex Extension Requirements**: Extensions like pg_cron, timescaledb, and wal2json require:
+1. **Complex Extension Requirements**: Extensions like pg_cron, timescaledb, and wal2json require:
    - Specific shared libraries preloaded at startup
    - Custom PostgreSQL configuration parameters
    - Initialization SQL in specific order
 
-3. **Multi-Version Support**: Need to handle:
+2. **Multi-Version Support**: Need to handle:
    - Different package names across PostgreSQL versions
    - Version-specific configuration requirements
-   - Graceful fallbacks for missing specifications
 
 ## Decision
 
@@ -54,8 +46,6 @@ description = "Run periodic jobs in PostgreSQL"
 # Docker image mutations
 [image]
 apt_packages = ["postgresql-16-cron"]
-apk_packages = []  # For Alpine Linux
-yum_packages = []  # For RHEL/CentOS
 
 # PostgreSQL configuration
 [postgresql.conf]
@@ -149,16 +139,29 @@ type Conflict struct {
 ```
 
 When conflicts are detected, the system:
+
 1. Collects all conflicts before failing
 2. Reports comprehensive error with all conflicts
 3. Suggests resolution strategies
 
-### 5. Extension Discovery
+### 5. Extension Discovery and Generation
 
-Extensions are discovered through:
+Extensions are discovered and maintained through:
+
 - File system scanning of `extensions/` directory
-- Validation against embedded `extensions.jsonl` for legacy support
 - Dynamic loading based on requested PostgreSQL version
+- Build-time generation from official PostgreSQL Docker images
+
+#### Build-Time Data Pipeline
+
+The scripts in `scripts/` folder create a data generation pipeline:
+
+1. **Data Collection**: Scripts query official PostgreSQL Docker images to discover available extensions
+2. **Mapping Generation**: Build extension name mappings between package names and SQL names
+3. **TOML Generation**: Automatically generate TOML specifications from collected data
+4. **Manual Enhancement**: TOML files can be manually edited to add configuration requirements
+
+This ensures extension data stays synchronized with official PostgreSQL repositories.
 
 ## Implementation
 
@@ -202,16 +205,16 @@ Extensions are discovered through:
 
 ### Negative
 
-1. **Dual System Maintenance**: Legacy JSONL system still needed for `up` command
-2. **Complexity**: Four-layer architecture adds indirection
-3. **Manual Specification**: Each extension needs manual TOML creation
-4. **Limited Validation**: Can't validate runtime behavior, only configuration
+1. **Complexity**: Four-layer architecture adds indirection
+2. **Manual Enhancement**: Complex extensions need manual TOML editing after generation
+3. **Limited Validation**: Can't validate runtime behavior, only configuration
+4. **Build Dependencies**: Requires Docker for updating extension catalogs
 
 ### Maintenance Burden
 
 - **Low**: Adding new extensions only requires TOML files
 - **Medium**: Schema changes require updates across all layers
-- **High**: Migrating `up` command to TOML system requires significant refactoring
+- **Low**: Updating extension catalogs is automated via `make update-extensions`
 
 ## Alternatives Considered
 
@@ -223,7 +226,6 @@ Extensions are discovered through:
 2. **Code-Based Configuration**:
    - More flexible but less accessible
    - Requires recompilation for changes
-   - Harder for users to customize
 
 3. **YAML Instead of TOML**:
    - More familiar to Docker users
@@ -237,21 +239,12 @@ Extensions are discovered through:
 
 ## Future Improvements
 
-1. **Unify Extension Systems**: Migrate `up` command to use TOML system
-2. **Extension Dependency Resolution**: Automatically include required extensions
-3. **Conflict Auto-Resolution**: Smart merging of compatible configurations
-4. **Extension Marketplace**: Community-contributed extension specifications
-5. **Runtime Validation**: Test extension configurations in ephemeral containers
-6. **Version Constraints**: Support minimum/maximum PostgreSQL versions in specs
-
-## Migration Path
-
-To unify the extension systems:
-
-1. **Phase 1**: Ensure all JSONL extensions have TOML equivalents
-2. **Phase 2**: Add TOML support to `up` command behind feature flag
-3. **Phase 3**: Deprecate JSONL system with migration warnings
-4. **Phase 4**: Remove JSONL system and embedded file
+1. **Extension Dependency Resolution**: Automatically include required extensions
+2. **Conflict Auto-Resolution**: Smart merging of compatible configurations
+3. **Extension Marketplace**: Community-contributed extension specifications
+4. **Runtime Validation**: Test extension configurations in ephemeral containers
+5. **Version Constraints**: Support minimum/maximum PostgreSQL versions in specs
+6. **Automated Configuration Discovery**: Analyze extension source to auto-detect requirements
 
 ## References
 

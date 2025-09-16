@@ -42,9 +42,7 @@ type ExtensionSpec struct {
 
 // ImageSpec defines packages to install in the Docker image
 type ImageSpec struct {
-	AptPackages []string `toml:"apt_packages"` // Debian/Ubuntu packages
-	ApkPackages []string `toml:"apk_packages"` // Alpine packages
-	YumPackages []string `toml:"yum_packages"` // RHEL/CentOS packages
+	AptPackages []string `toml:"apt_packages"` // Debian packages for standard PostgreSQL images
 }
 
 // PostgresConfSpec defines PostgreSQL configuration
@@ -244,10 +242,8 @@ func (l *Loader) normalize(spec *ExtensionSpec) {
 		spec.DisplayName = spec.Extension
 	}
 
-	// Sort and dedupe package lists
+	// Sort and dedupe package list
 	spec.Image.AptPackages = dedupeSort(spec.Image.AptPackages)
-	spec.Image.ApkPackages = dedupeSort(spec.Image.ApkPackages)
-	spec.Image.YumPackages = dedupeSort(spec.Image.YumPackages)
 
 	// Sort and dedupe shared preload libraries
 	spec.PostgresConf.SharedPreloadLibraries = dedupeSort(spec.PostgresConf.SharedPreloadLibraries)

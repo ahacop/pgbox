@@ -96,19 +96,13 @@ make update-nix-hash
 
 ## Architecture
 
-### Two Extension Configuration Systems
+### Extension Configuration System
 
-The codebase has TWO extension configuration systems:
-
-1. **Legacy System** (used by `up` command):
-   - Uses `extensions.jsonl` embedded file for extension metadata
-   - Simple package mapping via internal/extensions/loader.go
-   - Only handles package installation, not configuration
-
-2. **TOML-Based System** (used by `export` command):
+The codebase uses a TOML-based extension configuration system:
    - Uses TOML files in `extensions/` directory for rich configuration
    - Handles shared_preload_libraries, GUCs, and complex SQL initialization
    - Data flow: extspec.Loader → ExtensionSpec → applier → model → render
+   - Used by both `up` and `export` commands
 
 ### Extension TOML Structure
 
@@ -160,8 +154,7 @@ go test -v ./internal/extspec ./internal/applier
 ## Important Notes
 
 - Extensions like `pg_cron`, `wal2json`, `timescaledb` require `shared_preload_libraries`
-- The `up` command currently doesn't fully support the TOML configuration system
-- When modifying extension support, update both `extensions.jsonl` and TOML files
+- When adding new extensions, create TOML files in the `extensions/` directory
 - Container names follow pattern: `pgbox-pg{version}` by default
 - Extension name mapping: some extensions have different SQL names (e.g., "pgvector" → "vector")
 - Default PostgreSQL versions: 16 and 17 (17 is default)

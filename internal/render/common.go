@@ -51,7 +51,12 @@ func ParseFileWithAnchors(path string, marker AnchorMarker) (*ParsedFile, error)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			// Log close error but don't return it
+			fmt.Fprintf(os.Stderr, "Warning: failed to close file %s: %v\n", path, err)
+		}
+	}()
 
 	parsed := &ParsedFile{
 		PreAnchor:  []string{},
@@ -143,7 +148,12 @@ func ParseInitSQLAnchors(path string) (map[string][]string, []string, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to open file: %w", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			// Log close error but don't return it
+			fmt.Fprintf(os.Stderr, "Warning: failed to close file %s: %v\n", path, err)
+		}
+	}()
 
 	// Pattern for anchor markers
 	startPattern := regexp.MustCompile(`^-- pgbox: begin (\S+)`)

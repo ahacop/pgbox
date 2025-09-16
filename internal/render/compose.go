@@ -98,7 +98,7 @@ func generateComposeService(m *model.ComposeModel, pgConf *model.PGConfModel) []
 		// Add shared_preload_libraries if set
 		if len(pgConf.SharedPreload) > 0 {
 			preloadStr := pgConf.GetSharedPreloadString()
-			lines = append(lines, fmt.Sprintf("      - -c"))
+			lines = append(lines, "      - -c")
 			lines = append(lines, fmt.Sprintf("      - shared_preload_libraries=%s", preloadStr))
 		}
 

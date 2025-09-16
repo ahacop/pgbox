@@ -201,7 +201,10 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		if err := os.WriteFile(initFile, initContent, 0644); err != nil {
 			return fmt.Errorf("failed to write init.sql: %w", err)
 		}
-		os.Remove(generatedInitPath) // Clean up temp file
+		if err := os.Remove(generatedInitPath); err != nil {
+			// Log error but don't fail the command since container is already running
+			fmt.Fprintf(os.Stderr, "Warning: failed to clean up temp file %s: %v\n", generatedInitPath, err)
+		}
 		opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/docker-entrypoint-initdb.d/init.sql:ro", initFile))
 
 		// Add shared_preload_libraries if needed

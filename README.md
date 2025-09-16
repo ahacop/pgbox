@@ -6,6 +6,17 @@ PostgreSQL-in-Docker with selectable extensions.
 
 pgbox is a CLI tool that simplifies running PostgreSQL in Docker with your choice of extensions. It provides an easy way to spin up PostgreSQL instances with specific extensions for development and testing purposes.
 
+### Purpose & Philosophy
+
+pgbox is designed as an **experimentation and prototyping tool** for PostgreSQL extensions. Its primary goal is to help you quickly test different extensions and configurations before committing to them in your project:
+
+- **Quick experimentation**: Spin up a PostgreSQL instance with any combination of extensions in seconds
+- **Test before you commit**: Try out extensions locally before adding them to your production setup
+- **Export when ready**: Once you've found the right configuration, export it as Docker files for your project
+- **Clean, isolated environments**: Each unique extension combination gets its own container, preventing conflicts from incompatible extensions
+
+Think of pgbox as your PostgreSQL sandbox - a place to freely experiment with the vast ecosystem of PostgreSQL extensions without worrying about breaking your development database or dealing with complex installation procedures.
+
 ### Key Features
 
 - **200+ Extensions**: Comprehensive support for PostgreSQL extensions from apt.postgresql.org

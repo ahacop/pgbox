@@ -25,23 +25,50 @@ Think of pgbox as your PostgreSQL sandbox - a place to freely experiment with th
 
 ## Installation
 
-### Using Nix Flake (no installation required)
+### Download Pre-built Binary
+
+Download the latest release for your platform from [GitHub Releases](https://github.com/ahacop/pgbox/releases).
+
+#### Using the install script
 
 ```bash
-# Run directly from GitHub
+curl -sSL https://raw.githubusercontent.com/ahacop/pgbox/main/install.sh | sh
+```
+
+#### Manual download
+
+1. Download the appropriate archive for your platform from [releases](https://github.com/ahacop/pgbox/releases)
+2. Extract and move to your PATH:
+
+```bash
+tar -xzf pgbox_*_Linux_x86_64.tar.gz
+sudo mv pgbox /usr/local/bin/
+```
+
+### Using Go
+
+```bash
+go install github.com/ahacop/pgbox@latest
+```
+
+### Using Nix Flake
+
+```bash
+# Run directly without installation
 nix run github:ahacop/pgbox -- --help
 
 # Start with specific extensions
 nix run github:ahacop/pgbox -- up --ext pgvector,postgis
 ```
 
-### Build from source
+### Build from Source
 
 ```bash
-# Build from source
+git clone https://github.com/ahacop/pgbox
+cd pgbox
 make build
 
-# Install to GOPATH/bin
+# Optional: Install to GOPATH/bin
 make install
 ```
 
@@ -55,6 +82,9 @@ make install
 
 # Start PostgreSQL with specific extensions
 ./pgbox up --ext pgvector,hypopg
+
+# List available extensions
+./pgbox list-extensions
 
 # Connect to running PostgreSQL instance
 ./pgbox psql
@@ -240,6 +270,52 @@ The extension system uses a declarative TOML-based approach:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Release Process (Maintainers)
+
+### Creating a Release
+
+1. **Ensure all changes are committed and pushed**
+
+   ```bash
+   git status
+   git push origin main
+   ```
+
+2. **Test the release locally**
+
+   ```bash
+   # Test the release build without publishing
+   make release-snapshot
+
+   # Check generated artifacts
+   ls -la dist/
+   ```
+
+3. **Create and push a version tag**
+
+   ```bash
+   # For a new minor version
+   git tag v0.2.0
+   git push origin v0.2.0
+
+   # For a patch version
+   git tag v0.2.1
+   git push origin v0.2.1
+   ```
+
+4. **GitHub Actions will automatically**:
+   - Run tests
+   - Build binaries for Linux and macOS (amd64/arm64)
+   - Create a GitHub release with:
+     - Pre-built binaries for all platforms
+     - SHA256 checksums
+     - Auto-generated changelog from commit messages
+
+5. **After release, users can install via**:
+   - Pre-built binaries from GitHub releases
+   - Install script: `curl -sSL https://raw.githubusercontent.com/ahacop/pgbox/main/install.sh | sh`
+   - Go install: `go install github.com/ahacop/pgbox@v0.2.0`
 
 ## License
 

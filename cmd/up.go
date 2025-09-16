@@ -102,7 +102,7 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	containerMgr := container.NewManager()
 	containerName := name
 	if containerName == "" {
-		containerName = containerMgr.Name(pgConfig)
+		containerName = containerMgr.Name(pgConfig, extNames)
 	}
 
 	// Create Docker client
@@ -148,7 +148,7 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 		}
 
 		// Build custom image with extensions
-		customImage, err := buildCustomImage(pgVersion, dockerfileModel)
+		customImage, err := buildCustomImage(pgVersion, dockerfileModel, extNames, containerMgr)
 		if err != nil {
 			return fmt.Errorf("failed to build custom image: %w", err)
 		}
@@ -223,7 +223,7 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	return client.RunPostgres(pgConfig, opts)
 }
 
-func buildCustomImage(pgVersion string, dockerfileModel *model.DockerfileModel) (string, error) {
+func buildCustomImage(pgVersion string, dockerfileModel *model.DockerfileModel, extensions []string, containerMgr *container.Manager) (string, error) {
 	// Generate temp directory for build context
 	buildDir := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-build-%d", os.Getpid()))
 	if err := os.MkdirAll(buildDir, 0755); err != nil {
@@ -240,9 +240,16 @@ func buildCustomImage(pgVersion string, dockerfileModel *model.DockerfileModel) 
 		return "", fmt.Errorf("failed to render Dockerfile: %w", err)
 	}
 
-	// Build image
-	imageName := fmt.Sprintf("pgbox-pg%s-custom:%d", pgVersion, os.Getpid())
+	// Build image with deterministic name based on extensions
+	imageName := containerMgr.ImageName(pgVersion, extensions)
 	client := docker.NewClient()
+
+	// Check if image already exists
+	existingImages, _ := client.RunCommandWithOutput("images", "-q", imageName)
+	if strings.TrimSpace(existingImages) != "" {
+		fmt.Printf("Using existing custom image: %s\n", imageName)
+		return imageName, nil
+	}
 
 	fmt.Println("Building custom PostgreSQL image with extensions...")
 	buildArgs := []string{"build", "-t", imageName, "--build-arg", fmt.Sprintf("PG_MAJOR=%s", pgVersion), buildDir}

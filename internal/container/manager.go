@@ -1,8 +1,11 @@
 package container
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
@@ -16,9 +19,41 @@ func NewManager() *Manager {
 	return &Manager{}
 }
 
-// Name returns the container name for a PostgreSQL configuration
-func (m *Manager) Name(cfg *config.PostgresConfig) string {
-	return fmt.Sprintf("pgbox-pg%s", cfg.Version)
+// extensionHash generates a deterministic hash from sorted extension names
+func extensionHash(extensions []string) string {
+	if len(extensions) == 0 {
+		return ""
+	}
+
+	// Sort extensions to ensure deterministic hash
+	sorted := make([]string, len(extensions))
+	copy(sorted, extensions)
+	sort.Strings(sorted)
+
+	// Create hash from sorted, comma-separated extensions
+	h := sha256.Sum256([]byte(strings.Join(sorted, ",")))
+	// Use first 8 bytes (16 hex chars) for readability
+	return hex.EncodeToString(h[:8])
+}
+
+// Name returns the container name for a PostgreSQL configuration with optional extensions
+func (m *Manager) Name(cfg *config.PostgresConfig, extensions []string) string {
+	base := fmt.Sprintf("pgbox-pg%s", cfg.Version)
+	if hash := extensionHash(extensions); hash != "" {
+		return fmt.Sprintf("%s-%s", base, hash)
+	}
+	return base
+}
+
+// ImageName returns the Docker image name for the given version and extensions
+func (m *Manager) ImageName(version string, extensions []string) string {
+	if len(extensions) == 0 {
+		// No extensions, use standard postgres image
+		return fmt.Sprintf("postgres:%s", version)
+	}
+	// Extensions require custom image with deterministic tag
+	hash := extensionHash(extensions)
+	return fmt.Sprintf("pgbox-pg%s-custom:%s", version, hash)
 }
 
 // DefaultName returns the default container name (for PostgreSQL 17)

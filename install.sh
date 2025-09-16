@@ -76,7 +76,6 @@ detect_arch() {
 get_latest_version() {
     VERSION="${PGBOX_VERSION:-latest}"
     if [ "$VERSION" = "latest" ]; then
-        print_info "Fetching latest version..."
         VERSION=$(curl -sL "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest" | \
                   grep '"tag_name":' | \
                   sed -E 's/.*"([^"]+)".*/\1/')
@@ -96,7 +95,21 @@ install_binary() {
     local version=$3
 
     # Construct download URL
-    local archive_name="${BINARY_NAME}_${version#v}_$(echo "$os" | sed 's/.*/\u&/')_${arch}.tar.gz"
+    # Capitalize OS name for archive naming convention
+    local os_cap
+    case "$os" in
+        linux)
+            os_cap="Linux"
+            ;;
+        darwin)
+            os_cap="Darwin"
+            ;;
+        *)
+            os_cap="$os"
+            ;;
+    esac
+
+    local archive_name="${BINARY_NAME}_${version#v}_${os_cap}_${arch}.tar.gz"
     local download_url="https://github.com/$REPO_OWNER/$REPO_NAME/releases/download/$version/$archive_name"
 
     print_info "Downloading $BINARY_NAME $version for $os/$arch..."

@@ -1,27 +1,17 @@
-# pgbox
+# pgbox 🐘📦
 
-PostgreSQL-in-Docker with extensions.
+**pgbox** is a CLI tool for running PostgreSQL in Docker with your choice of extensions.
 
-## Overview
+It is designed for **experimentation and prototyping**, making it easy to test extensions before using them in a project.
 
-pgbox is a CLI tool that simplifies running PostgreSQL in Docker with your choice of extensions.
+### Why pgbox?
 
-### Purpose & Philosophy
+- **Quick setup**: Spin up PostgreSQL with any set of extensions in seconds
+- **Easy experimentation**: Test extensions locally before adding them to your stack
+- **Export to Docker**: Export Docker Compose files when ready for your project
+- **200+ extensions supported**: From [apt.postgresql.org](https://apt.postgresql.org)
 
-pgbox is designed as an **experimentation and prototyping tool** for PostgreSQL extensions. Its primary goal is to help you quickly experiment and test different extensions and configurations before committing to them in your project:
-
-- **Quick experimentation**: Spin up a PostgreSQL instance with any combination of extensions in seconds
-- **Test before you commit**: Try out extensions locally before adding them to your production setup
-- **Export when ready**: Once you've found the right configuration, export it as Docker files for your project
-- **Clean, isolated environments**: Each unique extension combination gets its own container, preventing conflicts from incompatible extensions
-
-Think of pgbox as your PostgreSQL sandbox - a place to freely experiment with the vast ecosystem of PostgreSQL extensions without worrying about breaking your development database or dealing with complex installation procedures.
-
-### Key Features
-
-- **Development-Friendly**: Quick spin-up of PostgreSQL instances with specific extensions
-- **Export to Docker**: Generate production-ready Docker Compose configurations
-- **200+ Extensions**: Comprehensive support for PostgreSQL extensions from apt.postgresql.org
+Think of pgbox as a PostgreSQL sandbox — a safe place to explore over 200 extensions without manual installs or risking your development database.
 
 ## Installation
 
@@ -164,7 +154,7 @@ make install
 ./pgbox list-extensions | grep vector
 ```
 
-#### Exporting for Production
+#### Exporting for your project
 
 ```bash
 # Export Docker configuration to directory
@@ -176,29 +166,11 @@ make install
 # Export with custom port
 ./pgbox export ./my-postgres -p 5433
 
-# Export with custom base image
-./pgbox export ./my-postgres --base-image postgres:17-alpine
-
 # Generated files:
 # - Dockerfile: Custom image with extensions
 # - docker-compose.yml: Complete Docker Compose setup with required configurations
 # - init.sql: SQL script to create extensions
 # - postgresql.conf (if needed): PostgreSQL configuration for extensions requiring preload
-```
-
-### Extension Support
-
-pgbox supports 200+ PostgreSQL extensions from apt.postgresql.org. Each extension is defined using a TOML specification that includes:
-
-- Package dependencies
-- PostgreSQL configuration requirements (shared_preload_libraries, GUCs)
-- SQL initialization commands
-- Docker compose hints
-
-View all available extensions:
-
-```bash
-./pgbox list-extensions
 ```
 
 ## Development
@@ -246,26 +218,6 @@ make export EXTS=pgvector,pg_cron PG_VERSION=17
 # Run PostgreSQL with extensions
 make run EXTS=pgvector,pg_cron PORT=5432
 ```
-
-## Architecture
-
-### Extension System
-
-The extension system uses a declarative TOML-based approach:
-
-1. **Extension Specifications** (`extensions/<name>/<version>.toml`): Define package dependencies, PostgreSQL configuration, and SQL initialization
-2. **Model Layer** (`internal/model/`): In-memory representations of Docker artifacts
-3. **Applier** (`internal/applier/`): Merges extension requirements into models
-4. **Renderer** (`internal/render/`): Generates Docker files with anchored blocks for user customizations
-
-### Key Components
-
-- **cmd/**: Command implementations (up, down, psql, export, etc.)
-- **internal/config/**: PostgreSQL configuration management
-- **internal/container/**: Container lifecycle management
-- **internal/docker/**: Docker command wrapper
-- **internal/extensions/**: Extension validation and TOML loading
-- **pkg/scaffold/**: Template-based Docker artifact generation
 
 ## Contributing
 

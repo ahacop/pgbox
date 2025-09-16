@@ -15,26 +15,21 @@
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in {
-        packages.default = pkgs.buildGoModule {
+        packages.default = pkgs.buildGoModule rec {
           pname = "pgbox";
-          version = "0.1.0";
+          version = if (self ? shortRev) then "0.1.0-${self.shortRev}" else "0.1.0";
 
           src = ./.;
 
           vendorHash = "sha256-si74AW9Uu8l+zCG6PEcZVFZ/pQ8N4yGayYm82afwc5E=";
 
-          buildPhase = ''
-            runHook preBuild
-            go build -ldflags="-s -w" -o pgbox .
-            runHook postBuild
-          '';
-
-          installPhase = ''
-            runHook preInstall
-            mkdir -p $out/bin
-            cp pgbox $out/bin/
-            runHook postInstall
-          '';
+          ldflags = [
+            "-s"
+            "-w"
+            "-X main.version=${version}"
+            "-X main.commit=${self.rev or "unknown"}"
+            "-X main.date=1970-01-01T00:00:00Z"  # Reproducible builds
+          ];
 
           env.CGO_ENABLED = 0;
 

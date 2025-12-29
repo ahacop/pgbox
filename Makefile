@@ -62,7 +62,6 @@ check: fmt vet test
 clean:
 	rm -f $(BINARY_NAME)
 	rm -f coverage.out coverage.html
-	rm -rf pgbox-data
 
 # Install to GOPATH/bin
 .PHONY: install
@@ -96,33 +95,8 @@ help:
 	@echo "  version           - Show version information"
 	@echo "  release           - Create a release with goreleaser"
 	@echo "  release-snapshot  - Test release build without publishing"
-	@echo "  update-extensions - Update extension catalogs"
 	@echo "  update-nix-hash   - Update Nix vendorHash after Go module changes"
 	@echo "  help              - Show this help message"
-
-# Update extension catalogs and generate TOML files
-.PHONY: update-extensions
-update-extensions:
-	@echo "Updating builtin extensions catalog..."
-	./scripts/build-official-extensions-list.bash
-	@echo "Updating apt package extensions catalog..."
-	./scripts/build-apt-clist.bash
-	@echo "Generating extension name mappings..."
-	./scripts/build-extension-mappings.bash
-	@echo "Generating TOML files from extension data..."
-	$(GO) run scripts/generate-extension-toml.go
-
-# Generate TOML files from existing JSON data
-.PHONY: generate-toml
-generate-toml:
-	@echo "Generating TOML files from extension data..."
-	$(GO) run scripts/generate-extension-toml.go
-
-# Force regenerate all TOML files
-.PHONY: generate-toml-force
-generate-toml-force:
-	@echo "Force regenerating all TOML files..."
-	$(GO) run scripts/generate-extension-toml.go --force
 
 # Export Docker configuration with extensions
 .PHONY: export

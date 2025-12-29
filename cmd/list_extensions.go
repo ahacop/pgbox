@@ -62,8 +62,8 @@ appears in multiple sources, the builtin version is preferred.`,
 
 func listExtensions(pgVersion string, showSource bool, filterKind string) error {
 	// Validate version
-	if pgVersion != "16" && pgVersion != "17" {
-		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
+	if err := ValidatePostgresVersion(pgVersion); err != nil {
+		return err
 	}
 
 	// Map to store unique extensions by name

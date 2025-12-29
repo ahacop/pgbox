@@ -62,16 +62,14 @@ func showStatus(containerName string) error {
 		return nil
 	}
 
-	// Check specific container
-	running, err := client.IsContainerRunning(containerName)
+	// Check specific container - verify it's running
+	resolvedName, err := ResolveRunningContainer(client, containerName)
 	if err != nil {
-		return fmt.Errorf("failed to check container status: %w", err)
-	}
-
-	if !running {
+		// Container not running is not an error for status command
 		fmt.Printf("Container '%s' is not running.\n", containerName)
 		return nil
 	}
+	containerName = resolvedName
 
 	// Get detailed container info
 	output, err := client.RunCommandWithOutput("ps", "--filter", fmt.Sprintf("name=%s", containerName), "--format", "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}")

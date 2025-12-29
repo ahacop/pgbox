@@ -39,24 +39,15 @@ By default shows recent logs and exits. Use -f/--follow to stream logs continuou
 func showLogs(containerName string, follow bool) error {
 	client := docker.NewClient()
 
-	// If no container name specified, try to find a running one
-	if containerName == "" {
-		foundName, err := client.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		containerName = foundName
-		fmt.Printf("Showing logs for container: %s\n", containerName)
-	}
-
-	// Check if the specified container is actually running
-	running, err := client.IsContainerRunning(containerName)
+	// Resolve container name (finds running container if not specified)
+	resolvedName, err := ResolveRunningContainer(client, containerName)
 	if err != nil {
-		return fmt.Errorf("failed to check container status: %w", err)
+		return err
 	}
-	if !running {
-		return fmt.Errorf("container %s is not running. Start it with: pgbox up", containerName)
+	if containerName == "" {
+		fmt.Printf("Showing logs for container: %s\n", resolvedName)
 	}
+	containerName = resolvedName
 
 	// Build docker logs command arguments
 	args := []string{"logs"}

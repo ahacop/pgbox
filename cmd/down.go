@@ -35,18 +35,18 @@ func downContainer(name string) error {
 	client := docker.NewClient()
 
 	// Try to find a running container if name not specified
-	if name == "" {
-		foundName, err := client.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Specify container name with -n flag")
-		}
-		name = foundName
-		fmt.Printf("Found running container: %s\n", name)
+	resolvedName, err := FindContainer(client, name)
+	if err != nil {
+		return err
 	}
+	if name == "" {
+		fmt.Printf("Found running container: %s\n", resolvedName)
+	}
+	name = resolvedName
 
 	fmt.Printf("Stopping container %s...\n", name)
 
-	err := client.StopContainer(name)
+	err = client.StopContainer(name)
 	if err != nil {
 		return fmt.Errorf("failed to stop container: %w", err)
 	}

@@ -9,13 +9,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	psqlDatabase string
-	psqlUser     string
-	psqlName     string
-)
-
 func PsqlCmd() *cobra.Command {
+	var psqlDatabase string
+	var psqlUser string
+	var psqlName string
+
 	psqlCmd := &cobra.Command{
 		Use:   "psql [flags] [-- psql-args...]",
 		Short: "Connect to PostgreSQL with psql",
@@ -44,7 +42,9 @@ You can pass additional arguments to psql after a '--' separator.`,
 
   # Execute a SQL file
   pgbox psql -- -f /path/to/file.sql`,
-		RunE:               runPsql,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return runPsql(cmd, args, &psqlDatabase, &psqlUser, &psqlName)
+		},
 		DisableFlagParsing: false,
 		Args:               cobra.ArbitraryArgs,
 	}
@@ -56,41 +56,30 @@ You can pass additional arguments to psql after a '--' separator.`,
 	return psqlCmd
 }
 
-func runPsql(cmd *cobra.Command, args []string) error {
+func runPsql(cmd *cobra.Command, args []string, psqlDatabase, psqlUser, psqlName *string) error {
 	client := docker.NewClient()
 
-	// If no container name specified, try to find a running one
-	if psqlName == "" {
-		foundName, err := client.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		psqlName = foundName
-	}
-
-	// Check if the specified container is actually running
-	running, err := client.IsContainerRunning(psqlName)
+	// Resolve container name (finds running container if not specified)
+	resolvedName, err := ResolveRunningContainer(client, *psqlName)
 	if err != nil {
-		return fmt.Errorf("failed to check container status: %w", err)
+		return err
 	}
-	if !running {
-		return fmt.Errorf("container %s is not running. Start it with: pgbox up", psqlName)
-	}
+	*psqlName = resolvedName
 
 	// If user and database weren't specified, try to get them from container env vars
 	if !cmd.Flags().Changed("user") {
-		if envUser, err := client.GetContainerEnv(psqlName, "POSTGRES_USER"); err == nil && envUser != "" {
-			psqlUser = envUser
+		if envUser, err := client.GetContainerEnv(*psqlName, "POSTGRES_USER"); err == nil && envUser != "" {
+			*psqlUser = envUser
 		}
 	}
 	if !cmd.Flags().Changed("database") {
-		if envDB, err := client.GetContainerEnv(psqlName, "POSTGRES_DB"); err == nil && envDB != "" {
-			psqlDatabase = envDB
+		if envDB, err := client.GetContainerEnv(*psqlName, "POSTGRES_DB"); err == nil && envDB != "" {
+			*psqlDatabase = envDB
 		}
 	}
 
 	// Build the psql command arguments
-	psqlArgs := []string{"psql", "-U", psqlUser, "-d", psqlDatabase}
+	psqlArgs := []string{"psql", "-U", *psqlUser, "-d", *psqlDatabase}
 
 	// Check if there are additional arguments after --
 	dashPos := cmd.ArgsLenAtDash()
@@ -119,7 +108,7 @@ func runPsql(cmd *cobra.Command, args []string) error {
 	}
 
 	if isInteractive {
-		fmt.Printf("Connecting to %s as user '%s' to database '%s'...\n", psqlName, psqlUser, psqlDatabase)
+		fmt.Printf("Connecting to %s as user '%s' to database '%s'...\n", *psqlName, *psqlUser, *psqlDatabase)
 		fmt.Println("Type \\q to exit")
 		fmt.Println(strings.Repeat("-", 40))
 	}
@@ -133,7 +122,7 @@ func runPsql(cmd *cobra.Command, args []string) error {
 		// Use -i for piped input (stdin needs to be connected but not a tty)
 		dockerArgs = append(dockerArgs, "-i")
 	}
-	dockerArgs = append(dockerArgs, psqlName)
+	dockerArgs = append(dockerArgs, *psqlName)
 	dockerArgs = append(dockerArgs, psqlArgs...)
 
 	// Execute psql inside the container

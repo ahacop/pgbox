@@ -53,8 +53,8 @@ used independently of pgbox to run PostgreSQL with your chosen configuration.`,
 
 func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error {
 	// Validate version
-	if pgVersion != "16" && pgVersion != "17" {
-		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
+	if err := ValidatePostgresVersion(pgVersion); err != nil {
+		return err
 	}
 
 	// Set default base image if not specified
@@ -79,13 +79,7 @@ func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error
 	}
 
 	// Parse extension list
-	var extNames []string
-	if extList != "" {
-		extNames = strings.Split(extList, ",")
-		for i := range extNames {
-			extNames[i] = strings.TrimSpace(extNames[i])
-		}
-	}
+	extNames := ParseExtensionList(extList)
 
 	// Create target directory
 	if err := os.MkdirAll(targetDir, 0755); err != nil {

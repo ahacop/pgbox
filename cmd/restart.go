@@ -34,24 +34,15 @@ This command stops and then starts the container, preserving all data and config
 func restartContainer(containerName string) error {
 	client := docker.NewClient()
 
-	// If no container name specified, try to find a running one
-	if containerName == "" {
-		foundName, err := client.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		containerName = foundName
-		fmt.Printf("Restarting container: %s\n", containerName)
-	}
-
-	// Check if the specified container is actually running
-	running, err := client.IsContainerRunning(containerName)
+	// Resolve container name (finds running container if not specified)
+	resolvedName, err := ResolveRunningContainer(client, containerName)
 	if err != nil {
-		return fmt.Errorf("failed to check container status: %w", err)
+		return err
 	}
-	if !running {
-		return fmt.Errorf("container %s is not running. Start it with: pgbox up", containerName)
+	if containerName == "" {
+		fmt.Printf("Restarting container: %s\n", resolvedName)
 	}
+	containerName = resolvedName
 
 	// Restart the container
 	fmt.Printf("Restarting container %s...\n", containerName)

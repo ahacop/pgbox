@@ -16,18 +16,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	pgVersion     string
-	port          string
-	name          string
-	password      string
-	database      string
-	user          string
-	detach        bool
-	extensionList string
-)
-
 func UpCmd() *cobra.Command {
+	var pgVersion string
+	var port string
+	var name string
+	var password string
+	var database string
+	var user string
+	var detach bool
+	var extensionList string
+
 	upCmd := &cobra.Command{
 		Use:   "up",
 		Short: "Start PostgreSQL in Docker",
@@ -52,7 +50,9 @@ The container runs in the background by default (detached mode).`,
 
   # Start with custom database and user
   pgbox up --database=mydb --user=myuser --password=secret`,
-		RunE: upPostgres,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return upPostgres(pgVersion, port, name, password, database, user, detach, extensionList)
+		},
 	}
 
 	upCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
@@ -67,10 +67,10 @@ The container runs in the background by default (detached mode).`,
 	return upCmd
 }
 
-func upPostgres(cmd *cobra.Command, args []string) error {
+func upPostgres(pgVersion, port, name, password, database, user string, detach bool, extensionList string) error {
 	// Validate version
-	if pgVersion != "16" && pgVersion != "17" {
-		return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", pgVersion)
+	if err := ValidatePostgresVersion(pgVersion); err != nil {
+		return err
 	}
 
 	// Create config with defaults, then override with user values
@@ -90,13 +90,7 @@ func upPostgres(cmd *cobra.Command, args []string) error {
 	}
 
 	// Parse extension list
-	var extNames []string
-	if extensionList != "" {
-		extNames = strings.Split(extensionList, ",")
-		for i := range extNames {
-			extNames[i] = strings.TrimSpace(extNames[i])
-		}
-	}
+	extNames := ParseExtensionList(extensionList)
 
 	// Determine container name
 	containerMgr := container.NewManager()

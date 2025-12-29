@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/ahacop/pgbox/internal/extspec"
 )
@@ -17,6 +18,8 @@ type TOMLManager struct {
 	pgVersion string
 	specs     map[string]*extspec.ExtensionSpec
 	loader    *extspec.Loader
+	once      sync.Once
+	initErr   error
 }
 
 // NewTOMLManager creates a new TOML-based extension manager
@@ -28,8 +31,17 @@ func NewTOMLManager(pgVersion string) *TOMLManager {
 	}
 }
 
-// Initialize loads all available extensions for the PostgreSQL version
+// Initialize loads all available extensions for the PostgreSQL version.
+// It is safe to call multiple times; initialization only happens once.
 func (m *TOMLManager) Initialize() error {
+	m.once.Do(func() {
+		m.initErr = m.doInitialize()
+	})
+	return m.initErr
+}
+
+// doInitialize performs the actual initialization work
+func (m *TOMLManager) doInitialize() error {
 	// Use filesystem path for extensions
 	extensionsDir := "extensions"
 

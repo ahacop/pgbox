@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
@@ -11,6 +12,18 @@ import (
 	"github.com/ahacop/pgbox/internal/render"
 	"github.com/spf13/cobra"
 )
+
+// getDebArch returns the Debian architecture string for the current system
+func getDebArch() string {
+	switch runtime.GOARCH {
+	case "amd64":
+		return "amd64"
+	case "arm64":
+		return "arm64"
+	default:
+		return "amd64" // fallback
+	}
+}
 
 func ExportCmd() *cobra.Command {
 	var pgVersion string
@@ -56,9 +69,15 @@ func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error
 		return err
 	}
 
-	// Set default base image if not specified
+	// Parse extension list early to check for base image requirements
+	extNames := ParseExtensionList(extList)
+
+	// Set base image - check if extensions require a specific one
 	if baseImage == "" {
-		baseImage = fmt.Sprintf("postgres:%s", pgVersion)
+		baseImage = extensions.GetBaseImage(extNames, pgVersion)
+		if baseImage == "" {
+			baseImage = fmt.Sprintf("postgres:%s", pgVersion)
+		}
 	}
 
 	// Create PostgresConfig with defaults and environment overrides
@@ -76,9 +95,6 @@ func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error
 	if database := os.Getenv("PGBOX_DATABASE"); database != "" {
 		pgConfig.Database = database
 	}
-
-	// Parse extension list
-	extNames := ParseExtensionList(extList)
 
 	// Create target directory
 	if err := os.MkdirAll(targetDir, 0755); err != nil {
@@ -108,10 +124,16 @@ func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error
 			return err
 		}
 
-		// Add packages to Dockerfile model
+		// Add packages to Dockerfile model (apt packages)
 		packages := extensions.GetPackages(extNames, pgVersion)
 		if len(packages) > 0 {
 			dockerfileModel.AddPackages(packages, "apt")
+		}
+
+		// Add .deb URLs to Dockerfile model
+		debURLs := extensions.GetDebURLs(extNames, pgVersion, getDebArch())
+		if len(debURLs) > 0 {
+			dockerfileModel.AddDebURLs(debURLs...)
 		}
 
 		// Add shared_preload_libraries

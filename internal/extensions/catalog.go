@@ -13,6 +13,15 @@ type Extension struct {
 	// Empty for built-in contrib extensions.
 	Package string
 
+	// DebURL is a URL template for downloading a .deb package directly.
+	// Supports placeholders: {v} (PG version), {arch} (amd64/arm64).
+	// If set, this is used instead of Package for installation.
+	DebURL string
+
+	// BaseImage overrides the default postgres:{v} image.
+	// Use this when a .deb requires a specific distro (e.g., "postgres:{v}-bookworm").
+	BaseImage string
+
 	// SQLName is the CREATE EXTENSION name if different from the catalog key.
 	SQLName string
 
@@ -213,6 +222,14 @@ var Catalog = map[string]Extension{
 			"-- To use it, create a replication slot with:\n" +
 			"-- SELECT pg_create_logical_replication_slot('slot_name', 'wal2json');",
 	},
+
+	// ===== Extensions installed from .deb URLs (GitHub releases, etc.) =====
+	"pg_search": {
+		DebURL:    "https://github.com/paradedb/paradedb/releases/download/v0.20.5/postgresql-{v}-pg-search_0.20.5-1PARADEDB-bookworm_{arch}.deb",
+		BaseImage: "postgres:{v}-bookworm",
+		SQLName:   "pg_search",
+		InitSQL:   "CREATE EXTENSION IF NOT EXISTS pg_search;",
+	},
 }
 
 // Get returns the extension configuration for the given name.
@@ -353,4 +370,58 @@ func GetGUCs(names []string) (map[string]string, error) {
 		}
 	}
 	return gucs, nil
+}
+
+// GetDebURL returns the resolved .deb URL for an extension.
+// Returns empty string if the extension doesn't use .deb installation.
+func GetDebURL(name, version, arch string) string {
+	ext, ok := Catalog[name]
+	if !ok || ext.DebURL == "" {
+		return ""
+	}
+	url := strings.ReplaceAll(ext.DebURL, "{v}", version)
+	url = strings.ReplaceAll(url, "{arch}", arch)
+	return url
+}
+
+// GetDebURLs returns all .deb URLs needed for the given extensions.
+func GetDebURLs(names []string, version, arch string) []string {
+	var urls []string
+	seen := make(map[string]bool)
+	for _, name := range names {
+		url := GetDebURL(name, version, arch)
+		if url != "" && !seen[url] {
+			urls = append(urls, url)
+			seen[url] = true
+		}
+	}
+	return urls
+}
+
+// NeedsDebPackages returns true if any of the given extensions require .deb downloads.
+func NeedsDebPackages(names []string) bool {
+	for _, name := range names {
+		if ext, ok := Catalog[name]; ok && ext.DebURL != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// HasDebURL returns true if the extension uses .deb installation.
+func HasDebURL(name string) bool {
+	ext, ok := Catalog[name]
+	return ok && ext.DebURL != ""
+}
+
+// GetBaseImage returns the required base image for extensions.
+// If any extension requires a specific base image, that takes precedence.
+// Returns empty string if default postgres:{version} should be used.
+func GetBaseImage(names []string, version string) string {
+	for _, name := range names {
+		if ext, ok := Catalog[name]; ok && ext.BaseImage != "" {
+			return strings.ReplaceAll(ext.BaseImage, "{v}", version)
+		}
+	}
+	return ""
 }

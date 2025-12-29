@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
@@ -14,6 +15,18 @@ import (
 	"github.com/ahacop/pgbox/internal/model"
 	"github.com/ahacop/pgbox/internal/render"
 )
+
+// getDebArch returns the Debian architecture string for the current system
+func getDebArch() string {
+	switch runtime.GOARCH {
+	case "amd64":
+		return "amd64"
+	case "arm64":
+		return "arm64"
+	default:
+		return "amd64" // fallback
+	}
+}
 
 // UpConfig holds the configuration for starting a PostgreSQL container.
 type UpConfig struct {
@@ -73,7 +86,11 @@ func (o *UpOrchestrator) Run(cfg UpConfig) error {
 	}
 
 	// Initialize models
-	baseImage := fmt.Sprintf("postgres:%s", cfg.Version)
+	// Check if extensions require a specific base image
+	baseImage := extensions.GetBaseImage(cfg.Extensions, cfg.Version)
+	if baseImage == "" {
+		baseImage = fmt.Sprintf("postgres:%s", cfg.Version)
+	}
 	dockerfileModel := model.NewDockerfileModel(baseImage)
 	pgConfModel := model.NewPGConfModel()
 	initModel := model.NewInitModel()
@@ -123,10 +140,16 @@ func (o *UpOrchestrator) processExtensions(
 		return err
 	}
 
-	// Add packages to Dockerfile model
+	// Add packages to Dockerfile model (apt packages)
 	packages := extensions.GetPackages(extNames, pgVersion)
 	if len(packages) > 0 {
 		dockerfileModel.AddPackages(packages, "apt")
+	}
+
+	// Add .deb URLs to Dockerfile model
+	debURLs := extensions.GetDebURLs(extNames, pgVersion, getDebArch())
+	if len(debURLs) > 0 {
+		dockerfileModel.AddDebURLs(debURLs...)
 	}
 
 	// Add shared_preload_libraries
@@ -152,8 +175,8 @@ func (o *UpOrchestrator) processExtensions(
 		}
 	}
 
-	// Build custom image if packages are needed
-	if len(packages) > 0 {
+	// Build custom image if packages or .deb URLs are needed
+	if len(packages) > 0 || len(debURLs) > 0 {
 		customImage, err := o.buildCustomImage(pgVersion, dockerfileModel, extNames)
 		if err != nil {
 			return fmt.Errorf("failed to build custom image: %w", err)

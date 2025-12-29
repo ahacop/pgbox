@@ -12,6 +12,7 @@ import (
 type DockerfileModel struct {
 	BaseImage   string              // Base Docker image (e.g., "postgres:17")
 	AptPackages []string            // Debian/Ubuntu packages to install
+	DebURLs     []string            // Direct .deb URLs to download and install
 	Blocks      map[string][]string // Named blocks for custom content
 }
 
@@ -20,8 +21,14 @@ func NewDockerfileModel(baseImage string) *DockerfileModel {
 	return &DockerfileModel{
 		BaseImage:   baseImage,
 		AptPackages: []string{},
+		DebURLs:     []string{},
 		Blocks:      make(map[string][]string),
 	}
+}
+
+// AddDebURLs adds .deb URLs to download and install
+func (d *DockerfileModel) AddDebURLs(urls ...string) {
+	d.DebURLs = appendUnique(d.DebURLs, urls...)
 }
 
 // AddPackages adds packages to install via apt

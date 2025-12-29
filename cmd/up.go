@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/docker"
 	"github.com/ahacop/pgbox/internal/orchestrator"
 	"github.com/spf13/cobra"
@@ -66,7 +67,7 @@ The container runs in the background by default (detached mode).`,
 		},
 	}
 
-	upCmd.Flags().StringVarP(&pgVersion, "version", "v", "18", "PostgreSQL version (16, 17, or 18)")
+	upCmd.Flags().StringVarP(&pgVersion, "version", "v", config.DefaultVersion, "PostgreSQL version (16, 17, or 18)")
 	upCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
 	upCmd.Flags().StringVarP(&name, "name", "n", "", "Container name (default: pgbox-pg<version>)")
 	upCmd.Flags().StringVar(&password, "password", "postgres", "PostgreSQL password")

@@ -6,7 +6,7 @@ GO := go
 
 # Extension and PostgreSQL configuration
 EXTS ?= pgvector,pg_cron
-PG_VERSION ?= 17
+PG_VERSION ?= 18
 PORT ?= 5432
 
 # Version information

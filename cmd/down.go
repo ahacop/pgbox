@@ -28,7 +28,7 @@ This command stops and removes the container but preserves any volumes.`,
 		},
 	}
 
-	downCmd.Flags().StringVarP(&containerName, "name", "n", "", "Container name to stop (default: pgbox-pg17)")
+	downCmd.Flags().StringVarP(&containerName, "name", "n", "", "Container name to stop (default: pgbox-pg<version>)")
 
 	return downCmd
 }

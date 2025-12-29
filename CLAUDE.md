@@ -185,7 +185,7 @@ go test -v ./cmd
 - To add a new extension, add it to `internal/extensions/catalog.go`
 - Container names follow pattern: `pgbox-pg{version}-{hash}` when extensions used
 - Extension name mapping: some extensions have different SQL names (e.g., "pgvector" → "vector")
-- Default PostgreSQL versions: 16 and 17 (17 is default)
+- Default PostgreSQL version: 18 (supported: 16, 17, 18)
 - Default credentials: user=postgres, password=postgres, database=postgres
 - Default port: 5432
 - Image hash includes extension config, so changes trigger rebuilds

@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/orchestrator"
 	"github.com/spf13/cobra"
 )
@@ -58,7 +59,7 @@ used independently of pgbox to run PostgreSQL with your chosen configuration.`,
 		},
 	}
 
-	exportCmd.Flags().StringVarP(&pgVersion, "version", "v", "18", "PostgreSQL version (16, 17, or 18)")
+	exportCmd.Flags().StringVarP(&pgVersion, "version", "v", config.DefaultVersion, "PostgreSQL version (16, 17, or 18)")
 	exportCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
 	exportCmd.Flags().StringVar(&extList, "ext", "", "Comma-separated list of extensions")
 	exportCmd.Flags().StringVar(&baseImage, "base-image", "", "Base Docker image (default: postgres:<version>)")

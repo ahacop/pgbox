@@ -71,7 +71,7 @@ You can pass additional arguments to psql after a '--' separator.`,
 
 	psqlCmd.Flags().StringVarP(&psqlDatabase, "database", "d", "postgres", "Database name to connect to")
 	psqlCmd.Flags().StringVarP(&psqlUser, "user", "u", "postgres", "Username for connection")
-	psqlCmd.Flags().StringVarP(&psqlName, "name", "n", "", "Container name (default: pgbox-pg17)")
+	psqlCmd.Flags().StringVarP(&psqlName, "name", "n", "", "Container name (default: pgbox-pg<version>)")
 
 	return psqlCmd
 }

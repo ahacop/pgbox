@@ -2,6 +2,10 @@ package config
 
 import "fmt"
 
+// DefaultVersion is the default PostgreSQL version used throughout pgbox.
+// This is the single source of truth for the default version.
+const DefaultVersion = "18"
+
 // PostgresConfig holds PostgreSQL-specific configuration
 type PostgresConfig struct {
 	Version     string // PostgreSQL version (e.g., "16", "17")
@@ -15,7 +19,7 @@ type PostgresConfig struct {
 // NewPostgresConfig returns a PostgresConfig with default values
 func NewPostgresConfig() *PostgresConfig {
 	return &PostgresConfig{
-		Version:  "18",
+		Version:  DefaultVersion,
 		Port:     "5432",
 		Database: "postgres",
 		User:     "postgres",

@@ -88,7 +88,7 @@ make install
 #### Starting PostgreSQL
 
 ```bash
-# Start with default settings (PostgreSQL 17, port 5432)
+# Start with default settings (PostgreSQL 18, port 5432)
 ./pgbox up
 
 # Start with specific extensions
@@ -207,7 +207,7 @@ make test
 make test-coverage
 
 # Test export functionality
-make export EXTS=pgvector,pg_cron PG_VERSION=17
+make export EXTS=pgvector,pg_cron PG_VERSION=18
 
 # Run PostgreSQL with extensions
 make run EXTS=pgvector,pg_cron PORT=5432

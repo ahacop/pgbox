@@ -77,9 +77,9 @@ func (m *Manager) ImageName(version string, extensions []string) string {
 	return fmt.Sprintf("pgbox-pg%s-custom:%s", version, hash)
 }
 
-// DefaultName returns the default container name (for PostgreSQL 17)
+// DefaultName returns the default container name for the default PostgreSQL version
 func (m *Manager) DefaultName() string {
-	return "pgbox-pg17"
+	return fmt.Sprintf("pgbox-pg%s", config.DefaultVersion)
 }
 
 // ErrNoContainerFound is returned when no suitable container is found

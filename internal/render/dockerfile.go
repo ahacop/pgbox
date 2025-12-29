@@ -12,46 +12,37 @@ import (
 func RenderDockerfile(m *model.DockerfileModel, outputPath string) error {
 	dockerfilePath := filepath.Join(outputPath, "Dockerfile")
 
-	// Parse existing file if it exists
 	parsed, err := ParseFileWithAnchors(dockerfilePath, DockerfileAnchors)
 	if err != nil {
 		return fmt.Errorf("failed to parse existing Dockerfile: %w", err)
 	}
 
-	// Generate new anchored content
 	var anchoredContent []string
 
-	// Generate apt packages installation
 	if len(m.AptPackages) > 0 {
 		anchoredContent = append(anchoredContent, generateAptInstall(m.BaseImage, m.AptPackages)...)
 	}
 
-	// Generate .deb downloads and installation
 	if len(m.DebURLs) > 0 {
 		anchoredContent = append(anchoredContent, generateDebInstall(m.DebURLs)...)
 	}
 
-	// Generate .zip downloads (containing .deb packages) and installation
 	if len(m.ZipURLs) > 0 {
 		anchoredContent = append(anchoredContent, generateZipInstall(m.ZipURLs)...)
 	}
 
-	// If no existing file, create default structure
 	if !parsed.HasAnchor && len(parsed.PreAnchor) == 0 {
 		parsed.PreAnchor = generateDefaultDockerfileHeader(m.BaseImage)
 	}
 
-	// Replace anchored content
 	lines := ReplaceAnchored(parsed, DockerfileAnchors, anchoredContent)
 
-	// Write the file
 	return WriteLines(dockerfilePath, lines)
 }
 
 // generateDefaultDockerfileHeader creates the default Dockerfile header
 func generateDefaultDockerfileHeader(baseImage string) []string {
-	// Extract major version from base image
-	pgMajor := "18" // default
+	pgMajor := "18"
 	if strings.Contains(baseImage, ":16") {
 		pgMajor = "16"
 	} else if strings.Contains(baseImage, ":17") {
@@ -79,7 +70,6 @@ func generateAptInstall(baseImage string, packages []string) []string {
 		"    apt-get update; \\",
 	}
 
-	// Add PostgreSQL APT repository if we have extension packages
 	hasExtensions := false
 	for _, pkg := range packages {
 		if strings.Contains(pkg, "postgresql-") {
@@ -97,7 +87,6 @@ func generateAptInstall(baseImage string, packages []string) []string {
 		)
 	}
 
-	// Add package installation
 	lines = append(lines, "    apt-get install -y --no-install-recommends \\")
 	for i, pkg := range packages {
 		if i < len(packages)-1 {
@@ -107,7 +96,6 @@ func generateAptInstall(baseImage string, packages []string) []string {
 		}
 	}
 
-	// Clean up
 	if hasExtensions {
 		lines = append(lines,
 			"    apt-get purge -y --auto-remove curl gnupg lsb-release; \\",
@@ -134,20 +122,17 @@ func generateDebInstall(debURLs []string) []string {
 		"    apt-get install -y --no-install-recommends curl ca-certificates; \\",
 	}
 
-	// Download each .deb file
 	for i, url := range debURLs {
 		filename := fmt.Sprintf("/tmp/ext_%d.deb", i)
 		lines = append(lines, fmt.Sprintf("    curl -fsSL -o %s '%s'; \\", filename, url))
 	}
 
-	// Install all .deb files
 	var debFiles []string
 	for i := range debURLs {
 		debFiles = append(debFiles, fmt.Sprintf("/tmp/ext_%d.deb", i))
 	}
 	lines = append(lines, fmt.Sprintf("    dpkg -i %s || apt-get install -fy; \\", strings.Join(debFiles, " ")))
 
-	// Cleanup
 	lines = append(lines,
 		"    rm -f /tmp/ext_*.deb; \\",
 		"    apt-get purge -y --auto-remove curl ca-certificates; \\",
@@ -171,7 +156,6 @@ func generateZipInstall(zipURLs []string) []string {
 		"    apt-get install -y --no-install-recommends curl ca-certificates unzip; \\",
 	}
 
-	// Download, extract, and install each .zip file
 	for i, url := range zipURLs {
 		zipFile := fmt.Sprintf("/tmp/ext_%d.zip", i)
 		lines = append(lines, fmt.Sprintf("    curl -fsSL -o %s '%s'; \\", zipFile, url))
@@ -179,7 +163,6 @@ func generateZipInstall(zipURLs []string) []string {
 		lines = append(lines, fmt.Sprintf("    dpkg -i /tmp/ext_%d/*.deb || apt-get install -fy; \\", i))
 	}
 
-	// Cleanup
 	lines = append(lines,
 		"    rm -rf /tmp/ext_*.zip /tmp/ext_*/; \\",
 		"    apt-get purge -y --auto-remove curl ca-certificates unzip; \\",

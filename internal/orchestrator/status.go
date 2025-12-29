@@ -26,7 +26,6 @@ func NewStatusOrchestrator(d docker.Docker, w io.Writer) *StatusOrchestrator {
 
 // Run shows the status of PostgreSQL containers.
 func (o *StatusOrchestrator) Run(cfg StatusConfig) error {
-	// If no container specified, try to find running pgbox containers
 	if cfg.ContainerName == "" {
 		containers, err := o.docker.ListContainers("pgbox")
 		if err != nil {
@@ -39,7 +38,6 @@ func (o *StatusOrchestrator) Run(cfg StatusConfig) error {
 			return nil
 		}
 
-		// Show status for all pgbox containers
 		fmt.Fprintln(o.output, "PostgreSQL containers:")
 		output, err := o.docker.RunCommandWithOutput("ps", "--filter", "name=pgbox", "--format", "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}")
 		if err != nil {
@@ -49,7 +47,6 @@ func (o *StatusOrchestrator) Run(cfg StatusConfig) error {
 		return nil
 	}
 
-	// Check specific container - verify it's running
 	running, err := o.docker.IsContainerRunning(cfg.ContainerName)
 	if err != nil {
 		return fmt.Errorf("failed to check container status: %w", err)
@@ -59,7 +56,6 @@ func (o *StatusOrchestrator) Run(cfg StatusConfig) error {
 		return nil
 	}
 
-	// Get detailed container info
 	output, err := o.docker.RunCommandWithOutput("ps", "--filter", fmt.Sprintf("name=%s", cfg.ContainerName), "--format", "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}")
 	if err != nil {
 		return fmt.Errorf("failed to get container details: %w", err)
@@ -68,7 +64,6 @@ func (o *StatusOrchestrator) Run(cfg StatusConfig) error {
 	fmt.Fprintln(o.output, "Container status:")
 	fmt.Fprintln(o.output, output)
 
-	// Get database info from the container
 	dbName, _ := o.docker.GetContainerEnv(cfg.ContainerName, "POSTGRES_DB")
 	userName, _ := o.docker.GetContainerEnv(cfg.ContainerName, "POSTGRES_USER")
 
@@ -81,7 +76,6 @@ func (o *StatusOrchestrator) Run(cfg StatusConfig) error {
 			fmt.Fprintf(o.output, "  User: %s\n", userName)
 		}
 
-		// Extract port for connection string
 		lines := strings.Split(output, "\n")
 		if len(lines) > 1 {
 			fields := strings.Fields(lines[1])

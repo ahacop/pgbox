@@ -14,10 +14,7 @@ var (
 )
 
 func main() {
-	// Use version directly as it already contains commit info from build
-	ver := version
-
-	if err := fang.Execute(context.Background(), cmd.RootCmd(), fang.WithVersion(ver)); err != nil {
+	if err := fang.Execute(context.Background(), cmd.RootCmd(), fang.WithVersion(version)); err != nil {
 		os.Exit(1)
 	}
 }

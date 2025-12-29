@@ -29,7 +29,6 @@ func NewCleanOrchestrator(d docker.Docker, w io.Writer, r io.Reader) *CleanOrche
 
 // Run cleans up pgbox containers, volumes, and images.
 func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
-	// Find all pgbox containers (running and stopped)
 	fmt.Fprintln(o.output, "Searching for pgbox containers...")
 	containersOutput, err := o.docker.RunCommandWithOutput("ps", "-a", "--filter", "name=pgbox", "--format", "{{.Names}}")
 	if err != nil {
@@ -45,7 +44,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Find all pgbox volumes
 	fmt.Fprintln(o.output, "Searching for pgbox volumes...")
 	volumesOutput, err := o.docker.RunCommandWithOutput("volume", "ls", "--format", "{{.Name}}")
 	if err != nil {
@@ -61,7 +59,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Find all pgbox images
 	fmt.Fprintln(o.output, "Searching for pgbox images...")
 	imagesOutput, err := o.docker.RunCommandWithOutput("images", "--format", "{{.Repository}}:{{.Tag}}")
 	if err != nil {
@@ -80,7 +77,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Show what will be removed
 	if len(containers) == 0 && len(volumes) == 0 && len(images) == 0 && len(baseImages) == 0 {
 		fmt.Fprintln(o.output, "No pgbox resources found to clean.")
 		return nil
@@ -112,7 +108,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Confirm unless --force
 	if !cfg.Force {
 		fmt.Fprint(o.output, "\nAre you sure you want to remove these resources? (y/N): ")
 		reader := bufio.NewReader(o.input)
@@ -127,7 +122,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Remove containers
 	if len(containers) > 0 {
 		fmt.Fprintln(o.output, "\nRemoving containers...")
 		for _, container := range containers {
@@ -140,7 +134,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Remove volumes
 	if len(volumes) > 0 {
 		fmt.Fprintln(o.output, "\nRemoving volumes...")
 		for _, volume := range volumes {
@@ -153,7 +146,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Remove images
 	allImages := append(images, baseImages...)
 	if len(allImages) > 0 {
 		fmt.Fprintln(o.output, "\nRemoving images...")
@@ -172,7 +164,6 @@ func (o *CleanOrchestrator) Run(cfg CleanConfig) error {
 		}
 	}
 
-	// Also clean up any temp files
 	fmt.Fprintln(o.output, "\nCleaning temporary files...")
 	if output, err := o.docker.RunCommandWithOutput("run", "--rm", "-v", "/tmp:/tmp", "alpine", "sh", "-c", "rm -f /tmp/pgbox-*.sql /tmp/pgbox-*.yml"); err != nil {
 		// Non-critical error, just warn

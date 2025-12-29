@@ -12,24 +12,20 @@ import (
 func RenderInitSQL(m *model.InitModel, outputPath string) error {
 	initPath := filepath.Join(outputPath, "init.sql")
 
-	// Parse existing file to get any user content
 	existingBlocks, preContent, err := ParseInitSQLAnchors(initPath)
 	if err != nil {
 		return fmt.Errorf("failed to parse existing init.sql: %w", err)
 	}
 
-	// Build the new content
 	var lines []string
 
-	// Add any pre-existing content (user content before anchors)
 	if len(preContent) > 0 {
 		lines = append(lines, preContent...)
 		if len(preContent) > 0 && preContent[len(preContent)-1] != "" {
-			lines = append(lines, "") // Add blank line separator
+			lines = append(lines, "")
 		}
 	}
 
-	// Add header if this is a new file
 	if len(existingBlocks) == 0 && len(preContent) == 0 {
 		lines = append(lines,
 			"-- PostgreSQL initialization script",
@@ -38,23 +34,18 @@ func RenderInitSQL(m *model.InitModel, outputPath string) error {
 		)
 	}
 
-	// Add fragments with anchors
 	fragments := m.GetOrderedFragments()
 	for _, frag := range fragments {
-		// Start anchor with hash
 		lines = append(lines, fmt.Sprintf("-- pgbox: begin %s sha256=%s", frag.Name, frag.SHA256[:16]))
 
-		// Add the SQL content
 		contentLines := strings.Split(strings.TrimSpace(frag.Content), "\n")
 		lines = append(lines, contentLines...)
 
-		// End anchor
 		lines = append(lines, fmt.Sprintf("-- pgbox: end %s", frag.Name))
-		lines = append(lines, "") // Blank line between fragments
+		lines = append(lines, "")
 	}
 
-	// Add any existing blocks that weren't replaced
-	// This preserves user-added fragments that aren't managed by pgbox
+	// Preserve user-added fragments that aren't managed by pgbox
 	for name, content := range existingBlocks {
 		found := false
 		for _, frag := range fragments {
@@ -72,7 +63,6 @@ func RenderInitSQL(m *model.InitModel, outputPath string) error {
 		}
 	}
 
-	// Write the file
 	return WriteLines(initPath, lines)
 }
 
@@ -92,15 +82,12 @@ func RenderPostgreSQLConf(pgConf *model.PGConfModel, outputPath string) error {
 		"",
 	)
 
-	// Add shared_preload_libraries if set
 	if len(pgConf.SharedPreload) > 0 {
 		preloadStr := pgConf.GetSharedPreloadString()
 		lines = append(lines, fmt.Sprintf("shared_preload_libraries = '%s'", preloadStr))
 	}
 
-	// Add other GUCs
 	for key, value := range pgConf.GUCs {
-		// Quote the value if it contains spaces or special characters
 		quotedValue := value
 		if strings.ContainsAny(value, " ,='\"") && !strings.HasPrefix(value, "'") {
 			quotedValue = fmt.Sprintf("'%s'", value)
@@ -110,7 +97,6 @@ func RenderPostgreSQLConf(pgConf *model.PGConfModel, outputPath string) error {
 
 	lines = append(lines, "")
 
-	// Also generate ALTER SYSTEM commands as an alternative
 	lines = append(lines,
 		"-- Alternatively, use these ALTER SYSTEM commands:",
 		"-- Connect to PostgreSQL and run:",

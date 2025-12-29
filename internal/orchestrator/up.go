@@ -47,7 +47,6 @@ func NewUpOrchestrator(d docker.Docker, w io.Writer) *UpOrchestrator {
 
 // Run starts a PostgreSQL container with the given configuration.
 func (o *UpOrchestrator) Run(cfg UpConfig) error {
-	// Create PostgreSQL config
 	pgConfig := config.NewPostgresConfig()
 	pgConfig.Version = cfg.Version
 	if cfg.Port != "" {
@@ -63,21 +62,17 @@ func (o *UpOrchestrator) Run(cfg UpConfig) error {
 		pgConfig.Password = cfg.Password
 	}
 
-	// Determine container name
 	containerName := cfg.ContainerName
 	if containerName == "" {
 		containerName = o.containerMgr.Name(pgConfig, cfg.Extensions)
 	}
 
-	// Check if container already exists (stopped)
 	if restarted, err := o.tryRestartExisting(containerName); err != nil {
 		return err
 	} else if restarted {
 		return nil
 	}
 
-	// Initialize models
-	// Check if extensions require a specific base image
 	baseImage := extensions.GetBaseImage(cfg.Extensions, cfg.Version)
 	if baseImage == "" {
 		baseImage = fmt.Sprintf("postgres:%s", cfg.Version)
@@ -86,17 +81,13 @@ func (o *UpOrchestrator) Run(cfg UpConfig) error {
 	pgConfModel := model.NewPGConfModel()
 	initModel := model.NewInitModel()
 
-	// Process extensions if specified
 	if len(cfg.Extensions) > 0 {
 		if err := o.processExtensions(cfg.Version, cfg.Extensions, dockerfileModel, pgConfModel, initModel, pgConfig); err != nil {
 			return err
 		}
 	}
 
-	// Print status
 	o.printStatus(pgConfig, containerName, cfg.Extensions, cfg.Detach)
-
-	// Build container options
 	opts := o.buildContainerOptions(containerName, cfg.Detach, cfg.Extensions, pgConfModel, initModel)
 
 	return o.docker.RunPostgres(pgConfig, opts)
@@ -126,36 +117,30 @@ func (o *UpOrchestrator) processExtensions(
 	initModel *model.InitModel,
 	pgConfig *config.PostgresConfig,
 ) error {
-	// Validate extensions exist in catalog
 	if err := extensions.ValidateExtensions(extNames); err != nil {
 		return err
 	}
 
-	// Add packages to Dockerfile model (apt packages)
 	packages := extensions.GetPackages(extNames, pgVersion)
 	if len(packages) > 0 {
 		dockerfileModel.AddPackages(packages, "apt")
 	}
 
-	// Add .deb URLs to Dockerfile model
 	debURLs := extensions.GetDebURLs(extNames, pgVersion, util.GetDebArch())
 	if len(debURLs) > 0 {
 		dockerfileModel.AddDebURLs(debURLs...)
 	}
 
-	// Add .zip URLs to Dockerfile model
 	zipURLs := extensions.GetZipURLs(extNames, pgVersion, util.GetDebArch())
 	if len(zipURLs) > 0 {
 		dockerfileModel.AddZipURLs(zipURLs...)
 	}
 
-	// Add shared_preload_libraries
 	preload := extensions.GetPreloadLibraries(extNames)
 	if len(preload) > 0 {
 		pgConfModel.AddSharedPreload(preload...)
 	}
 
-	// Add GUCs (with conflict detection)
 	gucs, err := extensions.GetGUCs(extNames)
 	if err != nil {
 		return fmt.Errorf("extension configuration conflict: %w", err)
@@ -164,7 +149,6 @@ func (o *UpOrchestrator) processExtensions(
 		pgConfModel.GUCs[key] = value
 	}
 
-	// Add init SQL for each extension
 	for _, name := range extNames {
 		sql := extensions.GetInitSQL(name)
 		if sql != "" {
@@ -172,7 +156,6 @@ func (o *UpOrchestrator) processExtensions(
 		}
 	}
 
-	// Build custom image if packages, .deb URLs, or .zip URLs are needed
 	if len(packages) > 0 || len(debURLs) > 0 || len(zipURLs) > 0 {
 		customImage, err := o.buildCustomImage(pgVersion, dockerfileModel, extNames)
 		if err != nil {
@@ -186,7 +169,6 @@ func (o *UpOrchestrator) processExtensions(
 
 // buildCustomImage builds a Docker image with the specified extensions.
 func (o *UpOrchestrator) buildCustomImage(pgVersion string, dockerfileModel *model.DockerfileModel, extensions []string) (string, error) {
-	// Generate temp directory for build context
 	buildDir := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-build-%d", os.Getpid()))
 	if err := os.MkdirAll(buildDir, 0755); err != nil {
 		return "", fmt.Errorf("failed to create build directory: %w", err)
@@ -197,15 +179,12 @@ func (o *UpOrchestrator) buildCustomImage(pgVersion string, dockerfileModel *mod
 		}
 	}()
 
-	// Render Dockerfile
 	if err := render.RenderDockerfile(dockerfileModel, buildDir); err != nil {
 		return "", fmt.Errorf("failed to render Dockerfile: %w", err)
 	}
 
-	// Build image with deterministic name based on extensions
 	imageName := o.containerMgr.ImageName(pgVersion, extensions)
 
-	// Check if image already exists
 	existingImages, _ := o.docker.RunCommandWithOutput("images", "-q", imageName)
 	if strings.TrimSpace(existingImages) != "" {
 		fmt.Fprintf(o.output, "Using existing custom image: %s\n", imageName)
@@ -257,11 +236,9 @@ func (o *UpOrchestrator) buildContainerOptions(
 		opts.ExtraArgs = append(opts.ExtraArgs, "-d")
 	}
 
-	// Add volume for data persistence
 	volumeName := fmt.Sprintf("%s-data", containerName)
 	opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/var/lib/postgresql/data", volumeName))
 
-	// Handle extensions configuration
 	if len(extensions) > 0 {
 		o.configureExtensions(&opts, containerName, pgConfModel, initModel)
 	}
@@ -276,14 +253,12 @@ func (o *UpOrchestrator) configureExtensions(
 	pgConfModel *model.PGConfModel,
 	initModel *model.InitModel,
 ) {
-	// Generate and mount init.sql
 	initFile := filepath.Join(os.TempDir(), fmt.Sprintf("pgbox-init-%s.sql", containerName))
 	if err := render.RenderInitSQL(initModel, os.TempDir()); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: failed to render init SQL: %v\n", err)
 		return
 	}
 
-	// Move the generated init.sql to the right location
 	generatedInitPath := filepath.Join(os.TempDir(), "init.sql")
 	initContent, err := os.ReadFile(generatedInitPath)
 	if err != nil {
@@ -299,13 +274,11 @@ func (o *UpOrchestrator) configureExtensions(
 	}
 	opts.ExtraArgs = append(opts.ExtraArgs, "-v", fmt.Sprintf("%s:/docker-entrypoint-initdb.d/init.sql:ro", initFile))
 
-	// Add shared_preload_libraries if needed
 	if len(pgConfModel.SharedPreload) > 0 {
 		preloadStr := pgConfModel.GetSharedPreloadString()
 		opts.Command = append(opts.Command, "-c", fmt.Sprintf("shared_preload_libraries=%s", preloadStr))
 	}
 
-	// Add other PostgreSQL configuration parameters
 	for key, value := range pgConfModel.GUCs {
 		if key == "shared_preload_libraries" {
 			continue

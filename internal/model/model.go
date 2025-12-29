@@ -40,7 +40,6 @@ func (d *DockerfileModel) AddZipURLs(urls ...string) {
 
 // AddPackages adds packages to install via apt
 func (d *DockerfileModel) AddPackages(packages []string, packageType string) {
-	// We only support apt for standard PostgreSQL images
 	if packageType == "apt" {
 		d.AptPackages = appendUnique(d.AptPackages, packages...)
 	}
@@ -158,11 +157,9 @@ func NewInitModel() *InitModel {
 
 // AddFragment adds a SQL fragment, avoiding duplicates by hash
 func (i *InitModel) AddFragment(name, content string) {
-	// Normalize content for consistent hashing
 	normalized := strings.TrimSpace(content)
 	hash := fmt.Sprintf("%x", sha256.Sum256([]byte(normalized)))
 
-	// Check for duplicate hash
 	for _, f := range i.Fragments {
 		if f.SHA256 == hash {
 			return // Skip duplicate
@@ -178,7 +175,6 @@ func (i *InitModel) AddFragment(name, content string) {
 
 // GetOrderedFragments returns fragments in a stable order
 func (i *InitModel) GetOrderedFragments() []InitFragment {
-	// Sort by name for deterministic output
 	sorted := make([]InitFragment, len(i.Fragments))
 	copy(sorted, i.Fragments)
 	sort.Slice(sorted, func(a, b int) bool {

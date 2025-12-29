@@ -37,7 +37,6 @@ type ParsedFile struct {
 
 // ParseFileWithAnchors parses a file and identifies anchored regions
 func ParseFileWithAnchors(path string, marker AnchorMarker) (*ParsedFile, error) {
-	// If file doesn't exist, return empty parsed file
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return &ParsedFile{
 			PreAnchor:  []string{},
@@ -73,20 +72,17 @@ func ParseFileWithAnchors(path string, marker AnchorMarker) (*ParsedFile, error)
 		line := scanner.Text()
 
 		if !inAnchor && strings.Contains(line, marker.Start) {
-			// Found start of anchor
 			inAnchor = true
 			parsed.HasAnchor = true
-			continue // Don't include the marker itself
+			continue
 		}
 
 		if inAnchor && strings.Contains(line, marker.End) {
-			// Found end of anchor
 			inAnchor = false
 			foundEnd = true
-			continue // Don't include the marker itself
+			continue
 		}
 
-		// Add line to appropriate section
 		if inAnchor {
 			parsed.Anchored = append(parsed.Anchored, line)
 		} else if !parsed.HasAnchor {
@@ -107,17 +103,14 @@ func ParseFileWithAnchors(path string, marker AnchorMarker) (*ParsedFile, error)
 func ReplaceAnchored(parsed *ParsedFile, marker AnchorMarker, newContent []string) []string {
 	var result []string
 
-	// Add pre-anchor content
 	result = append(result, parsed.PreAnchor...)
 
-	// Add anchored content with markers
 	if len(newContent) > 0 || parsed.HasAnchor {
 		result = append(result, marker.Start)
 		result = append(result, newContent...)
 		result = append(result, marker.End)
 	}
 
-	// Add post-anchor content
 	result = append(result, parsed.PostAnchor...)
 
 	return result
@@ -139,7 +132,6 @@ func ParseInitSQLAnchors(path string) (map[string][]string, []string, error) {
 	var currentBlock string
 	var currentLines []string
 
-	// If file doesn't exist, return empty
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return blocks, preContent, nil
 	}
@@ -155,7 +147,6 @@ func ParseInitSQLAnchors(path string) (map[string][]string, []string, error) {
 		}
 	}()
 
-	// Pattern for anchor markers
 	startPattern := regexp.MustCompile(`^-- pgbox: begin (\S+)`)
 	endPattern := regexp.MustCompile(`^-- pgbox: end (\S+)`)
 
@@ -163,10 +154,8 @@ func ParseInitSQLAnchors(path string) (map[string][]string, []string, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		// Check for start marker
 		if matches := startPattern.FindStringSubmatch(line); len(matches) > 1 {
 			if currentBlock != "" {
-				// Save previous block
 				blocks[currentBlock] = currentLines
 			}
 			currentBlock = matches[1]
@@ -174,7 +163,6 @@ func ParseInitSQLAnchors(path string) (map[string][]string, []string, error) {
 			continue
 		}
 
-		// Check for end marker
 		if matches := endPattern.FindStringSubmatch(line); len(matches) > 1 {
 			if currentBlock == matches[1] {
 				blocks[currentBlock] = currentLines
@@ -184,11 +172,9 @@ func ParseInitSQLAnchors(path string) (map[string][]string, []string, error) {
 			continue
 		}
 
-		// Add line to current context
 		if currentBlock != "" {
 			currentLines = append(currentLines, line)
 		} else if len(blocks) == 0 {
-			// Before any blocks
 			preContent = append(preContent, line)
 		}
 	}

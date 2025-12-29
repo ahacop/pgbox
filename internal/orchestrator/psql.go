@@ -37,9 +37,7 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 		return fmt.Errorf("%w. Start one with: pgbox up", err)
 	}
 
-	// If container was explicitly specified, verify it's running
 	if cfg.ContainerName != "" {
-		// Verify container is running
 		running, err := o.docker.IsContainerRunning(name)
 		if err != nil {
 			return fmt.Errorf("failed to check container status: %w", err)
@@ -49,7 +47,6 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 		}
 	}
 
-	// Get user/database from container env if not specified
 	user := cfg.User
 	database := cfg.Database
 
@@ -68,11 +65,9 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 		}
 	}
 
-	// Build the psql command arguments
 	psqlArgs := []string{"psql", "-U", user, "-d", database}
 	psqlArgs = append(psqlArgs, cfg.ExtraArgs...)
 
-	// Determine if stdin is a terminal
 	stdinIsTerminal := false
 	if cfg.StdinIsTerminal != nil {
 		stdinIsTerminal = *cfg.StdinIsTerminal
@@ -82,7 +77,6 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 		}
 	}
 
-	// Determine if this is an interactive session
 	isInteractive := stdinIsTerminal
 	for _, arg := range psqlArgs {
 		if arg == "-c" || arg == "--command" ||
@@ -100,7 +94,6 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 		fmt.Fprintln(o.output, strings.Repeat("-", 40))
 	}
 
-	// Build the full docker command
 	dockerArgs := []string{"exec"}
 	if isInteractive {
 		dockerArgs = append(dockerArgs, "-it")
@@ -110,6 +103,5 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 	dockerArgs = append(dockerArgs, name)
 	dockerArgs = append(dockerArgs, psqlArgs...)
 
-	// Execute psql inside the container
 	return o.docker.RunInteractive(dockerArgs...)
 }

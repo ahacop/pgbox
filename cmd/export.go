@@ -34,18 +34,13 @@ used independently of pgbox to run PostgreSQL with your chosen configuration.`,
   pgbox export ./my-postgres --base-image postgres:17-alpine`,
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Validate version
 			if err := ValidatePostgresVersion(pgVersion); err != nil {
 				return err
 			}
 
-			// Parse extensions
 			extensions := ParseExtensionList(extList)
-
-			// Create orchestrator
 			orch := orchestrator.NewExportOrchestrator(cmd.OutOrStdout())
 
-			// Run the orchestrator
 			return orch.Run(orchestrator.ExportConfig{
 				TargetDir:  args[0],
 				Version:    pgVersion,

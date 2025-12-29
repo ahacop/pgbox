@@ -40,7 +40,6 @@ You can pass additional arguments to psql after a '--' separator.`,
   # Execute a SQL file
   pgbox psql -- -f /path/to/file.sql`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Collect extra args after --
 			var extraArgs []string
 			dashPos := cmd.ArgsLenAtDash()
 			if dashPos > -1 {

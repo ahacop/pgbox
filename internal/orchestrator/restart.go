@@ -33,7 +33,6 @@ func (o *RestartOrchestrator) Run(cfg RestartConfig) error {
 		fmt.Fprintf(o.output, "Restarting container: %s\n", name)
 	}
 
-	// Restart the container
 	fmt.Fprintf(o.output, "Restarting container %s...\n", name)
 	err = o.docker.RunCommand("restart", name)
 	if err != nil {

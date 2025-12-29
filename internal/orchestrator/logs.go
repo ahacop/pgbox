@@ -34,13 +34,11 @@ func (o *LogsOrchestrator) Run(cfg LogsConfig) error {
 		fmt.Fprintf(o.output, "Showing logs for container: %s\n", name)
 	}
 
-	// Build docker logs command arguments
 	args := []string{"logs"}
 	if cfg.Follow {
 		args = append(args, "-f")
 	}
 	args = append(args, name)
 
-	// Show logs
 	return o.docker.RunCommand(args...)
 }

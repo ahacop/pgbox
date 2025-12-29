@@ -38,7 +38,6 @@ func NewExportOrchestrator(w io.Writer) *ExportOrchestrator {
 
 // Run exports Docker configuration to the target directory.
 func (o *ExportOrchestrator) Run(cfg ExportConfig) error {
-	// Set base image - check if extensions require a specific one
 	baseImage := cfg.BaseImage
 	if baseImage == "" {
 		baseImage = extensions.GetBaseImage(cfg.Extensions, cfg.Version)
@@ -47,7 +46,6 @@ func (o *ExportOrchestrator) Run(cfg ExportConfig) error {
 		}
 	}
 
-	// Create PostgresConfig
 	pgConfig := config.NewPostgresConfig()
 	pgConfig.Version = cfg.Version
 	pgConfig.Port = cfg.Port
@@ -61,18 +59,15 @@ func (o *ExportOrchestrator) Run(cfg ExportConfig) error {
 		pgConfig.Database = cfg.Database
 	}
 
-	// Create target directory
 	if err := os.MkdirAll(cfg.TargetDir, 0755); err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	// Initialize models
 	dockerfileModel := model.NewDockerfileModel(baseImage)
 	composeModel := model.NewComposeModel("db")
 	pgConfModel := model.NewPGConfModel()
 	initModel := model.NewInitModel()
 
-	// Configure compose model basics
 	composeModel.BuildPath = "."
 	composeModel.Image = baseImage
 	composeModel.AddPort(fmt.Sprintf("%s:5432", cfg.Port))
@@ -82,14 +77,12 @@ func (o *ExportOrchestrator) Run(cfg ExportConfig) error {
 	composeModel.SetEnv("POSTGRES_PASSWORD", pgConfig.Password)
 	composeModel.SetEnv("POSTGRES_DB", pgConfig.Database)
 
-	// Process extensions if specified
 	if len(cfg.Extensions) > 0 {
 		if err := o.processExtensions(cfg.Version, cfg.Extensions, dockerfileModel, pgConfModel, initModel); err != nil {
 			return err
 		}
 	}
 
-	// Render files
 	if err := render.RenderDockerfile(dockerfileModel, cfg.TargetDir); err != nil {
 		return fmt.Errorf("failed to render Dockerfile: %w", err)
 	}
@@ -102,14 +95,12 @@ func (o *ExportOrchestrator) Run(cfg ExportConfig) error {
 		return fmt.Errorf("failed to render init.sql: %w", err)
 	}
 
-	// Optionally render postgresql.conf snippet if there are config changes
 	if len(pgConfModel.SharedPreload) > 0 || len(pgConfModel.GUCs) > 0 {
 		if err := render.RenderPostgreSQLConf(pgConfModel, cfg.TargetDir); err != nil {
 			return fmt.Errorf("failed to render postgresql.conf: %w", err)
 		}
 	}
 
-	// Success message
 	o.printSuccess(cfg, pgConfModel)
 
 	return nil
@@ -123,36 +114,30 @@ func (o *ExportOrchestrator) processExtensions(
 	pgConfModel *model.PGConfModel,
 	initModel *model.InitModel,
 ) error {
-	// Validate extensions exist in catalog
 	if err := extensions.ValidateExtensions(extNames); err != nil {
 		return err
 	}
 
-	// Add packages to Dockerfile model (apt packages)
 	packages := extensions.GetPackages(extNames, pgVersion)
 	if len(packages) > 0 {
 		dockerfileModel.AddPackages(packages, "apt")
 	}
 
-	// Add .deb URLs to Dockerfile model
 	debURLs := extensions.GetDebURLs(extNames, pgVersion, util.GetDebArch())
 	if len(debURLs) > 0 {
 		dockerfileModel.AddDebURLs(debURLs...)
 	}
 
-	// Add .zip URLs to Dockerfile model
 	zipURLs := extensions.GetZipURLs(extNames, pgVersion, util.GetDebArch())
 	if len(zipURLs) > 0 {
 		dockerfileModel.AddZipURLs(zipURLs...)
 	}
 
-	// Add shared_preload_libraries
 	preload := extensions.GetPreloadLibraries(extNames)
 	if len(preload) > 0 {
 		pgConfModel.AddSharedPreload(preload...)
 	}
 
-	// Add GUCs (with conflict detection)
 	gucs, err := extensions.GetGUCs(extNames)
 	if err != nil {
 		return fmt.Errorf("extension configuration conflict: %w", err)
@@ -161,7 +146,6 @@ func (o *ExportOrchestrator) processExtensions(
 		pgConfModel.GUCs[key] = value
 	}
 
-	// Add init SQL for each extension
 	for _, name := range extNames {
 		sql := extensions.GetInitSQL(name)
 		if sql != "" {

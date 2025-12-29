@@ -42,18 +42,13 @@ The container runs in the background by default (detached mode).`,
   # Start with custom database and user
   pgbox up --database=mydb --user=myuser --password=secret`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Validate version
 			if err := ValidatePostgresVersion(pgVersion); err != nil {
 				return err
 			}
 
-			// Parse extensions
 			extensions := ParseExtensionList(extensionList)
-
-			// Create orchestrator with real Docker client
 			orch := orchestrator.NewUpOrchestrator(docker.NewClient(), cmd.OutOrStdout())
 
-			// Run the orchestrator
 			return orch.Run(orchestrator.UpConfig{
 				Version:       pgVersion,
 				Port:          port,

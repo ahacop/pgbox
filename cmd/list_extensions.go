@@ -47,7 +47,6 @@ func listExtensions(w io.Writer, showSource bool, filterKind string) error {
 	for _, name := range allExtensions {
 		ext, _ := extensions.Get(name)
 
-		// Apply filter if specified
 		if filterKind != "" {
 			isBuiltin := ext.Package == ""
 			if filterKind == "builtin" && !isBuiltin {
@@ -60,7 +59,6 @@ func listExtensions(w io.Writer, showSource bool, filterKind string) error {
 		displayed = append(displayed, name)
 	}
 
-	// Display extensions
 	fmt.Fprintf(w, "PostgreSQL Extensions (%d available):\n\n", len(displayed))
 
 	for _, name := range displayed {
@@ -68,7 +66,6 @@ func listExtensions(w io.Writer, showSource bool, filterKind string) error {
 		if showSource {
 			source := "builtin"
 			if ext.Package != "" {
-				// Show package pattern with placeholder
 				source = fmt.Sprintf("apt (%s)", strings.ReplaceAll(ext.Package, "{v}", "<version>"))
 			}
 			fmt.Fprintf(w, "%-30s %s\n", name, source)

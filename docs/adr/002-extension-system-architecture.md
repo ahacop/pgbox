@@ -1,8 +1,8 @@
-# ADR-002: PostgreSQL Extension System Architecture
+# ADR-002: PostgreSQL Extension System Architecture (TOML-based)
 
 ## Status
 
-Accepted
+Superseded by [ADR-003](003-go-extension-catalog.md)
 
 ## Date
 
@@ -252,3 +252,9 @@ This ensures extension data stays synchronized with official PostgreSQL reposito
 - [PostgreSQL Extension Documentation](https://www.postgresql.org/docs/current/extend-extensions.html)
 - [Docker Multi-stage Builds](https://docs.docker.com/develop/develop-images/multistage-build/)
 - [apt.postgresql.org Repository](https://apt.postgresql.org/)
+
+---
+
+## Supersession Note
+
+This ADR was superseded in December 2025. The TOML-based extension system described here was replaced with a simpler Go-based catalog approach. See [ADR-003](003-go-extension-catalog.md) for the rationale and details of the new architecture.

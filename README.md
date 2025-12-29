@@ -9,9 +9,9 @@ It is designed for **experimentation and prototyping**, making it easy to test e
 - **Quick setup**: Spin up PostgreSQL with any set of extensions in seconds
 - **Easy experimentation**: Test extensions locally before adding them to your stack
 - **Export to Docker**: Export Docker Compose files when ready for your project
-- **200+ extensions supported**: From [apt.postgresql.org](https://apt.postgresql.org)
+- **150+ extensions supported**: From [apt.postgresql.org](https://apt.postgresql.org)
 
-Think of pgbox as a PostgreSQL sandbox — a safe place to explore over 200 extensions without manual installs or risking your development database.
+Think of pgbox as a PostgreSQL sandbox — a safe place to explore 150+ extensions without manual installs or risking your development database.
 
 ## Installation
 
@@ -177,8 +177,8 @@ make install
 
 ### Prerequisites
 
-- Go 1.21+
-- Docker with compose plugin (for future functionality)
+- Go 1.24+
+- Docker
 - Optional: golangci-lint for linting
 
 ### Building
@@ -195,12 +195,6 @@ make check
 
 # Clean build artifacts
 make clean
-
-# Update extension catalogs and generate TOML files
-make update-extensions
-
-# Generate TOML files from existing JSON data
-make generate-toml
 ```
 
 ### Testing

@@ -14,13 +14,12 @@ pgbox is a Go CLI application that simplifies running PostgreSQL in Docker with 
   - **config/**: PostgreSQL configuration management
   - **container/**: Container lifecycle management
   - **docker/**: Docker command wrapper
-  - **extensions/**: Extension loading (legacy JSONL and TOML systems)
+  - **extensions/**: Extension TOML loading
   - **extspec/**: TOML schema definitions
   - **model/**: Data models for Dockerfile, Compose, PostgreSQL configs
   - **render/**: Renders models to Docker artifacts
 - **extensions/**: TOML extension definitions (one directory per extension)
 - **scripts/**: Build scripts for extension catalogs and TOML generation
-- **pkg/scaffold/**: Legacy template-based Docker artifact generation
 
 ## Build and Development Commands
 
@@ -98,11 +97,11 @@ make update-nix-hash
 
 ### Extension Configuration System
 
-The codebase uses a TOML-based extension configuration system:
-   - Uses TOML files in `extensions/` directory for rich configuration
-   - Handles shared_preload_libraries, GUCs, and complex SQL initialization
-   - Data flow: extspec.Loader → ExtensionSpec → applier → model → render
-   - Used by both `up` and `export` commands
+TOML-based extension configuration:
+- TOML files in `extensions/` directory define extension requirements
+- Handles shared_preload_libraries, GUCs, and SQL initialization
+- Data flow: extspec.Loader → ExtensionSpec → applier → model → render
+- Used by both `up` and `export` commands
 
 ### Extension TOML Structure
 
@@ -126,7 +125,7 @@ When extensions are requested:
 
 1. Creates temporary build directory with generated Dockerfile
 2. Builds custom image based on postgres:XX with apt packages
-3. For extensions with shared_preload_libraries (TOML system only):
+3. For extensions with shared_preload_libraries:
    - Configures PostgreSQL startup parameters
    - Sets required GUCs
 4. Mounts init.sql for extension creation

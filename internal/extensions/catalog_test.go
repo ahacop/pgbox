@@ -8,11 +8,11 @@ import (
 
 func TestGet(t *testing.T) {
 	tests := []struct {
-		name     string
-		extName  string
-		wantOK   bool
-		wantPkg  string
-		wantSQL  string
+		name    string
+		extName string
+		wantOK  bool
+		wantPkg string
+		wantSQL string
 	}{
 		{"built-in extension", "hstore", true, "", "hstore"},
 		{"simple third-party", "hypopg", true, "postgresql-{v}-hypopg", "hypopg"},

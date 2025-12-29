@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/extensions"
@@ -29,7 +30,7 @@ extensions installable from apt.postgresql.org.`,
   pgbox list-extensions --kind builtin
   pgbox list-extensions --kind package`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return listExtensions(showSource, filterKind)
+			return listExtensions(cmd.OutOrStdout(), showSource, filterKind)
 		},
 	}
 
@@ -39,7 +40,7 @@ extensions installable from apt.postgresql.org.`,
 	return listExtCmd
 }
 
-func listExtensions(showSource bool, filterKind string) error {
+func listExtensions(w io.Writer, showSource bool, filterKind string) error {
 	allExtensions := extensions.ListExtensions()
 
 	var displayed []string
@@ -60,7 +61,7 @@ func listExtensions(showSource bool, filterKind string) error {
 	}
 
 	// Display extensions
-	fmt.Printf("PostgreSQL Extensions (%d available):\n\n", len(displayed))
+	fmt.Fprintf(w, "PostgreSQL Extensions (%d available):\n\n", len(displayed))
 
 	for _, name := range displayed {
 		ext, _ := extensions.Get(name)
@@ -70,9 +71,9 @@ func listExtensions(showSource bool, filterKind string) error {
 				// Show package pattern with placeholder
 				source = fmt.Sprintf("apt (%s)", strings.ReplaceAll(ext.Package, "{v}", "<version>"))
 			}
-			fmt.Printf("%-30s %s\n", name, source)
+			fmt.Fprintf(w, "%-30s %s\n", name, source)
 		} else {
-			fmt.Printf("%s\n", name)
+			fmt.Fprintf(w, "%s\n", name)
 		}
 	}
 

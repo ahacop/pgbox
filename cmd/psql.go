@@ -1,11 +1,8 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-	"strings"
-
 	"github.com/ahacop/pgbox/internal/docker"
+	"github.com/ahacop/pgbox/internal/orchestrator"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +40,30 @@ You can pass additional arguments to psql after a '--' separator.`,
   # Execute a SQL file
   pgbox psql -- -f /path/to/file.sql`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runPsql(cmd, args, &psqlDatabase, &psqlUser, &psqlName)
+			// Collect extra args after --
+			var extraArgs []string
+			dashPos := cmd.ArgsLenAtDash()
+			if dashPos > -1 {
+				extraArgs = args[dashPos:]
+			}
+
+			// Only pass user/database if explicitly set
+			user := ""
+			database := ""
+			if cmd.Flags().Changed("user") {
+				user = psqlUser
+			}
+			if cmd.Flags().Changed("database") {
+				database = psqlDatabase
+			}
+
+			orch := orchestrator.NewPsqlOrchestrator(docker.NewClient(), cmd.OutOrStdout())
+			return orch.Run(orchestrator.PsqlConfig{
+				ContainerName: psqlName,
+				Database:      database,
+				User:          user,
+				ExtraArgs:     extraArgs,
+			})
 		},
 		DisableFlagParsing: false,
 		Args:               cobra.ArbitraryArgs,
@@ -54,77 +74,4 @@ You can pass additional arguments to psql after a '--' separator.`,
 	psqlCmd.Flags().StringVarP(&psqlName, "name", "n", "", "Container name (default: pgbox-pg17)")
 
 	return psqlCmd
-}
-
-func runPsql(cmd *cobra.Command, args []string, psqlDatabase, psqlUser, psqlName *string) error {
-	client := docker.NewClient()
-
-	// Resolve container name (finds running container if not specified)
-	resolvedName, err := ResolveRunningContainer(client, *psqlName)
-	if err != nil {
-		return err
-	}
-	*psqlName = resolvedName
-
-	// If user and database weren't specified, try to get them from container env vars
-	if !cmd.Flags().Changed("user") {
-		if envUser, err := client.GetContainerEnv(*psqlName, "POSTGRES_USER"); err == nil && envUser != "" {
-			*psqlUser = envUser
-		}
-	}
-	if !cmd.Flags().Changed("database") {
-		if envDB, err := client.GetContainerEnv(*psqlName, "POSTGRES_DB"); err == nil && envDB != "" {
-			*psqlDatabase = envDB
-		}
-	}
-
-	// Build the psql command arguments
-	psqlArgs := []string{"psql", "-U", *psqlUser, "-d", *psqlDatabase}
-
-	// Check if there are additional arguments after --
-	dashPos := cmd.ArgsLenAtDash()
-	if dashPos > -1 {
-		// There's a -- separator, append everything after it
-		psqlArgs = append(psqlArgs, args[dashPos:]...)
-	}
-
-	// Check if we're running an interactive session or a one-off command
-	// First check if stdin is a terminal
-	stdinIsTerminal := false
-	if fileInfo, _ := os.Stdin.Stat(); (fileInfo.Mode() & os.ModeCharDevice) != 0 {
-		stdinIsTerminal = true
-	}
-
-	// Determine if this is an interactive session
-	isInteractive := stdinIsTerminal
-	for _, arg := range psqlArgs {
-		if arg == "-c" || arg == "--command" ||
-			arg == "-f" || arg == "--file" ||
-			arg == "-l" || arg == "--list" ||
-			arg == "--help" || arg == "--version" {
-			isInteractive = false
-			break
-		}
-	}
-
-	if isInteractive {
-		fmt.Printf("Connecting to %s as user '%s' to database '%s'...\n", *psqlName, *psqlUser, *psqlDatabase)
-		fmt.Println("Type \\q to exit")
-		fmt.Println(strings.Repeat("-", 40))
-	}
-
-	// Build the full docker command
-	dockerArgs := []string{"exec"}
-	if isInteractive {
-		// Use -it for fully interactive sessions
-		dockerArgs = append(dockerArgs, "-it")
-	} else if !stdinIsTerminal {
-		// Use -i for piped input (stdin needs to be connected but not a tty)
-		dockerArgs = append(dockerArgs, "-i")
-	}
-	dockerArgs = append(dockerArgs, *psqlName)
-	dockerArgs = append(dockerArgs, psqlArgs...)
-
-	// Execute psql inside the container
-	return client.RunInteractive(dockerArgs...)
 }

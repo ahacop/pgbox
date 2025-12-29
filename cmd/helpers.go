@@ -3,8 +3,6 @@ package cmd
 import (
 	"fmt"
 	"strings"
-
-	"github.com/ahacop/pgbox/internal/docker"
 )
 
 // ValidPostgresVersions contains the supported PostgreSQL versions.
@@ -32,41 +30,4 @@ func ParseExtensionList(extList string) []string {
 		result[i] = strings.TrimSpace(p)
 	}
 	return result
-}
-
-// ResolveRunningContainer resolves the container name to use.
-// If containerName is provided, it validates that the container is running.
-// If containerName is empty, it finds a running pgbox container.
-// Returns the resolved container name or an error.
-func ResolveRunningContainer(client docker.Docker, containerName string) (string, error) {
-	if containerName == "" {
-		foundName, err := client.FindPgboxContainer()
-		if err != nil {
-			return "", fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		return foundName, nil
-	}
-
-	// Container name was provided, verify it's running
-	running, err := client.IsContainerRunning(containerName)
-	if err != nil {
-		return "", fmt.Errorf("failed to check container status: %w", err)
-	}
-	if !running {
-		return "", fmt.Errorf("container %s is not running. Start it with: pgbox up", containerName)
-	}
-	return containerName, nil
-}
-
-// FindContainer finds a running pgbox container without validating if it's running.
-// This is useful for commands like 'down' that work on stopped containers too.
-func FindContainer(client docker.Docker, containerName string) (string, error) {
-	if containerName == "" {
-		foundName, err := client.FindPgboxContainer()
-		if err != nil {
-			return "", fmt.Errorf("no running pgbox container found. Specify container name with -n flag")
-		}
-		return foundName, nil
-	}
-	return containerName, nil
 }

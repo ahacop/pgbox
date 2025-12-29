@@ -30,6 +30,16 @@ build:
 test:
 	$(GO) test -v ./...
 
+# Run tests with race detector
+.PHONY: test-race
+test-race:
+	$(GO) test -v -race ./...
+
+# Run tests with timeout
+.PHONY: test-timeout
+test-timeout:
+	$(GO) test -v -timeout 30s ./...
+
 # Run tests with coverage
 .PHONY: test-coverage
 test-coverage:
@@ -84,6 +94,8 @@ help:
 	@echo "Available targets:"
 	@echo "  build             - Build the binary"
 	@echo "  test              - Run tests"
+	@echo "  test-race         - Run tests with race detector"
+	@echo "  test-timeout      - Run tests with 30s timeout"
 	@echo "  test-coverage     - Run tests with coverage report"
 	@echo "  fmt               - Format code"
 	@echo "  vet               - Run go vet"

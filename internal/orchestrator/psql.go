@@ -32,16 +32,13 @@ func NewPsqlOrchestrator(d docker.Docker, w io.Writer) *PsqlOrchestrator {
 
 // Run connects to PostgreSQL via psql.
 func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
-	name := cfg.ContainerName
+	name, _, err := ResolveContainerName(o.docker, cfg.ContainerName)
+	if err != nil {
+		return fmt.Errorf("%w. Start one with: pgbox up", err)
+	}
 
-	// Resolve container name (finds running container if not specified)
-	if name == "" {
-		foundName, err := o.docker.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		name = foundName
-	} else {
+	// If container was explicitly specified, verify it's running
+	if cfg.ContainerName != "" {
 		// Verify container is running
 		running, err := o.docker.IsContainerRunning(name)
 		if err != nil {

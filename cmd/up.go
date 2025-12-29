@@ -50,7 +50,7 @@ The container runs in the background by default (detached mode).`,
 			extensions := ParseExtensionList(extensionList)
 
 			// Create orchestrator with real Docker client
-			orch := orchestrator.NewUpOrchestrator(docker.NewClient())
+			orch := orchestrator.NewUpOrchestrator(docker.NewClient(), cmd.OutOrStdout())
 
 			// Run the orchestrator
 			return orch.Run(orchestrator.UpConfig{

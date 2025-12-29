@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/ahacop/pgbox/internal/docker"
@@ -9,6 +10,7 @@ import (
 
 func TestUpOrchestrator_RestartExistingContainer(t *testing.T) {
 	mock := docker.NewMockDocker()
+	var buf bytes.Buffer
 
 	// Simulate existing container found
 	mock.RunCommandWithOutputFunc = func(args ...string) (string, error) {
@@ -18,7 +20,7 @@ func TestUpOrchestrator_RestartExistingContainer(t *testing.T) {
 		return "", nil
 	}
 
-	orch := NewUpOrchestrator(mock)
+	orch := NewUpOrchestrator(mock, &buf)
 	err := orch.Run(UpConfig{
 		Version: "17",
 	})
@@ -32,13 +34,14 @@ func TestUpOrchestrator_RestartExistingContainer(t *testing.T) {
 
 func TestUpOrchestrator_NewContainer(t *testing.T) {
 	mock := docker.NewMockDocker()
+	var buf bytes.Buffer
 
 	// Simulate no existing container
 	mock.RunCommandWithOutputFunc = func(args ...string) (string, error) {
 		return "", nil
 	}
 
-	orch := NewUpOrchestrator(mock)
+	orch := NewUpOrchestrator(mock, &buf)
 	err := orch.Run(UpConfig{
 		Version:  "17",
 		Port:     "5432",
@@ -59,11 +62,12 @@ func TestUpOrchestrator_NewContainer(t *testing.T) {
 
 func TestUpOrchestrator_CustomContainerName(t *testing.T) {
 	mock := docker.NewMockDocker()
+	var buf bytes.Buffer
 	mock.RunCommandWithOutputFunc = func(args ...string) (string, error) {
 		return "", nil
 	}
 
-	orch := NewUpOrchestrator(mock)
+	orch := NewUpOrchestrator(mock, &buf)
 	err := orch.Run(UpConfig{
 		Version:       "17",
 		ContainerName: "my-custom-pg",

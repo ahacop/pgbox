@@ -3,9 +3,9 @@ package orchestrator
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
@@ -14,19 +14,8 @@ import (
 	"github.com/ahacop/pgbox/internal/extensions"
 	"github.com/ahacop/pgbox/internal/model"
 	"github.com/ahacop/pgbox/internal/render"
+	"github.com/ahacop/pgbox/internal/util"
 )
-
-// getDebArch returns the Debian architecture string for the current system
-func getDebArch() string {
-	switch runtime.GOARCH {
-	case "amd64":
-		return "amd64"
-	case "arm64":
-		return "arm64"
-	default:
-		return "amd64" // fallback
-	}
-}
 
 // UpConfig holds the configuration for starting a PostgreSQL container.
 type UpConfig struct {
@@ -43,13 +32,15 @@ type UpConfig struct {
 // UpOrchestrator handles the business logic for starting PostgreSQL containers.
 type UpOrchestrator struct {
 	docker       docker.Docker
+	output       io.Writer
 	containerMgr *container.Manager
 }
 
 // NewUpOrchestrator creates a new UpOrchestrator with the given dependencies.
-func NewUpOrchestrator(d docker.Docker) *UpOrchestrator {
+func NewUpOrchestrator(d docker.Docker, w io.Writer) *UpOrchestrator {
 	return &UpOrchestrator{
 		docker:       d,
+		output:       w,
 		containerMgr: container.NewManager(),
 	}
 }
@@ -116,11 +107,11 @@ func (o *UpOrchestrator) Run(cfg UpConfig) error {
 func (o *UpOrchestrator) tryRestartExisting(containerName string) (bool, error) {
 	existingOutput, _ := o.docker.RunCommandWithOutput("ps", "-a", "--filter", fmt.Sprintf("name=^%s$", containerName), "--format", "{{.Names}}")
 	if strings.TrimSpace(existingOutput) == containerName {
-		fmt.Printf("Restarting existing container: %s\n", containerName)
+		fmt.Fprintf(o.output, "Restarting existing container: %s\n", containerName)
 		if err := o.docker.RunCommand("start", containerName); err != nil {
 			return false, fmt.Errorf("failed to restart container: %w", err)
 		}
-		fmt.Printf("Container %s restarted successfully\n", containerName)
+		fmt.Fprintf(o.output, "Container %s restarted successfully\n", containerName)
 		return true, nil
 	}
 	return false, nil
@@ -147,9 +138,15 @@ func (o *UpOrchestrator) processExtensions(
 	}
 
 	// Add .deb URLs to Dockerfile model
-	debURLs := extensions.GetDebURLs(extNames, pgVersion, getDebArch())
+	debURLs := extensions.GetDebURLs(extNames, pgVersion, util.GetDebArch())
 	if len(debURLs) > 0 {
 		dockerfileModel.AddDebURLs(debURLs...)
+	}
+
+	// Add .zip URLs to Dockerfile model
+	zipURLs := extensions.GetZipURLs(extNames, pgVersion, util.GetDebArch())
+	if len(zipURLs) > 0 {
+		dockerfileModel.AddZipURLs(zipURLs...)
 	}
 
 	// Add shared_preload_libraries
@@ -175,8 +172,8 @@ func (o *UpOrchestrator) processExtensions(
 		}
 	}
 
-	// Build custom image if packages or .deb URLs are needed
-	if len(packages) > 0 || len(debURLs) > 0 {
+	// Build custom image if packages, .deb URLs, or .zip URLs are needed
+	if len(packages) > 0 || len(debURLs) > 0 || len(zipURLs) > 0 {
 		customImage, err := o.buildCustomImage(pgVersion, dockerfileModel, extNames)
 		if err != nil {
 			return fmt.Errorf("failed to build custom image: %w", err)
@@ -211,11 +208,11 @@ func (o *UpOrchestrator) buildCustomImage(pgVersion string, dockerfileModel *mod
 	// Check if image already exists
 	existingImages, _ := o.docker.RunCommandWithOutput("images", "-q", imageName)
 	if strings.TrimSpace(existingImages) != "" {
-		fmt.Printf("Using existing custom image: %s\n", imageName)
+		fmt.Fprintf(o.output, "Using existing custom image: %s\n", imageName)
 		return imageName, nil
 	}
 
-	fmt.Println("Building custom PostgreSQL image with extensions...")
+	fmt.Fprintln(o.output, "Building custom PostgreSQL image with extensions...")
 	buildArgs := []string{"build", "-t", imageName, "--build-arg", fmt.Sprintf("PG_MAJOR=%s", pgVersion), buildDir}
 	if err := o.docker.RunCommand(buildArgs...); err != nil {
 		return "", fmt.Errorf("failed to build Docker image: %w", err)
@@ -224,23 +221,23 @@ func (o *UpOrchestrator) buildCustomImage(pgVersion string, dockerfileModel *mod
 	return imageName, nil
 }
 
-// printStatus prints the startup status to stdout.
+// printStatus prints the startup status to the output writer.
 func (o *UpOrchestrator) printStatus(pgConfig *config.PostgresConfig, containerName string, extensions []string, detach bool) {
-	fmt.Printf("Starting PostgreSQL %s...\n", pgConfig.Version)
-	fmt.Printf("Container: %s\n", containerName)
-	fmt.Printf("Port: %s\n", pgConfig.Port)
-	fmt.Printf("User: %s\n", pgConfig.User)
-	fmt.Printf("Database: %s\n", pgConfig.Database)
+	fmt.Fprintf(o.output, "Starting PostgreSQL %s...\n", pgConfig.Version)
+	fmt.Fprintf(o.output, "Container: %s\n", containerName)
+	fmt.Fprintf(o.output, "Port: %s\n", pgConfig.Port)
+	fmt.Fprintf(o.output, "User: %s\n", pgConfig.User)
+	fmt.Fprintf(o.output, "Database: %s\n", pgConfig.Database)
 	if len(extensions) > 0 {
-		fmt.Printf("Extensions: %s\n", strings.Join(extensions, ", "))
+		fmt.Fprintf(o.output, "Extensions: %s\n", strings.Join(extensions, ", "))
 	}
 
 	if !detach {
-		fmt.Println("\nPress Ctrl+C to stop the container")
+		fmt.Fprintln(o.output, "\nPress Ctrl+C to stop the container")
 	} else {
-		fmt.Printf("\nRunning in background. Use 'pgbox down -n %s' to stop.\n", containerName)
+		fmt.Fprintf(o.output, "\nRunning in background. Use 'pgbox down -n %s' to stop.\n", containerName)
 	}
-	fmt.Println(strings.Repeat("-", 40))
+	fmt.Fprintln(o.output, strings.Repeat("-", 40))
 }
 
 // buildContainerOptions builds the Docker container options.

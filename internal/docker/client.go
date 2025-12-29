@@ -114,8 +114,6 @@ type ContainerOptions struct {
 // RunPostgres runs a PostgreSQL container with the specified configuration
 func (c *Client) RunPostgres(pgConfig *config.PostgresConfig, opts ContainerOptions) error {
 	args := c.buildPostgresArgs(pgConfig, opts)
-	// Debug: Print the command being executed
-	// fmt.Printf("DEBUG: docker %s\n", strings.Join(args, " "))
 	return c.RunCommand(args...)
 }
 

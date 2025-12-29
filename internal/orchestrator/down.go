@@ -25,21 +25,17 @@ func NewDownOrchestrator(d docker.Docker, w io.Writer) *DownOrchestrator {
 
 // Run stops the PostgreSQL container.
 func (o *DownOrchestrator) Run(cfg DownConfig) error {
-	name := cfg.ContainerName
-
-	// Try to find a running container if name not specified
-	if name == "" {
-		foundName, err := o.docker.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Specify container name with -n flag")
-		}
-		fmt.Fprintf(o.output, "Found running container: %s\n", foundName)
-		name = foundName
+	name, autoDetected, err := ResolveContainerName(o.docker, cfg.ContainerName)
+	if err != nil {
+		return fmt.Errorf("%w. Specify container name with -n flag", err)
+	}
+	if autoDetected {
+		fmt.Fprintf(o.output, "Found running container: %s\n", name)
 	}
 
 	fmt.Fprintf(o.output, "Stopping container %s...\n", name)
 
-	err := o.docker.StopContainer(name)
+	err = o.docker.StopContainer(name)
 	if err != nil {
 		return fmt.Errorf("failed to stop container: %w", err)
 	}

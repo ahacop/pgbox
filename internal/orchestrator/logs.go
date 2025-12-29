@@ -26,16 +26,12 @@ func NewLogsOrchestrator(d docker.Docker, w io.Writer) *LogsOrchestrator {
 
 // Run shows logs from the PostgreSQL container.
 func (o *LogsOrchestrator) Run(cfg LogsConfig) error {
-	name := cfg.ContainerName
-
-	// Resolve container name (finds running container if not specified)
-	if name == "" {
-		foundName, err := o.docker.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		fmt.Fprintf(o.output, "Showing logs for container: %s\n", foundName)
-		name = foundName
+	name, autoDetected, err := ResolveContainerName(o.docker, cfg.ContainerName)
+	if err != nil {
+		return fmt.Errorf("%w. Start one with: pgbox up", err)
+	}
+	if autoDetected {
+		fmt.Fprintf(o.output, "Showing logs for container: %s\n", name)
 	}
 
 	// Build docker logs command arguments

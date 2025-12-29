@@ -18,6 +18,11 @@ type Extension struct {
 	// If set, this is used instead of Package for installation.
 	DebURL string
 
+	// ZipURL is a URL template for downloading a .zip file containing a .deb package.
+	// Supports placeholders: {v} (PG version), {arch} (amd64/arm64).
+	// The zip is extracted and the .deb inside is installed.
+	ZipURL string
+
 	// BaseImage overrides the default postgres:{v} image.
 	// Use this when a .deb requires a specific distro (e.g., "postgres:{v}-bookworm").
 	BaseImage string
@@ -230,6 +235,13 @@ var Catalog = map[string]Extension{
 		SQLName:   "pg_search",
 		InitSQL:   "CREATE EXTENSION IF NOT EXISTS pg_search;",
 	},
+
+	// ===== Extensions installed from .zip files containing .deb packages =====
+	// pg_textsearch: BM25 ranked text search (supports PostgreSQL 17 and 18 only)
+	"pg_textsearch": {
+		ZipURL:    "https://github.com/timescale/pg_textsearch/releases/download/v0.1.0/pg-textsearch-v0.1.0-pg{v}-{arch}.zip",
+		BaseImage: "postgres:{v}-bookworm",
+	},
 }
 
 // Get returns the extension configuration for the given name.
@@ -412,6 +424,48 @@ func NeedsDebPackages(names []string) bool {
 func HasDebURL(name string) bool {
 	ext, ok := Catalog[name]
 	return ok && ext.DebURL != ""
+}
+
+// GetZipURL returns the resolved .zip URL for an extension.
+// Returns empty string if the extension doesn't use .zip installation.
+func GetZipURL(name, version, arch string) string {
+	ext, ok := Catalog[name]
+	if !ok || ext.ZipURL == "" {
+		return ""
+	}
+	url := strings.ReplaceAll(ext.ZipURL, "{v}", version)
+	url = strings.ReplaceAll(url, "{arch}", arch)
+	return url
+}
+
+// GetZipURLs returns all .zip URLs needed for the given extensions.
+func GetZipURLs(names []string, version, arch string) []string {
+	var urls []string
+	seen := make(map[string]bool)
+	for _, name := range names {
+		url := GetZipURL(name, version, arch)
+		if url != "" && !seen[url] {
+			urls = append(urls, url)
+			seen[url] = true
+		}
+	}
+	return urls
+}
+
+// NeedsZipPackages returns true if any of the given extensions require .zip downloads.
+func NeedsZipPackages(names []string) bool {
+	for _, name := range names {
+		if ext, ok := Catalog[name]; ok && ext.ZipURL != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// HasZipURL returns true if the extension uses .zip installation.
+func HasZipURL(name string) bool {
+	ext, ok := Catalog[name]
+	return ok && ext.ZipURL != ""
 }
 
 // GetBaseImage returns the required base image for extensions.

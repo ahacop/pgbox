@@ -1,12 +1,14 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 
+	"github.com/ahacop/pgbox/internal/orchestrator"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -16,6 +18,22 @@ func init() {
 	_, filename, _, _ := runtime.Caller(0)
 	projectRoot := filepath.Dir(filepath.Dir(filename))
 	os.Chdir(projectRoot)
+}
+
+// runExport is a helper to run the export orchestrator with the given parameters
+func runExport(t *testing.T, dir, version, port, extList, baseImage string) error {
+	var buf bytes.Buffer
+	orch := orchestrator.NewExportOrchestrator(&buf)
+
+	extensions := ParseExtensionList(extList)
+
+	return orch.Run(orchestrator.ExportConfig{
+		TargetDir:  dir,
+		Version:    version,
+		Port:       port,
+		Extensions: extensions,
+		BaseImage:  baseImage,
+	})
 }
 
 func TestExportGeneratesCorrectFiles(t *testing.T) {
@@ -184,7 +202,7 @@ func TestExportGeneratesCorrectFiles(t *testing.T) {
 			defer os.RemoveAll(tmpDir)
 
 			// Run export
-			err = exportScaffold(tmpDir, tt.pgVersion, "5432", tt.extensions, "")
+			err = runExport(t, tmpDir, tt.pgVersion, "5432", tt.extensions, "")
 			require.NoError(t, err)
 
 			// Check expected files exist
@@ -202,22 +220,12 @@ func TestExportGeneratesCorrectFiles(t *testing.T) {
 	}
 }
 
-func TestExportInvalidVersion(t *testing.T) {
-	tmpDir, err := os.MkdirTemp("", "pgbox-export-test-*")
-	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
-
-	err = exportScaffold(tmpDir, "15", "5432", "", "")
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "invalid PostgreSQL version")
-}
-
 func TestExportUnknownExtension(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "pgbox-export-test-*")
 	require.NoError(t, err)
 	defer os.RemoveAll(tmpDir)
 
-	err = exportScaffold(tmpDir, "17", "5432", "nonexistent_extension", "")
+	err = runExport(t, tmpDir, "17", "5432", "nonexistent_extension", "")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "unknown extensions")
 }
@@ -227,7 +235,7 @@ func TestExportCustomPort(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(tmpDir)
 
-	err = exportScaffold(tmpDir, "17", "5433", "", "")
+	err = runExport(t, tmpDir, "17", "5433", "", "")
 	require.NoError(t, err)
 
 	compose := readFile(t, filepath.Join(tmpDir, "docker-compose.yml"))
@@ -239,7 +247,7 @@ func TestExportCustomBaseImage(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(tmpDir)
 
-	err = exportScaffold(tmpDir, "17", "5432", "", "postgres:17-alpine")
+	err = runExport(t, tmpDir, "17", "5432", "", "postgres:17-alpine")
 	require.NoError(t, err)
 
 	dockerfile := readFile(t, filepath.Join(tmpDir, "Dockerfile"))

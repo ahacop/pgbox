@@ -25,21 +25,17 @@ func NewRestartOrchestrator(d docker.Docker, w io.Writer) *RestartOrchestrator {
 
 // Run restarts the PostgreSQL container.
 func (o *RestartOrchestrator) Run(cfg RestartConfig) error {
-	name := cfg.ContainerName
-
-	// Resolve container name (finds running container if not specified)
-	if name == "" {
-		foundName, err := o.docker.FindPgboxContainer()
-		if err != nil {
-			return fmt.Errorf("no running pgbox container found. Start one with: pgbox up")
-		}
-		fmt.Fprintf(o.output, "Restarting container: %s\n", foundName)
-		name = foundName
+	name, autoDetected, err := ResolveContainerName(o.docker, cfg.ContainerName)
+	if err != nil {
+		return fmt.Errorf("%w. Start one with: pgbox up", err)
+	}
+	if autoDetected {
+		fmt.Fprintf(o.output, "Restarting container: %s\n", name)
 	}
 
 	// Restart the container
 	fmt.Fprintf(o.output, "Restarting container %s...\n", name)
-	err := o.docker.RunCommand("restart", name)
+	err = o.docker.RunCommand("restart", name)
 	if err != nil {
 		return fmt.Errorf("failed to restart container: %w", err)
 	}

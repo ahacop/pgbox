@@ -89,9 +89,9 @@ func (o *PsqlOrchestrator) Run(cfg PsqlConfig) error {
 	}
 
 	if isInteractive {
-		fmt.Fprintf(o.output, "Connecting to %s as user '%s' to database '%s'...\n", name, user, database)
-		fmt.Fprintln(o.output, "Type \\q to exit")
-		fmt.Fprintln(o.output, strings.Repeat("-", 40))
+		_, _ = fmt.Fprintf(o.output, "Connecting to %s as user '%s' to database '%s'...\n", name, user, database)
+		_, _ = fmt.Fprintln(o.output, "Type \\q to exit")
+		_, _ = fmt.Fprintln(o.output, strings.Repeat("-", 40))
 	}
 
 	dockerArgs := []string{"exec"}

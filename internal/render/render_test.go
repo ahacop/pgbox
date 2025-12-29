@@ -15,7 +15,7 @@ import (
 func setupTempDir(t *testing.T) string {
 	dir, err := os.MkdirTemp("", "pgbox-render-test")
 	require.NoError(t, err)
-	t.Cleanup(func() { os.RemoveAll(dir) })
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
 	return dir
 }
 

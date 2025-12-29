@@ -13,7 +13,7 @@ import (
 func TestExportOrchestrator_BasicExport(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)
@@ -39,7 +39,7 @@ func TestExportOrchestrator_BasicExport(t *testing.T) {
 func TestExportOrchestrator_WithExtensions(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)
@@ -66,7 +66,7 @@ func TestExportOrchestrator_WithExtensions(t *testing.T) {
 func TestExportOrchestrator_CustomPort(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)
@@ -88,7 +88,7 @@ func TestExportOrchestrator_CustomPort(t *testing.T) {
 func TestExportOrchestrator_CustomBaseImage(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)
@@ -111,7 +111,7 @@ func TestExportOrchestrator_CustomBaseImage(t *testing.T) {
 func TestExportOrchestrator_WithPreloadExtensions(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)
@@ -137,7 +137,7 @@ func TestExportOrchestrator_WithPreloadExtensions(t *testing.T) {
 func TestExportOrchestrator_InvalidExtension(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)
@@ -156,7 +156,7 @@ func TestExportOrchestrator_InvalidExtension(t *testing.T) {
 func TestExportOrchestrator_CustomCredentials(t *testing.T) {
 	dir, err := os.MkdirTemp("", "pgbox-export-test")
 	require.NoError(t, err)
-	defer os.RemoveAll(dir)
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	var buf bytes.Buffer
 	orch := NewExportOrchestrator(&buf)

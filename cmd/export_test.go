@@ -17,7 +17,9 @@ func init() {
 	// Change to project root directory so extension TOML files can be found
 	_, filename, _, _ := runtime.Caller(0)
 	projectRoot := filepath.Dir(filepath.Dir(filename))
-	os.Chdir(projectRoot)
+	if err := os.Chdir(projectRoot); err != nil {
+		panic(err)
+	}
 }
 
 // runExport is a helper to run the export orchestrator with the given parameters
@@ -199,7 +201,7 @@ func TestExportGeneratesCorrectFiles(t *testing.T) {
 			// Create temp directory for output
 			tmpDir, err := os.MkdirTemp("", "pgbox-export-test-*")
 			require.NoError(t, err)
-			defer os.RemoveAll(tmpDir)
+			defer func() { _ = os.RemoveAll(tmpDir) }()
 
 			// Run export
 			err = runExport(t, tmpDir, tt.pgVersion, "5432", tt.extensions, "")
@@ -223,7 +225,7 @@ func TestExportGeneratesCorrectFiles(t *testing.T) {
 func TestExportUnknownExtension(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "pgbox-export-test-*")
 	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	err = runExport(t, tmpDir, "17", "5432", "nonexistent_extension", "")
 	assert.Error(t, err)
@@ -233,7 +235,7 @@ func TestExportUnknownExtension(t *testing.T) {
 func TestExportCustomPort(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "pgbox-export-test-*")
 	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	err = runExport(t, tmpDir, "17", "5433", "", "")
 	require.NoError(t, err)
@@ -245,7 +247,7 @@ func TestExportCustomPort(t *testing.T) {
 func TestExportCustomBaseImage(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "pgbox-export-test-*")
 	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
+	defer func() { _ = os.RemoveAll(tmpDir) }()
 
 	err = runExport(t, tmpDir, "17", "5432", "", "postgres:17-alpine")
 	require.NoError(t, err)

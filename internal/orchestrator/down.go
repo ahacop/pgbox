@@ -30,16 +30,16 @@ func (o *DownOrchestrator) Run(cfg DownConfig) error {
 		return fmt.Errorf("%w. Specify container name with -n flag", err)
 	}
 	if autoDetected {
-		fmt.Fprintf(o.output, "Found running container: %s\n", name)
+		_, _ = fmt.Fprintf(o.output, "Found running container: %s\n", name)
 	}
 
-	fmt.Fprintf(o.output, "Stopping container %s...\n", name)
+	_, _ = fmt.Fprintf(o.output, "Stopping container %s...\n", name)
 
 	err = o.docker.StopContainer(name)
 	if err != nil {
 		return fmt.Errorf("failed to stop container: %w", err)
 	}
 
-	fmt.Fprintf(o.output, "Container %s stopped successfully\n", name)
+	_, _ = fmt.Fprintf(o.output, "Container %s stopped successfully\n", name)
 	return nil
 }

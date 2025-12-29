@@ -31,7 +31,7 @@ func (o *LogsOrchestrator) Run(cfg LogsConfig) error {
 		return fmt.Errorf("%w. Start one with: pgbox up", err)
 	}
 	if autoDetected {
-		fmt.Fprintf(o.output, "Showing logs for container: %s\n", name)
+		_, _ = fmt.Fprintf(o.output, "Showing logs for container: %s\n", name)
 	}
 
 	args := []string{"logs"}

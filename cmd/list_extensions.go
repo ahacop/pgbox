@@ -59,7 +59,7 @@ func listExtensions(w io.Writer, showSource bool, filterKind string) error {
 		displayed = append(displayed, name)
 	}
 
-	fmt.Fprintf(w, "PostgreSQL Extensions (%d available):\n\n", len(displayed))
+	_, _ = fmt.Fprintf(w, "PostgreSQL Extensions (%d available):\n\n", len(displayed))
 
 	for _, name := range displayed {
 		ext, _ := extensions.Get(name)
@@ -68,9 +68,9 @@ func listExtensions(w io.Writer, showSource bool, filterKind string) error {
 			if ext.Package != "" {
 				source = fmt.Sprintf("apt (%s)", strings.ReplaceAll(ext.Package, "{v}", "<version>"))
 			}
-			fmt.Fprintf(w, "%-30s %s\n", name, source)
+			_, _ = fmt.Fprintf(w, "%-30s %s\n", name, source)
 		} else {
-			fmt.Fprintf(w, "%s\n", name)
+			_, _ = fmt.Fprintf(w, "%s\n", name)
 		}
 	}
 

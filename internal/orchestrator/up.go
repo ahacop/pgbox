@@ -98,11 +98,11 @@ func (o *UpOrchestrator) Run(cfg UpConfig) error {
 func (o *UpOrchestrator) tryRestartExisting(containerName string) (bool, error) {
 	existingOutput, _ := o.docker.RunCommandWithOutput("ps", "-a", "--filter", fmt.Sprintf("name=^%s$", containerName), "--format", "{{.Names}}")
 	if strings.TrimSpace(existingOutput) == containerName {
-		fmt.Fprintf(o.output, "Restarting existing container: %s\n", containerName)
+		_, _ = fmt.Fprintf(o.output, "Restarting existing container: %s\n", containerName)
 		if err := o.docker.RunCommand("start", containerName); err != nil {
 			return false, fmt.Errorf("failed to restart container: %w", err)
 		}
-		fmt.Fprintf(o.output, "Container %s restarted successfully\n", containerName)
+		_, _ = fmt.Fprintf(o.output, "Container %s restarted successfully\n", containerName)
 		return true, nil
 	}
 	return false, nil
@@ -187,11 +187,11 @@ func (o *UpOrchestrator) buildCustomImage(pgVersion string, dockerfileModel *mod
 
 	existingImages, _ := o.docker.RunCommandWithOutput("images", "-q", imageName)
 	if strings.TrimSpace(existingImages) != "" {
-		fmt.Fprintf(o.output, "Using existing custom image: %s\n", imageName)
+		_, _ = fmt.Fprintf(o.output, "Using existing custom image: %s\n", imageName)
 		return imageName, nil
 	}
 
-	fmt.Fprintln(o.output, "Building custom PostgreSQL image with extensions...")
+	_, _ = fmt.Fprintln(o.output, "Building custom PostgreSQL image with extensions...")
 	buildArgs := []string{"build", "-t", imageName, "--build-arg", fmt.Sprintf("PG_MAJOR=%s", pgVersion), buildDir}
 	if err := o.docker.RunCommand(buildArgs...); err != nil {
 		return "", fmt.Errorf("failed to build Docker image: %w", err)
@@ -202,21 +202,21 @@ func (o *UpOrchestrator) buildCustomImage(pgVersion string, dockerfileModel *mod
 
 // printStatus prints the startup status to the output writer.
 func (o *UpOrchestrator) printStatus(pgConfig *config.PostgresConfig, containerName string, extensions []string, detach bool) {
-	fmt.Fprintf(o.output, "Starting PostgreSQL %s...\n", pgConfig.Version)
-	fmt.Fprintf(o.output, "Container: %s\n", containerName)
-	fmt.Fprintf(o.output, "Port: %s\n", pgConfig.Port)
-	fmt.Fprintf(o.output, "User: %s\n", pgConfig.User)
-	fmt.Fprintf(o.output, "Database: %s\n", pgConfig.Database)
+	_, _ = fmt.Fprintf(o.output, "Starting PostgreSQL %s...\n", pgConfig.Version)
+	_, _ = fmt.Fprintf(o.output, "Container: %s\n", containerName)
+	_, _ = fmt.Fprintf(o.output, "Port: %s\n", pgConfig.Port)
+	_, _ = fmt.Fprintf(o.output, "User: %s\n", pgConfig.User)
+	_, _ = fmt.Fprintf(o.output, "Database: %s\n", pgConfig.Database)
 	if len(extensions) > 0 {
-		fmt.Fprintf(o.output, "Extensions: %s\n", strings.Join(extensions, ", "))
+		_, _ = fmt.Fprintf(o.output, "Extensions: %s\n", strings.Join(extensions, ", "))
 	}
 
 	if !detach {
-		fmt.Fprintln(o.output, "\nPress Ctrl+C to stop the container")
+		_, _ = fmt.Fprintln(o.output, "\nPress Ctrl+C to stop the container")
 	} else {
-		fmt.Fprintf(o.output, "\nRunning in background. Use 'pgbox down -n %s' to stop.\n", containerName)
+		_, _ = fmt.Fprintf(o.output, "\nRunning in background. Use 'pgbox down -n %s' to stop.\n", containerName)
 	}
-	fmt.Fprintln(o.output, strings.Repeat("-", 40))
+	_, _ = fmt.Fprintln(o.output, strings.Repeat("-", 40))
 }
 
 // buildContainerOptions builds the Docker container options.

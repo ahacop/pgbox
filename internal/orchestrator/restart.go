@@ -30,15 +30,15 @@ func (o *RestartOrchestrator) Run(cfg RestartConfig) error {
 		return fmt.Errorf("%w. Start one with: pgbox up", err)
 	}
 	if autoDetected {
-		fmt.Fprintf(o.output, "Restarting container: %s\n", name)
+		_, _ = fmt.Fprintf(o.output, "Restarting container: %s\n", name)
 	}
 
-	fmt.Fprintf(o.output, "Restarting container %s...\n", name)
+	_, _ = fmt.Fprintf(o.output, "Restarting container %s...\n", name)
 	err = o.docker.RunCommand("restart", name)
 	if err != nil {
 		return fmt.Errorf("failed to restart container: %w", err)
 	}
 
-	fmt.Fprintf(o.output, "Container %s restarted successfully\n", name)
+	_, _ = fmt.Fprintf(o.output, "Container %s restarted successfully\n", name)
 	return nil
 }

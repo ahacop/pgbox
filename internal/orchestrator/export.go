@@ -158,16 +158,16 @@ func (o *ExportOrchestrator) processExtensions(
 
 // printSuccess prints the success message.
 func (o *ExportOrchestrator) printSuccess(cfg ExportConfig, pgConfModel *model.PGConfModel) {
-	fmt.Fprintf(o.output, "Exported Docker configuration to %s\n", cfg.TargetDir)
+	_, _ = fmt.Fprintf(o.output, "Exported Docker configuration to %s\n", cfg.TargetDir)
 	if len(cfg.Extensions) > 0 {
-		fmt.Fprintf(o.output, "With extensions: %s\n", strings.Join(cfg.Extensions, ", "))
+		_, _ = fmt.Fprintf(o.output, "With extensions: %s\n", strings.Join(cfg.Extensions, ", "))
 	}
-	fmt.Fprintf(o.output, "\nTo start PostgreSQL:\n")
-	fmt.Fprintf(o.output, "  cd %s\n", cfg.TargetDir)
-	fmt.Fprintf(o.output, "  docker-compose up -d\n")
+	_, _ = fmt.Fprintf(o.output, "\nTo start PostgreSQL:\n")
+	_, _ = fmt.Fprintf(o.output, "  cd %s\n", cfg.TargetDir)
+	_, _ = fmt.Fprintf(o.output, "  docker-compose up -d\n")
 
 	if pgConfModel.RequireRestart {
-		fmt.Fprintf(o.output, "\nNote: Some extensions require server configuration changes.\n")
-		fmt.Fprintf(o.output, "The container will start with the required settings.\n")
+		_, _ = fmt.Fprintf(o.output, "\nNote: Some extensions require server configuration changes.\n")
+		_, _ = fmt.Fprintf(o.output, "The container will start with the required settings.\n")
 	}
 }

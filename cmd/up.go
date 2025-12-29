@@ -23,11 +23,11 @@ func UpCmd() *cobra.Command {
 
 This command starts a PostgreSQL container with sensible defaults for development.
 The container runs in the background by default (detached mode).`,
-		Example: `  # Start PostgreSQL 17 (creates container named pgbox-pg17)
+		Example: `  # Start PostgreSQL 18 (creates container named pgbox-pg18)
   pgbox up
 
-  # Start PostgreSQL 16 (creates container named pgbox-pg16)
-  pgbox up -v 16
+  # Start PostgreSQL 17 (creates container named pgbox-pg17)
+  pgbox up -v 17
 
   # Start PostgreSQL with custom name
   pgbox up -n my-postgres
@@ -66,7 +66,7 @@ The container runs in the background by default (detached mode).`,
 		},
 	}
 
-	upCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
+	upCmd.Flags().StringVarP(&pgVersion, "version", "v", "18", "PostgreSQL version (16, 17, or 18)")
 	upCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
 	upCmd.Flags().StringVarP(&name, "name", "n", "", "Container name (default: pgbox-pg<version>)")
 	upCmd.Flags().StringVar(&password, "password", "postgres", "PostgreSQL password")

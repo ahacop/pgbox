@@ -46,11 +46,13 @@ func RenderDockerfile(m *model.DockerfileModel, outputPath string) error {
 // generateDefaultDockerfileHeader creates the default Dockerfile header
 func generateDefaultDockerfileHeader(baseImage string) []string {
 	// Extract major version from base image
-	pgMajor := "17" // default
+	pgMajor := "18" // default
 	if strings.Contains(baseImage, ":16") {
 		pgMajor = "16"
 	} else if strings.Contains(baseImage, ":17") {
 		pgMajor = "17"
+	} else if strings.Contains(baseImage, ":18") {
+		pgMajor = "18"
 	}
 
 	return []string{

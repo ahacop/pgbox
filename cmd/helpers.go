@@ -6,7 +6,7 @@ import (
 )
 
 // ValidPostgresVersions contains the supported PostgreSQL versions.
-var ValidPostgresVersions = []string{"16", "17"}
+var ValidPostgresVersions = []string{"16", "17", "18"}
 
 // ValidatePostgresVersion checks if the given version is a supported PostgreSQL version.
 func ValidatePostgresVersion(version string) error {
@@ -15,7 +15,7 @@ func ValidatePostgresVersion(version string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("invalid PostgreSQL version: %s (must be 16 or 17)", version)
+	return fmt.Errorf("invalid PostgreSQL version: %s (must be 16, 17, or 18)", version)
 }
 
 // ParseExtensionList parses a comma-separated list of extensions and returns a slice.

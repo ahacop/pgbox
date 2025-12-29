@@ -15,7 +15,7 @@ type PostgresConfig struct {
 // NewPostgresConfig returns a PostgresConfig with default values
 func NewPostgresConfig() *PostgresConfig {
 	return &PostgresConfig{
-		Version:  "17",
+		Version:  "18",
 		Port:     "5432",
 		Database: "postgres",
 		User:     "postgres",

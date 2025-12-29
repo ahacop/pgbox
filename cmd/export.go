@@ -55,7 +55,7 @@ used independently of pgbox to run PostgreSQL with your chosen configuration.`,
 		},
 	}
 
-	exportCmd.Flags().StringVarP(&pgVersion, "version", "v", "17", "PostgreSQL version (16 or 17)")
+	exportCmd.Flags().StringVarP(&pgVersion, "version", "v", "18", "PostgreSQL version (16, 17, or 18)")
 	exportCmd.Flags().StringVarP(&port, "port", "p", "5432", "Port to expose PostgreSQL on")
 	exportCmd.Flags().StringVar(&extList, "ext", "", "Comma-separated list of extensions")
 	exportCmd.Flags().StringVar(&baseImage, "base-image", "", "Base Docker image (default: postgres:<version>)")

@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 16
-
-extension = "pgstattuple"
-description = "show tuple-level statistics"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS pgstattuple;"

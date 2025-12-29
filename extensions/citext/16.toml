@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 16
-
-extension = "citext"
-description = "data type for case-insensitive character strings"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS citext;"

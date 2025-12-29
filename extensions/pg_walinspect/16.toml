@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 16
-
-extension = "pg_walinspect"
-description = "functions to inspect contents of PostgreSQL Write-Ahead Log"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS pg_walinspect;"

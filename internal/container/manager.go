@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/ahacop/pgbox/internal/config"
+	"github.com/ahacop/pgbox/internal/extensions"
 )
 
 // Manager handles container lifecycle and naming
@@ -19,21 +20,41 @@ func NewManager() *Manager {
 	return &Manager{}
 }
 
-// extensionHash generates a deterministic hash from sorted extension names
-func extensionHash(extensions []string) string {
-	if len(extensions) == 0 {
+// extensionHash generates a deterministic hash from sorted extension names AND their configs.
+// This ensures the image is rebuilt when extension configurations change.
+func extensionHash(extNames []string) string {
+	if len(extNames) == 0 {
 		return ""
 	}
 
 	// Sort extensions to ensure deterministic hash
-	sorted := make([]string, len(extensions))
-	copy(sorted, extensions)
+	sorted := make([]string, len(extNames))
+	copy(sorted, extNames)
 	sort.Strings(sorted)
 
-	// Create hash from sorted, comma-separated extensions
-	h := sha256.Sum256([]byte(strings.Join(sorted, ",")))
+	// Build hash input: name + package + preload + gucs + initSQL for each extension
+	h := sha256.New()
+	for _, name := range sorted {
+		h.Write([]byte(name))
+		if ext, ok := extensions.Get(name); ok {
+			h.Write([]byte(ext.Package))
+			h.Write([]byte(strings.Join(ext.Preload, ",")))
+			// Sort GUC keys for determinism
+			var gucKeys []string
+			for k := range ext.GUCs {
+				gucKeys = append(gucKeys, k)
+			}
+			sort.Strings(gucKeys)
+			for _, k := range gucKeys {
+				h.Write([]byte(k + "=" + ext.GUCs[k]))
+			}
+			h.Write([]byte(ext.InitSQL))
+		}
+	}
+
 	// Use first 8 bytes (16 hex chars) for readability
-	return hex.EncodeToString(h[:8])
+	sum := h.Sum(nil)
+	return hex.EncodeToString(sum[:8])
 }
 
 // Name returns the container name for a PostgreSQL configuration with optional extensions

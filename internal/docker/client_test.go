@@ -8,7 +8,7 @@ import (
 )
 
 func TestBuildPostgresArgs(t *testing.T) {
-	client := NewClient()
+	client := &Client{} // Use concrete type to test internal method
 
 	tests := []struct {
 		name     string

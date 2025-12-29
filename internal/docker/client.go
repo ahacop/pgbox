@@ -14,8 +14,8 @@ import (
 // Client provides an interface to Docker operations
 type Client struct{}
 
-// NewClient creates a new Docker client
-func NewClient() *Client {
+// NewClient creates a new Docker client that implements the Docker interface.
+func NewClient() Docker {
 	return &Client{}
 }
 

@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 16
-
-extension = "file_fdw"
-description = "foreign-data wrapper for flat file access"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS file_fdw;"

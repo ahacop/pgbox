@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 17
-
-extension = "xml2"
-description = "XPath querying and XSLT"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS xml2;"

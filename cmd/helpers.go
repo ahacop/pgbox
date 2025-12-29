@@ -38,7 +38,7 @@ func ParseExtensionList(extList string) []string {
 // If containerName is provided, it validates that the container is running.
 // If containerName is empty, it finds a running pgbox container.
 // Returns the resolved container name or an error.
-func ResolveRunningContainer(client *docker.Client, containerName string) (string, error) {
+func ResolveRunningContainer(client docker.Docker, containerName string) (string, error) {
 	if containerName == "" {
 		foundName, err := client.FindPgboxContainer()
 		if err != nil {
@@ -60,7 +60,7 @@ func ResolveRunningContainer(client *docker.Client, containerName string) (strin
 
 // FindContainer finds a running pgbox container without validating if it's running.
 // This is useful for commands like 'down' that work on stopped containers too.
-func FindContainer(client *docker.Client, containerName string) (string, error) {
+func FindContainer(client docker.Docker, containerName string) (string, error) {
 	if containerName == "" {
 		foundName, err := client.FindPgboxContainer()
 		if err != nil {

@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 16
-
-extension = "postgres_fdw"
-description = "foreign-data wrapper for remote PostgreSQL servers"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS postgres_fdw;"

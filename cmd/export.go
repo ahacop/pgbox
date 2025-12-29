@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ahacop/pgbox/internal/applier"
 	"github.com/ahacop/pgbox/internal/config"
 	"github.com/ahacop/pgbox/internal/extensions"
 	"github.com/ahacop/pgbox/internal/model"
@@ -104,24 +103,38 @@ func exportScaffold(targetDir, pgVersion, port, extList, baseImage string) error
 
 	// Process extensions if specified
 	if len(extNames) > 0 {
-		// Create TOML manager
-		tomlMgr := extensions.NewTOMLManager(pgVersion)
-
-		// Validate extensions
-		if err := tomlMgr.ValidateExtensions(extNames); err != nil {
+		// Validate extensions exist in catalog
+		if err := extensions.ValidateExtensions(extNames); err != nil {
 			return err
 		}
 
-		// Get extension specs
-		specs, err := tomlMgr.GetSpecs(extNames)
-		if err != nil {
-			return fmt.Errorf("failed to load extension specs: %w", err)
+		// Add packages to Dockerfile model
+		packages := extensions.GetPackages(extNames, pgVersion)
+		if len(packages) > 0 {
+			dockerfileModel.AddPackages(packages, "apt")
 		}
 
-		// Apply specs to models
-		app := applier.New()
-		if err := app.Apply(specs, dockerfileModel, composeModel, pgConfModel, initModel); err != nil {
-			return fmt.Errorf("failed to apply extensions: %w", err)
+		// Add shared_preload_libraries
+		preload := extensions.GetPreloadLibraries(extNames)
+		if len(preload) > 0 {
+			pgConfModel.AddSharedPreload(preload...)
+		}
+
+		// Add GUCs (with conflict detection)
+		gucs, err := extensions.GetGUCs(extNames)
+		if err != nil {
+			return fmt.Errorf("extension configuration conflict: %w", err)
+		}
+		for key, value := range gucs {
+			pgConfModel.GUCs[key] = value
+		}
+
+		// Add init SQL for each extension
+		for _, name := range extNames {
+			sql := extensions.GetInitSQL(name)
+			if sql != "" {
+				initModel.AddFragment(name+"-init", sql)
+			}
 		}
 	}
 

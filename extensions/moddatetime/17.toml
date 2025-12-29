@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 17
-
-extension = "moddatetime"
-description = "functions for tracking last modification time"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS moddatetime;"

@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 17
-
-extension = "cube"
-description = "data type for multidimensional cubes"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS cube;"

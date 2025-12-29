@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 17
-
-extension = "hstore"
-description = "data type for storing sets of (key, value) pairs"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS hstore;"

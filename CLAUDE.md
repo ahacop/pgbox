@@ -10,16 +10,14 @@ pgbox is a Go CLI application that simplifies running PostgreSQL in Docker with 
 
 - **cmd/**: Command implementations (up, down, psql, export, status, logs, restart, clean, list-extensions)
 - **internal/**: Core business logic
-  - **applier/**: Applies TOML specs to Docker/PostgreSQL configs
   - **config/**: PostgreSQL configuration management
-  - **container/**: Container lifecycle management
-  - **docker/**: Docker command wrapper
-  - **extensions/**: Extension TOML loading
-  - **extspec/**: TOML schema definitions
+  - **container/**: Container lifecycle management and naming
+  - **docker/**: Docker command wrapper with interface for testability
+  - **extensions/**: Extension catalog (Go map with 150+ extensions)
   - **model/**: Data models for Dockerfile, Compose, PostgreSQL configs
+  - **orchestrator/**: Business logic extracted from commands (testable)
   - **render/**: Renders models to Docker artifacts
-- **extensions/**: TOML extension definitions (one directory per extension)
-- **scripts/**: Build scripts for extension catalogs and TOML generation
+- **scripts/**: Build scripts
 
 ## Build and Development Commands
 
@@ -53,12 +51,6 @@ make clean
 
 # Install binary to GOPATH/bin
 make install
-
-# Update extension catalogs from Docker images
-make update-extensions
-
-# Generate TOML files from extension data
-make generate-toml
 
 # Update Nix vendorHash after Go module changes
 make update-nix-hash
@@ -95,67 +87,105 @@ make update-nix-hash
 
 ## Architecture
 
-### Extension Configuration System
+### Extension Catalog System
 
-TOML-based extension configuration:
-- TOML files in `extensions/` directory define extension requirements
-- Handles shared_preload_libraries, GUCs, and SQL initialization
-- Data flow: extspec.Loader → ExtensionSpec → applier → model → render
-- Used by both `up` and `export` commands
+Extensions are defined in a Go map in `internal/extensions/catalog.go`:
 
-### Extension TOML Structure
+```go
+var Catalog = map[string]Extension{
+    // Built-in extensions (no apt package needed)
+    "hstore": {},
+    "ltree":  {},
 
-Extensions requiring special configuration (e.g., pg_cron) have TOML files:
+    // Third-party extensions
+    "pgvector": {Package: "postgresql-{v}-pgvector", SQLName: "vector"},
+    "hypopg":   {Package: "postgresql-{v}-hypopg"},
 
-```toml
-extension = "pg_cron"
-package = "postgresql-17-cron"
-
-[postgresql.conf]
-shared_preload_libraries = ["pg_cron"]
-"cron.database_name" = "postgres"
-
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS pg_cron;"
+    // Complex extensions (need shared_preload_libraries and/or GUCs)
+    "pg_cron": {
+        Package: "postgresql-{v}-cron",
+        Preload: []string{"pg_cron"},
+        GUCs: map[string]string{
+            "cron.database_name": "postgres",
+        },
+        InitSQL: "CREATE EXTENSION IF NOT EXISTS pg_cron;\nGRANT USAGE ON SCHEMA cron TO postgres;",
+    },
+}
 ```
+
+Key functions:
+- `extensions.Get(name)` - lookup extension
+- `extensions.GetPackage(name, version)` - get apt package name
+- `extensions.GetInitSQL(name)` - get initialization SQL
+- `extensions.ValidateExtensions(names)` - validate extensions exist
+- `extensions.ListExtensions()` - list all extensions
 
 ### Docker Integration
 
-When extensions are requested:
+The Docker interface (`internal/docker/docker.go`) enables testability:
 
-1. Creates temporary build directory with generated Dockerfile
-2. Builds custom image based on postgres:XX with apt packages
-3. For extensions with shared_preload_libraries:
-   - Configures PostgreSQL startup parameters
-   - Sets required GUCs
+```go
+type Docker interface {
+    RunCommand(args ...string) error
+    RunCommandWithOutput(args ...string) (string, error)
+    RunPostgres(pgConfig *config.PostgresConfig, opts ContainerOptions) error
+    // ... etc
+}
+```
+
+When extensions are requested:
+1. Validates extensions exist in catalog
+2. Collects apt packages, shared_preload_libraries, GUCs, init SQL
+3. Builds custom Docker image if packages needed
 4. Mounts init.sql for extension creation
 5. Uses Docker volumes for data persistence
-6. Container naming: `pgbox-pg{version}` or custom via --name flag
-7. Image naming: deterministic based on extensions hash
+6. Container naming: `pgbox-pg{version}-{hash}` based on extensions
+7. Image naming: deterministic based on extensions + their configs
 
-## Testing Specific Components
+### Orchestrator Pattern
+
+Business logic is extracted into `internal/orchestrator/` for testability:
+
+```go
+type UpOrchestrator struct {
+    docker       docker.Docker
+    containerMgr *container.Manager
+}
+
+func (o *UpOrchestrator) Run(cfg UpConfig) error {
+    // All business logic for starting PostgreSQL
+}
+```
+
+Commands in `cmd/` are thin wrappers that parse flags and call orchestrators.
+
+## Testing
 
 ```bash
 # Test Docker client
 go test -v ./internal/docker
 
-# Test extension management
+# Test extension catalog
 go test -v ./internal/extensions
 
-# Test TOML loading and application
-go test -v ./internal/extspec ./internal/applier
+# Test orchestrator (with mock Docker)
+go test -v ./internal/orchestrator
 
-# Test with specific extension
+# Test export command
+go test -v ./cmd
+
+# Manual test with specific extension
 ./pgbox up --ext pg_cron,pgvector
 ./pgbox psql -- -c "SELECT * FROM pg_extension;"
 ```
 
 ## Important Notes
 
-- Extensions like `pg_cron`, `wal2json`, `timescaledb` require `shared_preload_libraries`
-- When adding new extensions, create TOML files in the `extensions/` directory
-- Container names follow pattern: `pgbox-pg{version}` by default
+- Extensions like `pg_cron`, `wal2json` require `shared_preload_libraries`
+- To add a new extension, add it to `internal/extensions/catalog.go`
+- Container names follow pattern: `pgbox-pg{version}-{hash}` when extensions used
 - Extension name mapping: some extensions have different SQL names (e.g., "pgvector" → "vector")
 - Default PostgreSQL versions: 16 and 17 (17 is default)
 - Default credentials: user=postgres, password=postgres, database=postgres
 - Default port: 5432
+- Image hash includes extension config, so changes trigger rebuilds

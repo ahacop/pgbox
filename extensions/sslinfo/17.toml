@@ -1,8 +1,0 @@
-# Auto-generated from pgbox-data - PostgreSQL 17
-
-extension = "sslinfo"
-description = "information about SSL certificates"
-
-# SQL initialization
-[[sql.initdb]]
-text = "CREATE EXTENSION IF NOT EXISTS sslinfo;"

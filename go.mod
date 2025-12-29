@@ -3,7 +3,6 @@ module github.com/ahacop/pgbox
 go 1.24.0
 
 require (
-	github.com/BurntSushi/toml v1.5.0
 	github.com/charmbracelet/fang v0.4.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0

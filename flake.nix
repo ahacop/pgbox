@@ -17,14 +17,16 @@
       in {
         packages.default = pkgs.buildGoModule rec {
           pname = "pgbox";
+          # Read base version from VERSION file (single source of truth)
+          baseVersion = builtins.replaceStrings ["\n"] [""] (builtins.readFile ./VERSION);
           version =
             if (self ? shortRev)
-            then "0.2.2-${self.shortRev}"
-            else "0.2.2";
+            then "${baseVersion}-${self.shortRev}"
+            else baseVersion;
 
           src = ./.;
 
-          vendorHash = "sha256-si74AW9Uu8l+zCG6PEcZVFZ/pQ8N4yGayYm82afwc5E=";
+          vendorHash = "sha256-d74qMuSWFX12B9tPKT7DfTr50ssOmyCJLAMg6hSka78=";
 
           ldflags = [
             "-s"

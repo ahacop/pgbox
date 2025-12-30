@@ -11,6 +11,7 @@ REPO_OWNER="ahacop"
 REPO_NAME="pgbox"
 BINARY_NAME="pgbox"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/.local/bin}"
+FORCE="${PGBOX_FORCE:-false}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -214,17 +215,26 @@ main() {
     # Check for existing installation
     if [ -f "$INSTALL_DIR/$BINARY_NAME" ]; then
         print_warning "$BINARY_NAME is already installed at $INSTALL_DIR/$BINARY_NAME"
-        printf "Do you want to overwrite it? [y/N] "
-        read -r response
-        case "$response" in
-            [yY][eE][sS]|[yY])
-                print_info "Overwriting existing installation..."
-                ;;
-            *)
-                print_info "Installation cancelled"
-                exit 0
-                ;;
-        esac
+
+        if [ "$FORCE" = "true" ]; then
+            print_info "Force flag set, overwriting existing installation..."
+        elif [ ! -t 0 ]; then
+            # Non-interactive mode (piped input or CI environment)
+            print_info "Non-interactive mode detected. Use --force to overwrite."
+            exit 0
+        else
+            printf "Do you want to overwrite it? [y/N] "
+            read -r response
+            case "$response" in
+                [yY][eE][sS]|[yY])
+                    print_info "Overwriting existing installation..."
+                    ;;
+                *)
+                    print_info "Installation cancelled"
+                    exit 0
+                    ;;
+            esac
+        fi
     fi
 
     # Install binary
@@ -245,5 +255,33 @@ main() {
     fi
 }
 
+# Parse arguments
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -f|--force)
+            FORCE="true"
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  -f, --force    Overwrite existing installation without prompting"
+            echo "  -h, --help     Show this help message"
+            echo ""
+            echo "Environment variables:"
+            echo "  INSTALL_DIR    Installation directory (default: \$HOME/.local/bin)"
+            echo "  PGBOX_VERSION  Version to install (default: latest)"
+            echo "  PGBOX_FORCE    Set to 'true' to force overwrite (same as --force)"
+            exit 0
+            ;;
+        *)
+            print_error "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 # Run main function
-main "$@"
+main

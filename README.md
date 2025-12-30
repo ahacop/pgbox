@@ -228,40 +228,48 @@ Contributions are welcome! Please feel free to submit a Pull Request.
    git push origin main
    ```
 
-2. **Test the release locally**
+2. **Run the release preparation script**
 
    ```bash
-   # Test the release build without publishing
-   make release-snapshot
-
-   # Check generated artifacts
-   ls -la dist/
+   ./scripts/prepare-release.sh v0.3.0
    ```
 
-3. **Create and push a version tag**
+   This script will:
+   - Update the `VERSION` file
+   - Update the `vendorHash` in `flake.nix`
+   - Run tests
+   - Create a git commit and tag
+
+3. **Push the commit and tag**
 
    ```bash
-   # For a new minor version
-   git tag v0.2.0
-   git push origin v0.2.0
-
-   # For a patch version
-   git tag v0.2.1
-   git push origin v0.2.1
+   git push origin main
+   git push origin v0.3.0
    ```
 
 4. **GitHub Actions will automatically**:
-   - Run tests
+   - Run tests and quality checks
    - Build binaries for Linux and macOS (amd64/arm64)
-   - Create a GitHub release with:
-     - Pre-built binaries for all platforms
-     - SHA256 checksums
-     - Auto-generated changelog from commit messages
+   - Create a GitHub release with pre-built binaries and checksums
 
-5. **After release, users can install via**:
-   - Pre-built binaries from GitHub releases
-   - Install script: `curl -sSL https://raw.githubusercontent.com/ahacop/pgbox/main/install.sh | sh`
-   - Go install: `go install github.com/ahacop/pgbox@v0.2.0`
+5. **Verify the release**
+
+   ```bash
+   ./scripts/test-release.sh --tag v0.3.0
+   ```
+
+### Testing Releases
+
+```bash
+# Test latest release (dry-run, no installation)
+./scripts/test-release.sh --dry-run
+
+# Test specific release with full installation
+./scripts/test-release.sh --tag v0.2.2
+
+# Test local release build
+make release-snapshot
+```
 
 ## License
 

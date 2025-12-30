@@ -5,6 +5,11 @@ on:
     tags:
       - 'v*'
 
+# Prevent concurrent releases and re-triggers
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   packages: write
@@ -60,12 +65,17 @@ jobs:
 
       - name: Test install script
         run: |
-          # Test the install script
-          ./install.sh
+          # Test the install script with --force for CI
+          ./install.sh --force
+
+          # Add install directory to PATH
+          export PATH="$HOME/.local/bin:$PATH"
 
           # Verify pgbox was installed
           if ! command -v pgbox &> /dev/null; then
             echo "pgbox not found in PATH after installation"
+            echo "Checking install directory..."
+            ls -la "$HOME/.local/bin/" || true
             exit 1
           fi
 

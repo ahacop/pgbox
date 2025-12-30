@@ -64,8 +64,11 @@ jobs:
           fetch-depth: 1
 
       - name: Test install script
+        env:
+          PGBOX_VERSION: ${{ github.ref_name }}
         run: |
           # Test the install script with --force for CI
+          # Use PGBOX_VERSION to avoid race condition with "latest" API
           ./install.sh --force
 
           # Add install directory to PATH
